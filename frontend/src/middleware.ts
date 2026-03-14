@@ -14,9 +14,9 @@ export async function middleware(request: NextRequest) {
     // Rate Limiting
     try {
         if (path.startsWith('/api/auth') || path.startsWith('/login')) {
-            await authLimiter.check(30, ip) // Increased from 5 to 30 requests per minute
+            await authLimiter.check(30, ip)
         } else if (path.startsWith('/api')) {
-            await generalLimiter.check(100, ip) // Increased from 60 to 100 requests per minute
+            await generalLimiter.check(100, ip)
         }
     } catch {
         return NextResponse.json({ error: 'Too Many Requests' }, { status: 429 })
@@ -26,22 +26,14 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.next()
 
     // Handle authenticated redirection for landing and login pages
-    const token = request.cookies.get('sb-access-token')?.value
-    const role = request.cookies.get('sb-user-role')?.value
+    // Using fb-token and fb-user-role to match Firebase AuthContext
+    const token = request.cookies.get('fb-token')?.value
+    const role = request.cookies.get('fb-user-role')?.value
 
     if (token && role && (path === '/' || path === '/login')) {
-        if (role === 'ADMIN' || role === 'STAFF') {
-            url.pathname = '/admin'
-            return NextResponse.redirect(url)
-        }
-        if (role === 'STUDENT') {
-            url.pathname = '/student'
-            return NextResponse.redirect(url)
-        }
-        if (role === 'TRAINER') {
-            url.pathname = '/trainer'
-            return NextResponse.redirect(url)
-        }
+        const userRole = role.toLowerCase()
+        url.pathname = `/${userRole}`
+        return NextResponse.redirect(url)
     }
 
     // Redirect consolidated login pages to the main login page

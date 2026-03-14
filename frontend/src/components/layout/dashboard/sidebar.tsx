@@ -52,27 +52,7 @@ export function Sidebar({ role }: SidebarProps) {
         </Link>
       </div>
 
-      {!collapsed || mobileOpen ? (
-        <div className="mx-4 mb-6 mt-2 card-dark p-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-amber-500 ring-1 ring-amber-500/30">
-              <span className="text-xs font-bold">{user?.name?.split(' ').map(n => n[0]).join('').substring(0, 2) || "RS"}</span>
-            </div>
-            <div className="flex flex-1 flex-col overflow-hidden">
-              <span className="truncate text-sm font-bold text-white">{user?.name || "Rahul Sharma"}</span>
-              <span className="truncate text-[10px] text-white/50">{user?.email?.split('@')[0] || "2021CS047 · CSE"}</span>
-            </div>
-            <div className="live-dot" />
-          </div>
-          <div className="mt-2 flex items-center justify-between">
-            <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-500 ring-1 ring-emerald-500/20">Active</span>
-          </div>
-        </div>
-      ) : (
-        <div className="mx-auto mb-6 mt-2 flex h-10 w-10 items-center justify-center rounded-full bg-white/5 ring-1 ring-white/10">
-           <div className="live-dot" />
-        </div>
-      )}
+      {/* Navigation items start immediately after logo for a tighter look */}
 
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2 custom-scrollbar" aria-label="Main Navigation">
         {navItems.map((item: any, index: number) => {
@@ -81,7 +61,8 @@ export function Sidebar({ role }: SidebarProps) {
               <div
                 key={`header-${index}`}
                 className={cn(
-                  "mt-6 mb-2 px-3 transition-all duration-300",
+                  index === 0 ? "mt-2 mb-2" : "mt-6 mb-2",
+                  "px-3 transition-all duration-300",
                   (!collapsed || mobileOpen) ? "opacity-100" : "opacity-0 hidden"
                 )}
               >

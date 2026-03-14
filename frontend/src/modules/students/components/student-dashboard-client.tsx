@@ -5,7 +5,10 @@ import { StudentOverview } from"@/modules/students/components/student-overview"
 import { TrainingSection } from"@/modules/students/components/training-section"
 import { TestsSection } from"@/modules/students/components/tests-section"
 import { useEffect, useState } from"react";
+import { useRouter } from"next/navigation";
 import { Loader2 } from"lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from"@/components/ui/avatar";
+import { getImageUrl } from"@/lib/utils";
 
 import { dashboardBanner, pipelineData, upcomingDrives, statCards } from "@/data/dashboard";
 import { PlacementPipeline } from "./placement-pipeline";
@@ -14,6 +17,7 @@ import { StatCounter } from "@/components/ui/StatCounter";
 import { cn } from "@/lib/utils";
 
 export default function StudentDashboard() {
+  const router = useRouter();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
 
@@ -48,12 +52,14 @@ export default function StudentDashboard() {
               className="h-10 w-64 rounded-sm border border-border/60 bg-white pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20"
             />
           </div>
-          <button className="flex h-10 w-10 items-center justify-center rounded-sm border border-border/60 bg-white text-muted-foreground hover:bg-muted/50 transition-base">
-            <Bell className="h-5 w-5" />
+          <button onClick={() => router.push('/student/profile')} className="transition-transform hover:scale-105 active:scale-95">
+            <Avatar className="h-10 w-10 rounded-sm border border-border/60 shadow-sm">
+              <AvatarImage src={getImageUrl(user?.photoUrl)} alt={user?.name} className="object-cover" />
+              <AvatarFallback className="rounded-sm bg-brown-900 font-display font-bold text-cream">
+                {user?.name?.split(' ').map(n => n[0]).join('').substring(0, 2) || "RS"}
+              </AvatarFallback>
+            </Avatar>
           </button>
-          <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-brown-900 font-display font-bold text-cream">
-            {user?.name?.split(' ').map(n => n[0]).join('').substring(0, 2) || "RS"}
-          </div>
         </div>
       </div>
 

@@ -56,10 +56,11 @@
  --color-sand: rgb(var(--color-primary-100));
 
  /* ── TYPOGRAPHY ── */
- --font-display: var(--font-display);
- --font-body: var(--font-body);
- --font-mono: var(--font-mono);
- --font-sans: var(--font-body);
+  --font-display: var(--font-display, 'Cormorant Garamond', serif);
+  --font-body: var(--font-body, 'Outfit', sans-serif);
+  --font-mono: var(--font-mono, 'Fira Code', monospace);
+  --font-sans: var(--font-body, 'Outfit', sans-serif);
+  --font-serif: var(--font-display, 'Cormorant Garamond', serif);
 
  /* ── BORDER RADIUS ── */
  --radius-sm: var(--radius-sm);
@@ -277,6 +278,16 @@
  font-weight: var(--font-normal);
  line-height: var(--leading-normal);
  letter-spacing: var(--tracking-normal);
+ }
+
+ /* Ensure form elements inherit the brand font */
+ button, input, optgroup, select, textarea {
+  font-family: inherit;
+  font-feature-settings: inherit;
+  font-variation-settings: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
  }
 
  /* Display headings — Cormorant Garamond serif */
@@ -767,3 +778,46 @@
  .numbers-bar-grid-custom { grid-template-columns: repeat(2, 1fr) !important; }
  .footer-cols-custom { grid-template-columns: 1fr !important; }
 }
+
+ /* Premium Custom Scrollbar */
+ .custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+ }
+ .custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+ }
+ .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(232, 160, 32, 0.2);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+ }
+ .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(232, 160, 32, 0.4);
+ }
+ .custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232, 160, 32, 0.2) transparent;
+ }
+
+ /* Dashboard Layout Utilities */
+ .dashboard-canvas {
+  background-color: rgb(var(--background));
+  min-height: 100vh;
+  width: 100%;
+ }
+
+ .page-shell {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;   /* px-6 */
+  padding-right: 1.5rem;  /* px-6 */
+  max-width: 1600px;      /* Large enough for dashboard, but prevents extreme stretching */
+ }
+
+ @media (min-width: 768px) {
+  .page-shell {
+  padding-left: 2rem;   /* px-8 */
+  padding-right: 2rem;  /* px-8 */
+  }
+ }

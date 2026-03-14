@@ -8,8 +8,9 @@ export function cn(...inputs: ClassValue[]) {
 
 export function getImageUrl(path: string | null | undefined): string | undefined {
  if (!path) return undefined;
- if (path.startsWith('http') || path.startsWith('https')) return path;
- if (path.startsWith('data:')) return path; // Base64
+  if (path.startsWith("http") || path.startsWith("https")) return path;
+  if (path.startsWith("data:")) return path;
+  if (path.startsWith("/api/files")) return path;
 
  // Ensure API_BASE_URL doesn't end with a slash
  const apiUrl = API_BASE_URL.replace(/\/+$/, '');

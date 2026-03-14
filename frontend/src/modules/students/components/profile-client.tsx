@@ -5,7 +5,7 @@ import { useEffect, useState } from"react";
 import { motion } from"framer-motion";
 import { useAuth } from"@/contexts/auth-context";
 import { api, API_BASE_URL } from"@/lib/api";
-import { cn } from"@/lib/utils";
+import { cn, getImageUrl } from"@/lib/utils";
 import { Button } from"@/components/ui/button";
 import { Input } from"@/components/ui/input";
 import { Label } from"@/components/ui/label";
@@ -534,6 +534,7 @@ export default function StudentProfilePage() {
 
  const fd = new FormData();
  fd.append("file", blob,"profile.jpg");
+  fd.append("type", "profile-images");
 
  try {
  // Artificial delay removed for speed
@@ -964,10 +965,9 @@ export default function StudentProfilePage() {
 
  if (loading) return <div className="flex h-screen items-center justify-center"><Loader2 className="animate-spin" /></div>;
 
- // Fix: Handle absolute Cloudinary URLs
- const fullPhotoUrl = profile?.photoUrl
- ? (profile.photoUrl.startsWith('http') ? profile.photoUrl : `${API_BASE_URL}${profile.photoUrl}`)
- : undefined;
+  // Standardize naming and URL resolution
+  const fullPhotoUrl = getImageUrl(profile?.photoUrl);
+  console.log("[ProfileClient] fullPhotoUrl:", fullPhotoUrl);
  const isLocked = profile?.isProfileLocked;
  const isAnySectionLocked = isLocked || profile?.isClass10Locked || profile?.isClass12Locked || profile?.isDiplomaLocked || semesterResults.some(r => r.isLocked);
 

@@ -22,6 +22,7 @@ function LoginContent() {
   const [role, setRole] = useState<Role>("STUDENT");
   const [loading, setLoading] = useState(false);
   const { isAuthenticated, isLoading, user } = useAuth();
+  const [error, setError] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     loginId: "",
@@ -39,10 +40,18 @@ function LoginContent() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     try {
       await signInWithEmailAndPassword(auth, formData.loginId, formData.password);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      if (err.code === "auth/unauthorized-domain") {
+        setError("This domain is not authorized in Firebase. Please add your Vercel URL to Authorized Domains.");
+      } else if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
+        setError("Invalid credentials. Please check your ID and password.");
+      } else {
+        setError(err.message || "An unexpected error occurred. Please check console.");
+      }
     } finally {
       setLoading(false);
     }
@@ -123,11 +132,17 @@ function LoginContent() {
           <ArrowLeft className="w-5 h-5" />
         </Link>
 
-        <div className="w-full max-w-[420px] mx-auto">
+          <div className="w-full max-w-[420px] mx-auto">
           <div className="mb-12 text-center">
             <h2 className="section-h2 text-4xl mb-3">Welcome Back</h2>
             <p className="text-muted-foreground text-sm font-light">Select your credentials to access the placement portal.</p>
           </div>
+
+          {error && (
+            <div className="mb-6 p-4 rounded-md bg-destructive/10 border border-destructive/20 text-destructive text-xs font-medium uppercase tracking-wider text-center animate-in fade-in slide-in-from-top-2 duration-300">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-8">
             <div>

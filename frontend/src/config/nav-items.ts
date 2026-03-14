@@ -18,7 +18,6 @@ import {
 export const studentNavItems = [
   { type: "header", label: "MAIN" },
   { label: "Overview", href: "/student", icon: LayoutDashboard },
-  { label: "My Profile", href: "/student/profile", icon: User },
 
   { type: "header", label: "TRAINING" },
   { label: "CDC Training", href: "/student/training", icon: BookOpen, count: 3 },
@@ -27,11 +26,6 @@ export const studentNavItems = [
 
   { type: "header", label: "PLACEMENT" },
   { label: "Placements", href: "/student/placements", icon: Briefcase, count: 2 },
-  { label: "Upcoming Drives", href: "/student/upcoming-drives", icon: Calendar },
-
-  { type: "header", label: "DOCUMENTS" },
-  { label: "Documents", href: "/student/documents", icon: FileText },
-  { label: "Notifications", href: "/student/updates", icon: Activity, count: 5 },
 ]
 
 export const adminNavItems = [
@@ -62,7 +56,6 @@ export const adminNavItems = [
 export const trainerNavItems = [
  { type:"header", label:"Overview" },
  { label:"Dashboard", href:"/trainer", icon: LayoutDashboard },
- { label:"Profile", href:"/trainer/profile", icon: User },
 
  { type:"header", label:"Instruction" },
  { label:"My Groups", href:"/trainer/groups", icon: Users },

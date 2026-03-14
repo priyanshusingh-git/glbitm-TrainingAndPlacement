@@ -9,11 +9,13 @@ export type AuthUser = {
 };
 
 export async function authenticate(req: NextRequest): Promise<AuthUser | NextResponse> {
- const token = req.headers.get('Authorization')?.replace('Bearer ', '');
-
- if (!token) {
- return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
- }
+  let token = req.headers.get("Authorization")?.replace("Bearer ", "");
+  if (!token) {
+    token = req.cookies.get("fb-token")?.value;
+  }
+  if (!token) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
  try {
  const decodedToken = await authAdmin.verifyIdToken(token);
