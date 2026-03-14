@@ -32,7 +32,7 @@ export function AnimatedSection({ children, className, delay = 0 }: AnimatedSect
 
 export const fadeUp = {
  hidden: { opacity: 0, y: 24 },
- visible: { opacity: 1, y: 0, transition: { duration: 0.65 } },
+ visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: 'easeOut' } },
 }
 
 export const fadeIn = {
