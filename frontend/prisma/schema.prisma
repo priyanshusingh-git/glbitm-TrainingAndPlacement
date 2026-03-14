@@ -1,0 +1,545 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                 String              @id @default(uuid())
+  email              String              @unique
+  password           String?
+  role               Role                @default(STUDENT)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  mustChangePassword Boolean             @default(false)
+  name               String?
+  otp                String?
+  otpExpires         DateTime?
+  auditLogs          AuditLog[]
+  createdBootcamps   Bootcamp[]          @relation("BootcampCreator")
+  notifications      Notification[]
+  studentProfile     StudentProfile?
+  createdTests       Test[]              @relation("TestCreator")
+  assignedGroups     TrainerAssignment[]
+  trainerProfile     TrainerProfile?
+  instructorBatches  TrainingBatch[]
+  conductedSessions  TrainingSession[]
+}
+
+model TrainerProfile {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  trainerType    String?
+  specialization String?
+  department     String?
+  mobileNo       String?
+  experience     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Company {
+  id              String           @id @default(uuid())
+  name            String
+  industry        String?
+  location        String?
+  website         String?
+  contactPerson   String?
+  email           String?
+  phone           String?
+  status          String           @default("Active")
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  placementDrives PlacementDrive[]
+}
+
+model CodingProfile {
+  id                 String         @id @default(uuid())
+  studentId          String
+  platform           String
+  username           String
+  profileUrl         String?
+  statsJSON          String
+  lastFetched        DateTime       @default(now())
+  isPrimary          Boolean        @default(false)
+  monthlyGoal        Int            @default(0)
+  currentMonthSolved Int            @default(0)
+  practiceFrequency  String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  student            StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, platform])
+  @@index([studentId])
+}
+
+model Project {
+  id          String         @id @default(uuid())
+  studentId   String
+  title       String
+  description String
+  techStack   String[]
+  githubLink  String?
+  liveLink    String?
+  status      String         @default("In Progress")
+  featured    Boolean        @default(false)
+  isImported  Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+}
+
+model Hackathon {
+  id             String         @id @default(uuid())
+  studentId      String
+  name           String
+  organizer      String
+  date           DateTime
+  mode           String
+  certificateUrl String?
+  createdAt      DateTime       @default(now())
+  achievement    String?
+  description    String?
+  student        StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+}
+
+model WorkExperience {
+  id          String         @id @default(uuid())
+  studentId   String
+  title       String
+  company     String
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  isCurrent   Boolean        @default(false)
+  description String?
+  createdAt   DateTime       @default(now())
+  student     StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+}
+
+model Certification {
+  id             String         @id @default(uuid())
+  studentId      String
+  issuer         String
+  issueDate      DateTime
+  credentialUrl  String?
+  createdAt      DateTime       @default(now())
+  credentialId   String?
+  expirationDate DateTime?
+  name           String
+  student        StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+}
+
+model Education {
+  id             String         @id @default(uuid())
+  studentId      String
+  level          String
+  institution    String
+  board          String?
+  yearOfPassing  String
+  score          String
+  scoreType      String         @default("Percentage")
+  specialization String?
+  createdAt      DateTime       @default(now())
+  student        StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+}
+
+model StudentProfile {
+  id                    String           @id @default(uuid())
+  userId                String           @unique
+  name                  String?
+  rollNo                String?          @unique
+  branch                String?
+  year                  String?
+  skills                String[]
+  resumeLink            String?
+  githubId              String?
+  leetcodeId            String?
+  codechefId            String?
+  batchId               String?
+  admissionId           String?          @unique
+  class10Board          String?
+  class10Percentage     String?
+  class10School         String?
+  class10Year           String?
+  class12Board          String?
+  class12MathPercentage String?
+  class12PcmPercentage  String?
+  class12Percentage     String?
+  class12School         String?
+  class12Year           String?
+  currentSemester       Int?
+  diplomaBranch         String?
+  diplomaInstitute      String?
+  diplomaPercentage     String?
+  diplomaYear           String?
+  educationType         String?
+  fatherEmail           String?
+  fatherMobile          String?
+  fatherName            String?
+  fatherOccupation      String?
+  isProfileLocked       Boolean          @default(false)
+  mobileNo              String?
+  motherEmail           String?
+  motherMobile          String?
+  motherName            String?
+  motherOccupation      String?
+  permanentBlock        String?
+  permanentCountry      String?          @default("India")
+  permanentDistrict     String?
+  permanentHouseNo      String?
+  permanentState        String?
+  personalEmail         String?
+  photoUrl              String?
+  presentBlock          String?
+  presentCountry        String?          @default("India")
+  presentDistrict       String?
+  presentHouseNo        String?
+  presentState          String?
+  course                String?          @default("Bachelor of Technology")
+  isBasicInfoLocked     Boolean          @default(false)
+  isClass10Locked       Boolean          @default(false)
+  isClass12Locked       Boolean          @default(false)
+  isDiplomaLocked       Boolean          @default(false)
+  studentType           String?          @default("Regular Entry")
+  permanentCity         String?
+  permanentLocality     String?
+  permanentPincode      String?
+  permanentTehsil       String?
+  presentCity           String?
+  presentLocality       String?
+  presentPincode        String?
+  presentTehsil         String?
+  trainingGroupId       String?
+  attendancePercentage  Float?           @default(0.0)
+  cgpa                  Float?           @default(0.0)
+  section               String?
+  applications          Application[]
+  attendances           Attendance[]
+  certifications        Certification[]
+  codingProfiles        CodingProfile[]
+  education             Education[]
+  hackathons            Hackathon[]
+  projects              Project[]
+  semesterResults       SemesterResult[]
+  batch                 TrainingBatch?   @relation(fields: [batchId], references: [id])
+  trainingGroup         TrainingGroup?   @relation(fields: [trainingGroupId], references: [id])
+  user                  User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submissions           Submission[]
+  results               TestResult[]
+  workExperience        WorkExperience[]
+
+  @@index([userId])
+}
+
+model SemesterResult {
+  id            String         @id @default(uuid())
+  studentId     String
+  semester      Int
+  sgpa          Float?
+  backlogs      Int            @default(0)
+  credits       Int?
+  isLocked      Boolean        @default(false)
+  obtainedMarks Int?
+  percentage    Float?
+  totalMarks    Int?
+  student       StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, semester])
+}
+
+model TrainingBatch {
+  id           String           @id @default(uuid())
+  name         String
+  instructorId String
+  startDate    DateTime
+  endDate      DateTime?
+  status       String           @default("active")
+  attendances  Attendance[]
+  students     StudentProfile[]
+  instructor   User             @relation(fields: [instructorId], references: [id])
+}
+
+model Attendance {
+  id        String           @id @default(uuid())
+  studentId String
+  batchId   String?
+  date      DateTime
+  status    String
+  sessionId String?
+  batch     TrainingBatch?   @relation(fields: [batchId], references: [id])
+  session   TrainingSession? @relation(fields: [sessionId], references: [id])
+  student   StudentProfile   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, batchId, date])
+  @@unique([studentId, sessionId])
+  @@index([studentId])
+  @@index([batchId])
+  @@index([sessionId])
+}
+
+model TrainingGroup {
+  id                String              @id @default(uuid())
+  name              String
+  branch            String
+  year              String
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  description       String?
+  students          StudentProfile[]
+  trainers          TrainerAssignment[]
+  assignedBootcamps Bootcamp[]          @relation("BootcampAssignments")
+  sessions          TrainingSession[]   @relation("SessionToGroups")
+  assignedTests     Test[]              @relation("TestAssignments")
+
+  @@index([year])
+}
+
+model TrainingGroupMaster {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model TrainerAssignment {
+  id        String        @id @default(uuid())
+  groupId   String
+  trainerId String
+  type      String
+  group     TrainingGroup @relation(fields: [groupId], references: [id])
+  trainer   User          @relation(fields: [trainerId], references: [id])
+
+  @@unique([groupId, type])
+}
+
+model TrainingSession {
+  id            String            @id @default(uuid())
+  trainerId     String
+  title         String
+  type          String
+  date          DateTime
+  startTime     DateTime?
+  duration      Int?
+  mode          String
+  location      String?
+  status        String            @default("scheduled")
+  seriesId      String?
+  attendances   Attendance[]
+  resources     SessionResource[]
+  trainer       User              @relation(fields: [trainerId], references: [id])
+  sessionGroups TrainingGroup[]   @relation("SessionToGroups")
+
+  @@index([trainerId])
+  @@index([seriesId])
+}
+
+model SessionResource {
+  id        String          @id @default(uuid())
+  sessionId String
+  title     String
+  url       String
+  session   TrainingSession @relation(fields: [sessionId], references: [id])
+}
+
+model Test {
+  id             String          @id @default(uuid())
+  title          String
+  type           String
+  date           DateTime
+  duration       Int
+  totalMarks     Int
+  createdBy      String?
+  platform       String?
+  testUrl        String?
+  submissions    Submission[]
+  creator        User?           @relation("TestCreator", fields: [createdBy], references: [id])
+  questions      TestQuestion[]
+  results        TestResult[]
+  assignedGroups TrainingGroup[] @relation("TestAssignments")
+}
+
+model TestResult {
+  id            String         @id @default(uuid())
+  testId        String
+  studentId     String
+  marksObtained Float
+  remarks       String?
+  student       StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  test          Test           @relation(fields: [testId], references: [id])
+
+  @@unique([testId, studentId])
+}
+
+model Question {
+  id          String           @id @default(uuid())
+  text        String
+  type        String           @default("MCQ")
+  difficulty  String           @default("MEDIUM")
+  category    String
+  explanation String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  options     QuestionOption[]
+  tests       TestQuestion[]
+}
+
+model QuestionOption {
+  id         String   @id @default(uuid())
+  questionId String
+  text       String
+  isCorrect  Boolean  @default(false)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+model TestQuestion {
+  id         String   @id @default(uuid())
+  testId     String
+  questionId String
+  order      Int      @default(0)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  test       Test     @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@unique([testId, questionId])
+}
+
+model Submission {
+  id          String             @id @default(uuid())
+  testId      String
+  studentId   String
+  score       Float              @default(0)
+  status      String             @default("completed")
+  startedAt   DateTime           @default(now())
+  completedAt DateTime?
+  student     StudentProfile     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  test        Test               @relation(fields: [testId], references: [id])
+  answers     SubmissionAnswer[]
+
+  @@index([testId, studentId])
+}
+
+model SubmissionAnswer {
+  id              String     @id @default(uuid())
+  submissionId    String
+  questionId      String
+  selectedOptions String[]
+  isCorrect       Boolean    @default(false)
+  submission      Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+}
+
+model PlacementDrive {
+  id                  String        @id @default(uuid())
+  role                String
+  ctc                 String
+  location            String
+  date                DateTime
+  eligibilityCriteria String?
+  status              String        @default("scheduled")
+  companyId           String
+  applications        Application[]
+  company             Company       @relation(fields: [companyId], references: [id])
+}
+
+model Application {
+  id        String         @id @default(uuid())
+  driveId   String
+  studentId String
+  status    String         @default("applied")
+  appliedAt DateTime       @default(now())
+  drive     PlacementDrive @relation(fields: [driveId], references: [id])
+  student   StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([driveId, studentId])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      String   @default("INFO")
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Bootcamp {
+  id             String          @id @default(uuid())
+  title          String
+  description    String
+  date           DateTime
+  createdById    String
+  createdAt      DateTime        @default(now())
+  createdBy      User            @relation("BootcampCreator", fields: [createdById], references: [id])
+  assignedGroups TrainingGroup[] @relation("BootcampAssignments")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model HeroSlider {
+  id        String   @id @default(uuid())
+  imageUrl  String
+  title     String?
+  subtitle  String?
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id            String   @id @default(uuid())
+  action        String
+  entityType    String
+  entityId      String?
+  performedById String
+  details       Json?
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+  performedBy   User     @relation(fields: [performedById], references: [id])
+
+  @@index([performedById])
+  @@index([entityType, entityId])
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  category  String
+  updatedAt DateTime @updatedAt
+
+  @@index([category])
+}
+
+enum Role {
+  ADMIN
+  STAFF
+  TRAINER
+  STUDENT
+}

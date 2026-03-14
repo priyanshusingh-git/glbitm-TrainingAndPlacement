@@ -1,0 +1,18 @@
+import { useEffect } from 'react';
+
+export function useUnsavedChangesWarning(isDirty: boolean) {
+ useEffect(() => {
+ const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+ if (isDirty) {
+ e.preventDefault();
+ e.returnValue = ''; // Required for most browsers to show the default warning dialog
+ }
+ };
+
+ window.addEventListener('beforeunload', handleBeforeUnload);
+
+ return () => {
+ window.removeEventListener('beforeunload', handleBeforeUnload);
+ };
+ }, [isDirty]);
+}

@@ -1,0 +1,200 @@
+"use client";
+
+import { useAuth } from"@/contexts/auth-context";
+import { StudentOverview } from"@/modules/students/components/student-overview"
+import { TrainingSection } from"@/modules/students/components/training-section"
+import { TestsSection } from"@/modules/students/components/tests-section"
+import { useEffect, useState } from"react";
+import { Loader2 } from"lucide-react";
+
+import { dashboardBanner, pipelineData, upcomingDrives, statCards } from "@/data/dashboard";
+import { PlacementPipeline } from "./placement-pipeline";
+import { Search, Bell, Briefcase, Trophy, CheckCircle, BookOpen, Building2 } from "lucide-react";
+import { StatCounter } from "@/components/ui/StatCounter";
+import { cn } from "@/lib/utils";
+
+export default function StudentDashboard() {
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading
+    const timer = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex h-[50vh] w-full items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col gap-8 pb-12 animate-fade-up">
+      {/* Top Bar for Desktop */}
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col">
+          <h2 className="section-h2">Dashboard Overview</h2>
+          <p className="text-sm text-muted-foreground">{`Welcome back, ${user?.name?.split(' ')[0]} — Placement Season 2024-25`}</p>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <input 
+              type="text" 
+              placeholder="Search..." 
+              className="h-10 w-64 rounded-sm border border-border/60 bg-white pl-10 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20"
+            />
+          </div>
+          <button className="flex h-10 w-10 items-center justify-center rounded-sm border border-border/60 bg-white text-muted-foreground hover:bg-muted/50 transition-base">
+            <Bell className="h-5 w-5" />
+          </button>
+          <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-brown-900 font-display font-bold text-cream">
+            {user?.name?.split(' ').map(n => n[0]).join('').substring(0, 2) || "RS"}
+          </div>
+        </div>
+      </div>
+
+      {/* Hero Banner */}
+      <div className="relative overflow-hidden rounded-xl bg-brown-900 bg-hero-gradient p-8 text-white shadow-lg transition-base hover:shadow-brown-900/20">
+        <div className="absolute inset-0 bg-diagonal-lines opacity-20" />
+        
+        <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+          <div className="flex flex-col gap-2">
+            <span className="eyebrow-dark">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500 mr-2 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
+              {dashboardBanner.status}
+            </span>
+            <h1 className="font-display text-4xl font-bold md:text-5xl text-white">
+              {dashboardBanner.greeting}, <span className="italic text-amber-500">{user?.name?.split(' ')[0] || "Rahul"}!</span>
+            </h1>
+            <p className="text-lg text-white/70 max-w-xl">
+              {dashboardBanner.message}
+            </p>
+          </div>
+
+          <div className="flex flex-wrap gap-4">
+            {dashboardBanner.metrics.map((metric) => (
+              <div key={metric.label} className="stat-bubble bg-white/5 border-white/10">
+                <span className="font-display text-2xl font-bold text-amber-500">
+                  <StatCounter value={parseFloat(metric.value)} suffix={metric.value.includes('%') ? '%' : ''} decimals={metric.value.includes('.') ? 1 : 0} />
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-white/40">{metric.label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {statCards.map((card) => (
+          <StatCard 
+            key={card.id}
+            icon={getIcon(card.tag, card.badgeColor)}
+            label={card.label} 
+            value={card.value} 
+            badge={card.badge} 
+            badgeColor={card.badgeColor}
+          />
+        ))}
+      </div>
+
+      {/* Pipeline and Upcoming Section */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-xl font-bold font-display">{`Placement Pipeline`}</h3>
+            <button className="text-xs font-bold text-primary hover:underline">View Details</button>
+          </div>
+          <PlacementPipeline 
+            company={pipelineData.company} 
+            role={pipelineData.role} 
+            stages={pipelineData.stages as any} 
+          />
+        </div>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xl font-bold font-display">Upcoming Drives</h3>
+            <button className="text-xs font-bold text-primary hover:underline">View All</button>
+          </div>
+          <div className="card-base p-6 flex flex-col gap-4">
+             {upcomingDrives.map((drive) => (
+               <DriveItem key={drive.id} {...drive} />
+             ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function getIcon(tag: string, color: string) {
+  const iconProps = { className: cn("h-6 w-6", {
+    "text-amber-500": color === 'amber',
+    "text-blue-500": color === 'blue',
+    "text-emerald-500": color === 'emerald',
+    "text-indigo-500": color === 'indigo'
+  }) };
+
+  switch (tag) {
+    case 'Trophy': return <Trophy {...iconProps} />;
+    case 'Briefcase': return <Briefcase {...iconProps} />;
+    case 'CheckCircle': return <CheckCircle {...iconProps} />;
+    case 'BookOpen': return <BookOpen {...iconProps} />;
+    default: return <Briefcase {...iconProps} />;
+  }
+}
+
+function StatCard({ icon, label, value, badge, badgeColor }: { icon: React.ReactNode, label: string, value: string, badge: string, badgeColor: string }) {
+  const badgeColors: Record<string, string> = {
+    blue: "bg-blue-500/10 text-blue-600",
+    emerald: "bg-emerald-500/10 text-emerald-600",
+    indigo: "bg-indigo-500/10 text-indigo-600",
+  }
+
+  return (
+    <div className="dashboard-card flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted/30">
+          {icon}
+        </div>
+        <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ring-1 ring-inset", badgeColors[badgeColor] || badgeColors.blue)}>
+          {badge}
+        </span>
+      </div>
+      <div className="flex flex-col">
+        <span className="font-display text-4xl font-bold">{value}</span>
+        <span className="text-xs font-medium text-muted-foreground">{label}</span>
+      </div>
+    </div>
+  )
+}
+
+function DriveItem({ name, role, package: pkg, date }: { name: string, role: string, package: string, date: string }) {
+  return (
+    <div className="flex items-center justify-between border-b border-border/40 pb-4 last:border-0 last:pb-0">
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted/30">
+           <Building2Icon className="h-5 w-5 text-muted-foreground" />
+        </div>
+        <div className="flex flex-col">
+          <span className="text-sm font-bold">{name}</span>
+          <span className="text-[11px] text-muted-foreground">{role}</span>
+        </div>
+      </div>
+      <div className="flex flex-col items-end">
+        <span className="text-sm font-bold text-emerald-600">{pkg}</span>
+        <span className="text-[10px] text-muted-foreground">{date}</span>
+      </div>
+    </div>
+  )
+}
+
+// Minimal icons within the file for speed, can be replaced with lucide-react if preferred
+function TrophyIcon(props: any) { return <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/><path d="M12 21V7"/><path d="M3 3h18"/></svg> }
+function CheckCircleIcon(props: any) { return <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> }
+function BookOpenIcon(props: any) { return <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a4 4 0 0 0-4-4H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a4 4 0 0 1 4-4h6z"/></svg> }
+function Building2Icon(props: any) { return <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg> }

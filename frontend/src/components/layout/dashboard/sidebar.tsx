@@ -1,0 +1,174 @@
+"use client"
+
+import Link from"next/link"
+import Image from"next/image"
+import { usePathname } from"next/navigation"
+import { cn } from"@/lib/utils"
+import {
+ ChevronDown,
+} from"lucide-react"
+import { Button } from"@/components/ui/button"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from"@/components/ui/collapsible"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from"@/components/ui/tooltip"
+import { useSidebar } from"@/components/layout/dashboard/dashboard-layout"
+import { studentNavItems, adminNavItems, trainerNavItems } from "@/config/nav-items"
+import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet"
+import { useAuth } from "@/contexts/auth-context"
+import { LogOut } from "lucide-react"
+
+interface SidebarProps {
+ role:"student" |"admin" |"trainer"
+}
+
+export function Sidebar({ role }: SidebarProps) {
+ const pathname = usePathname()
+ const { collapsed, setCollapsed, mobileOpen, setMobileOpen, expandOnHover } = useSidebar()
+  const { user, logout } = useAuth()
+  const navItems = role === "student" ? studentNavItems : (role === "admin" ? adminNavItems : trainerNavItems)
+
+  const handleMouseEnter = () => {
+    if (expandOnHover && collapsed) {
+      setCollapsed(false);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (expandOnHover && !collapsed) {
+      setCollapsed(true);
+    }
+  };
+
+  const NavContent = () => (
+    <div className="flex h-full flex-col bg-brown-900 text-white">
+      <div className={cn("flex h-20 items-center transition-all duration-300", collapsed ? "justify-center" : "px-6")}>
+        <Link href={role === "student" ? "/student" : role === "trainer" ? "/trainer" : "/admin"} className="flex items-center gap-3 overflow-hidden">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500 shadow-lg shadow-amber-500/20">
+            <span className="font-display text-xl font-bold text-brown-900">GL</span>
+          </div>
+          <div className={cn("flex flex-col transition-all duration-300", (!collapsed || mobileOpen) ? "opacity-100" : "opacity-0 hidden")}>
+            <span className="whitespace-nowrap text-sm font-bold tracking-tight">GL Bajaj Portal</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-amber-500/80">T&P · CDC</span>
+          </div>
+        </Link>
+      </div>
+
+      {!collapsed || mobileOpen ? (
+        <div className="mx-4 mb-6 mt-2 card-dark p-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500/20 text-amber-500 ring-1 ring-amber-500/30">
+              <span className="text-xs font-bold">{user?.name?.split(' ').map(n => n[0]).join('').substring(0, 2) || "RS"}</span>
+            </div>
+            <div className="flex flex-1 flex-col overflow-hidden">
+              <span className="truncate text-sm font-bold text-white">{user?.name || "Rahul Sharma"}</span>
+              <span className="truncate text-[10px] text-white/50">{user?.email?.split('@')[0] || "2021CS047 · CSE"}</span>
+            </div>
+            <div className="live-dot" />
+          </div>
+          <div className="mt-2 flex items-center justify-between">
+            <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-500 ring-1 ring-emerald-500/20">Active</span>
+          </div>
+        </div>
+      ) : (
+        <div className="mx-auto mb-6 mt-2 flex h-10 w-10 items-center justify-center rounded-full bg-white/5 ring-1 ring-white/10">
+           <div className="live-dot" />
+        </div>
+      )}
+
+      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2 custom-scrollbar" aria-label="Main Navigation">
+        {navItems.map((item: any, index: number) => {
+          if (item.type === "header") {
+            return (
+              <div
+                key={`header-${index}`}
+                className={cn(
+                  "mt-6 mb-2 px-3 transition-all duration-300",
+                  (!collapsed || mobileOpen) ? "opacity-100" : "opacity-0 hidden"
+                )}
+              >
+                <h4 className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
+                  {item.label}
+                </h4>
+              </div>
+            )
+          }
+
+          const isRootPath = item.href === "/student" || item.href === "/admin" || item.href === "/trainer";
+          const isActive = isRootPath
+            ? pathname === item.href
+            : pathname === item.href || (item.items && item.items.some((subItem: any) => pathname.startsWith(item.href) || pathname === subItem.href));
+
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              onClick={() => setMobileOpen(false)}
+              className={cn(
+                "group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                isActive
+                  ? "bg-amber-500/10 text-amber-500 ring-1 ring-amber-500/20"
+                  : "text-white/60 hover:bg-white/5 hover:text-white",
+                collapsed && !mobileOpen && "justify-center px-2"
+              )}
+            >
+              <item.icon className={cn("h-5 w-5 shrink-0 transition-colors", isActive ? "text-amber-500" : "group-hover:text-white")} />
+              <span className={cn(
+                "truncate transition-all duration-300",
+                (!collapsed || mobileOpen) ? "opacity-100 max-w-[200px]" : "opacity-0 max-w-0 pointer-events-none hidden"
+              )}>
+                {item.label}
+              </span>
+              {item.count && (!collapsed || mobileOpen) && (
+                <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-brown-900">
+                  {item.count}
+                </span>
+              )}
+            </Link>
+          )
+        })}
+      </nav>
+
+      <div className="mt-auto border-t border-white/5 p-4">
+        <button
+          onClick={() => logout()}
+          className={cn(
+            "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/60 transition-all hover:bg-red-500/10 hover:text-red-500",
+            collapsed && !mobileOpen && "justify-center px-2"
+          )}
+        >
+          <LogOut className="h-5 w-5 shrink-0" />
+          <span className={cn(
+            "truncate transition-all duration-300",
+            (!collapsed || mobileOpen) ? "opacity-100" : "opacity-0 hidden"
+          )}>
+            Sign Out
+          </span>
+        </button>
+      </div>
+    </div>
+  )
+
+ return (
+ <>
+ <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+ <SheetContent side="left" className="w-72 border-r border-sidebar-border bg-sidebar p-0">
+ <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+ <SheetDescription className="sr-only">
+ Mobile navigation menu for accessing dashboard sections.
+ </SheetDescription>
+ <NavContent />
+ </SheetContent>
+ </Sheet>
+
+ <aside
+ onMouseEnter={expandOnHover ? handleMouseEnter : undefined}
+ onMouseLeave={expandOnHover ? handleMouseLeave : undefined}
+  className={cn(
+    "fixed left-0 top-0 z-40 hidden h-screen flex-col border-r border-white/5 bg-brown-900 shadow-2xl transition-all duration-300 md:flex",
+    collapsed ? "w-16" : "w-64"
+  )}
+ >
+ <NavContent />
+ </aside>
+ </>
+ )
+}
