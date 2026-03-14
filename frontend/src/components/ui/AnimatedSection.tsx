@@ -1,5 +1,5 @@
 'use client'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, type Variants } from 'framer-motion'
 import { useRef, ReactNode } from 'react'
 
 interface AnimatedSectionProps {
@@ -30,12 +30,12 @@ export function AnimatedSection({ children, className, delay = 0 }: AnimatedSect
  )
 }
 
-export const fadeUp = {
+export const fadeUp: Variants = {
  hidden: { opacity: 0, y: 24 },
  visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: 'easeOut' } },
 }
 
-export const fadeIn = {
+export const fadeIn: Variants = {
  hidden: { opacity: 0 },
  visible: { opacity: 1, transition: { duration: 0.6 } },
 }
