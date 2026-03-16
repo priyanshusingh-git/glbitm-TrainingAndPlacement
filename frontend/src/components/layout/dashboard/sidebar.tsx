@@ -41,13 +41,19 @@ export function Sidebar({ role }: SidebarProps) {
   const NavContent = () => (
     <div className="flex h-full flex-col bg-brown-900 text-white">
       <div className={cn("flex h-20 items-center transition-all duration-300", collapsed ? "justify-center" : "px-6")}>
-        <Link href={role === "student" ? "/student" : role === "trainer" ? "/trainer" : "/admin"} className="flex items-center gap-3 overflow-hidden">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500 shadow-lg shadow-amber-500/20">
-            <span className="font-display text-xl font-bold text-brown-900">GL</span>
+        <Link href={role === "student" ? "/student" : role === "trainer" ? "/trainer" : "/admin"} className="flex items-center gap-3 overflow-hidden group">
+          <div className={cn("relative shrink-0 transition-all duration-300", collapsed ? "h-10 w-10" : "h-10 w-10 ml-1")}>
+            <Image 
+              src="/glbitm-logo.png" 
+              alt="GL Bajaj Logo" 
+              fill
+              className="object-contain transition-transform duration-300 group-hover:scale-110"
+              priority
+            />
           </div>
-          <div className={cn("flex flex-col transition-all duration-300", (!collapsed || mobileOpen) ? "opacity-100" : "opacity-0 hidden")}>
-            <span className="whitespace-nowrap text-sm font-bold tracking-tight">GL Bajaj Portal</span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-amber-500/80">T&P · CDC</span>
+          <div className={cn("flex flex-col justify-center transition-all duration-300 ml-1", (!collapsed || mobileOpen) ? "opacity-100" : "opacity-0 hidden")}>
+            <span className="whitespace-nowrap text-[1.1rem] font-bold tracking-tight leading-none">GL Bajaj</span>
+            <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-amber-500 mt-1.5 opacity-80 leading-none">T&P · CDC</span>
           </div>
         </Link>
       </div>

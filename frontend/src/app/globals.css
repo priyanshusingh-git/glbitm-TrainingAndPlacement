@@ -1,6 +1,6 @@
 /*
  * GL Bajaj T&P — Design Token System
- * Stack: Next.js 14 + Tailwind CSS + shadcn/ui
+ * Stack: Next.js 16 + Tailwind CSS v4 + shadcn/ui
  *
  * Usage:
  * - All raw brand values live here as CSS variables
@@ -56,11 +56,11 @@
  --color-sand: rgb(var(--color-primary-100));
 
  /* ── TYPOGRAPHY ── */
-  --font-display: var(--font-display, 'Cormorant Garamond', serif);
-  --font-body: var(--font-body, 'Outfit', sans-serif);
+  --font-display: var(--font-display, 'Fraunces', serif);
+  --font-body: var(--font-body, 'Inter', sans-serif);
   --font-mono: var(--font-mono, 'Fira Code', monospace);
-  --font-sans: var(--font-body, 'Outfit', sans-serif);
-  --font-serif: var(--font-display, 'Cormorant Garamond', serif);
+  --font-sans: var(--font-body, 'Inter', sans-serif);
+  --font-serif: var(--font-display, 'Fraunces', serif);
 
  /* ── BORDER RADIUS ── */
  --radius-sm: var(--radius-sm);
@@ -115,7 +115,7 @@
 /* ─────────────────────────────────────────
  GOOGLE FONTS
  Add to layout.tsx instead for Next.js font optimization:
- import { Cormorant_Garamond, Outfit } from 'next/font/google'
+ import { Fira_Code, Fraunces, Inter } from 'next/font/google'
 ───────────────────────────────────────── */
 
 @layer base {
@@ -164,9 +164,9 @@
  --destructive-foreground: 255 255 255;
 
  /* ── TYPOGRAPHY ─────────────────────── */
- --font-display: 'Cormorant Garamond', Georgia, serif;
- --font-body: 'Outfit', system-ui, sans-serif;
- --font-mono: 'Fira Code', 'Cascadia Code', monospace;
+ --font-display: 'Fraunces', Georgia, serif;
+ --font-body: 'Inter', system-ui, sans-serif;
+ --font-mono: 'Fira Code', 'Courier New', monospace;
 
  /* Font sizes (fluid) */
  --text-xs: 0.75rem; /* 12px — labels, hints, badges */
@@ -187,6 +187,7 @@
  --font-medium: 500; /* nav links, subtle emphasis */
  --font-semibold: 600; /* labels, card subtitles */
  --font-bold: 700; /* headings, buttons, CTAs */
+ --font-extrabold: 800; /* hero h1 display weight */
 
  /* Line heights */
  --leading-none: 1; /* stat numbers, display figures */
@@ -282,8 +283,13 @@
  font-family: var(--font-body);
  font-size: var(--text-base);
  font-weight: var(--font-normal);
- line-height: var(--leading-normal);
+ line-height: var(--leading-relaxed);
  letter-spacing: var(--tracking-normal);
+ }
+
+ ::selection {
+ background: rgba(232,160,32,0.32);
+ color: rgb(var(--color-primary-900));
  }
 
  /* Ensure form elements inherit the brand font */
@@ -296,13 +302,14 @@
   color: inherit;
  }
 
- /* Display headings — Cormorant Garamond serif */
+ /* Display headings — Fraunces serif */
  h1 {
  font-family: var(--font-display);
  font-size: var(--text-hero);
- font-weight: var(--font-bold);
- line-height: var(--leading-tight);
- letter-spacing: var(--tracking-tight);
+ font-weight: var(--font-extrabold);
+ line-height: 1.04;
+ letter-spacing: -0.03em;
+ font-variation-settings: "opsz" 72, "SOFT" 0, "WONK" 0;
  color: rgb(var(--color-primary-900));
  }
 
@@ -310,8 +317,9 @@
  font-family: var(--font-display);
  font-size: var(--text-h2);
  font-weight: var(--font-bold);
- line-height: var(--leading-tight);
- letter-spacing: var(--tracking-tight);
+ line-height: 1.06;
+ letter-spacing: -0.025em;
+ font-variation-settings: "opsz" 48, "SOFT" 0, "WONK" 0;
  color: rgb(var(--color-primary-900));
  }
 
@@ -319,12 +327,13 @@
  font-family: var(--font-display);
  font-size: var(--text-3xl);
  font-weight: var(--font-bold);
- line-height: var(--leading-snug);
- letter-spacing: var(--tracking-tight);
+ line-height: 1.1;
+ letter-spacing: -0.02em;
+ font-variation-settings: "opsz" 30, "SOFT" 0, "WONK" 0;
  color: rgb(var(--color-primary-900));
  }
 
- /* Sub-headings — Outfit sans-serif */
+ /* Sub-headings — Inter sans-serif */
  h4 {
  font-family: var(--font-body);
  font-size: var(--text-xl);
@@ -338,7 +347,7 @@
  font-size: var(--text-base);
  font-weight: var(--font-bold);
  line-height: var(--leading-snug);
- letter-spacing: var(--tracking-widest);
+ letter-spacing: 0.1em;
  text-transform: uppercase;
  color: rgb(var(--color-primary-900));
  }
@@ -357,7 +366,7 @@
  p {
  font-size: var(--text-base);
  font-weight: var(--font-normal);
- line-height: var(--leading-normal);
+ line-height: var(--leading-relaxed);
  color: rgb(var(--foreground));
  }
 
@@ -372,6 +381,13 @@
  code, pre {
  font-family: var(--font-mono);
  font-size: var(--text-sm);
+ }
+
+ td,
+ .data-value,
+ .stat-number,
+ .tabular-nums {
+ font-variant-numeric: tabular-nums;
  }
 
  /* Focus ring — accessible + on-brand */
@@ -416,8 +432,187 @@
  font-family: var(--font-display);
  font-weight: 700;
  color: rgb(var(--color-primary-900));
- line-height: 1.1;
+ line-height: 1.06;
+ letter-spacing: -0.025em;
+ font-variation-settings: "opsz" 48, "SOFT" 0, "WONK" 0;
+ }
+
+ .hero-badge {
+ display: inline-flex;
+ align-items: center;
+ gap: 0.5rem;
+ padding: 0.375rem 1rem;
+ border-radius: var(--radius-full);
+ border: 1px solid rgba(232,160,32,0.3);
+ background: rgba(232,160,32,0.1);
+ }
+
+ .meta-kicker-inverse,
+ .meta-label-inverse,
+ .meta-label-accent,
+ .meta-label-muted {
+ font-size: 10px;
+ font-weight: 700;
+ letter-spacing: 0.2em;
+ text-transform: uppercase;
+ }
+
+ .meta-kicker-inverse,
+ .meta-label-inverse {
+ color: rgba(255,255,255,0.4);
+ }
+
+ .meta-label-accent {
+ color: rgb(var(--color-accent-500));
+ }
+
+ .meta-label-muted {
+ color: rgb(var(--muted-foreground));
+ }
+
+ .hero-display-inverse {
+ font-family: var(--font-display);
+ font-size: var(--text-hero);
+ font-weight: var(--font-extrabold);
+ line-height: 1.04;
  letter-spacing: -0.03em;
+ color: white;
+ font-variation-settings: "opsz" 72, "SOFT" 0, "WONK" 0;
+ }
+
+ .section-display-inverse {
+ font-family: var(--font-display);
+ font-size: clamp(2rem, 5vw, 3.75rem);
+ font-weight: var(--font-bold);
+ line-height: 1.06;
+ letter-spacing: -0.025em;
+ color: white;
+ font-variation-settings: "opsz" 48, "SOFT" 0, "WONK" 0;
+ }
+
+ .display-title-inverse {
+ font-family: var(--font-display);
+ font-size: var(--text-3xl);
+ font-weight: var(--font-bold);
+ line-height: 1.1;
+ letter-spacing: -0.02em;
+ color: white;
+ font-variation-settings: "opsz" 30, "SOFT" 0, "WONK" 0;
+ }
+
+ .display-copy-inverse {
+ font-size: var(--text-lg);
+ font-weight: var(--font-light);
+ line-height: var(--leading-relaxed);
+ color: rgba(255,255,255,0.6);
+ }
+
+ .panel-dark-elevated,
+ .panel-dark-glass {
+ position: relative;
+ overflow: hidden;
+ border: 1px solid rgba(255,255,255,0.1);
+ box-shadow: var(--shadow-lg);
+ }
+
+ .panel-dark-elevated {
+ border-radius: var(--radius-lg);
+ background: rgb(var(--color-primary-900));
+ }
+
+ .panel-dark-glass {
+ border-radius: 1.5rem;
+ background: rgba(58,28,11,0.4);
+ backdrop-filter: blur(20px);
+ }
+
+ .metric-card-dark {
+ border-radius: var(--radius-sm);
+ border: 1px solid rgba(255,255,255,0.1);
+ background: rgba(255,255,255,0.05);
+ backdrop-filter: blur(10px);
+ transition: all var(--transition-base);
+ }
+
+ .metric-card-dark:hover {
+ background: rgba(255,255,255,0.1);
+ }
+
+ .metric-value-inverse,
+ .metric-value-accent {
+ font-family: var(--font-display);
+ font-size: var(--text-3xl);
+ font-weight: var(--font-bold);
+ line-height: 1;
+ letter-spacing: -0.04em;
+ font-variation-settings: "opsz" 30, "SOFT" 0, "WONK" 0;
+ }
+
+ .metric-value-inverse {
+ color: white;
+ }
+
+ .metric-value-accent {
+ color: rgb(var(--color-accent-500));
+ }
+
+ .auth-label {
+ font-size: 10px;
+ font-weight: 700;
+ letter-spacing: 0.2em;
+ text-transform: uppercase;
+ color: rgb(var(--color-primary-900));
+ }
+
+ .auth-input {
+ height: 3.5rem;
+ border-radius: var(--radius-md);
+ border: 1px solid rgb(var(--border));
+ background: rgba(255,255,255,0.5);
+ font-weight: 500;
+ transition: all var(--transition-base);
+ }
+
+ .auth-input:focus {
+ background: white;
+ border-color: rgb(var(--color-accent-500));
+ }
+
+ .auth-link {
+ font-size: 10px;
+ font-weight: 700;
+ letter-spacing: 0.2em;
+ text-transform: uppercase;
+ color: rgb(var(--color-accent-700));
+ transition: color var(--transition-base);
+ }
+
+ .auth-link:hover {
+ color: rgb(var(--color-accent-500));
+ }
+
+ .feedback-message {
+ display: flex;
+ align-items: flex-start;
+ gap: 0.75rem;
+ border-radius: var(--radius-md);
+ border: 1px solid transparent;
+ padding: 1rem;
+ font-size: var(--text-sm);
+ font-weight: 500;
+ transition: all var(--transition-base);
+ }
+
+ .feedback-message-error {
+ border-color: rgba(220,38,38,0.2);
+ background: rgba(220,38,38,0.05);
+ color: rgb(220 38 38);
+ }
+
+ .feedback-message-success {
+ border-color: rgba(16,185,129,0.2);
+ background: rgba(16,185,129,0.05);
+ color: rgb(5 150 105);
  }
 
  /* Gold rule underline used beneath h2s */
@@ -514,9 +709,11 @@
  .stat-number {
  font-family: var(--font-display);
  font-weight: 700;
- font-size: var(--text-hero);
+ font-size: clamp(3rem, 4.5vw, 4.5rem);
  color: rgb(var(--color-accent-500));
  line-height: 1;
+ letter-spacing: -0.04em;
+ font-variation-settings: "opsz" 52, "SOFT" 0, "WONK" 0;
  }
 
  /* Card base */
@@ -680,6 +877,189 @@
   }
 }
 
+/*
+ * These design-system classes are consumed directly in JSX and must always be
+ * present. Keeping them as plain CSS avoids them being dropped during Tailwind
+ * layer optimization, which was breaking dark-surface typography and panels.
+ */
+.hero-badge {
+ display: inline-flex;
+ align-items: center;
+ gap: 0.5rem;
+ padding: 0.375rem 1rem;
+ border-radius: var(--radius-full);
+ border: 1px solid rgba(232,160,32,0.3);
+ background: rgba(232,160,32,0.1);
+}
+
+.meta-kicker-inverse,
+.meta-label-inverse,
+.meta-label-accent,
+.meta-label-muted {
+ font-size: 10px;
+ font-weight: 700;
+ letter-spacing: 0.2em;
+ text-transform: uppercase;
+}
+
+.meta-kicker-inverse,
+.meta-label-inverse {
+ color: rgba(255,255,255,0.4);
+}
+
+.meta-label-accent {
+ color: rgb(var(--color-accent-500));
+}
+
+.meta-label-muted {
+ color: rgb(var(--muted-foreground));
+}
+
+.hero-display-inverse {
+ font-family: var(--font-display);
+ font-size: var(--text-hero);
+ font-weight: var(--font-extrabold);
+ line-height: 1.04;
+ letter-spacing: -0.03em;
+ color: white;
+ font-variation-settings: "opsz" 72, "SOFT" 0, "WONK" 0;
+}
+
+.section-display-inverse {
+ font-family: var(--font-display);
+ font-size: clamp(2rem, 5vw, 3.75rem);
+ font-weight: var(--font-bold);
+ line-height: 1.06;
+ letter-spacing: -0.025em;
+ color: white;
+ font-variation-settings: "opsz" 48, "SOFT" 0, "WONK" 0;
+}
+
+.display-title-inverse {
+ font-family: var(--font-display);
+ font-size: var(--text-3xl);
+ font-weight: var(--font-bold);
+ line-height: 1.1;
+ letter-spacing: -0.02em;
+ color: white;
+ font-variation-settings: "opsz" 30, "SOFT" 0, "WONK" 0;
+}
+
+.display-copy-inverse {
+ font-size: var(--text-lg);
+ font-weight: var(--font-light);
+ line-height: var(--leading-relaxed);
+ color: rgba(255,255,255,0.6);
+}
+
+.panel-dark-elevated,
+.panel-dark-glass {
+ position: relative;
+ overflow: hidden;
+ border: 1px solid rgba(255,255,255,0.1);
+ box-shadow: var(--shadow-lg);
+}
+
+.panel-dark-elevated {
+ border-radius: var(--radius-lg);
+ background: rgb(var(--color-primary-900));
+}
+
+.panel-dark-glass {
+ border-radius: 1.5rem;
+ background: rgba(58,28,11,0.4);
+ backdrop-filter: blur(20px);
+}
+
+.metric-card-dark {
+ border-radius: var(--radius-sm);
+ border: 1px solid rgba(255,255,255,0.1);
+ background: rgba(255,255,255,0.05);
+ backdrop-filter: blur(10px);
+ transition: all var(--transition-base);
+}
+
+.metric-card-dark:hover {
+ background: rgba(255,255,255,0.1);
+}
+
+.metric-value-inverse,
+.metric-value-accent {
+ font-family: var(--font-display);
+ font-size: var(--text-3xl);
+ font-weight: var(--font-bold);
+ line-height: 1;
+ letter-spacing: -0.04em;
+ font-variation-settings: "opsz" 30, "SOFT" 0, "WONK" 0;
+}
+
+.metric-value-inverse {
+ color: white;
+}
+
+.metric-value-accent {
+ color: rgb(var(--color-accent-500));
+}
+
+.auth-label {
+ font-size: 10px;
+ font-weight: 700;
+ letter-spacing: 0.2em;
+ text-transform: uppercase;
+ color: rgb(var(--color-primary-900));
+}
+
+.auth-input {
+ height: 3.5rem;
+ border-radius: var(--radius-md);
+ border: 1px solid rgb(var(--border));
+ background: rgba(255,255,255,0.5);
+ font-weight: 500;
+ transition: all var(--transition-base);
+}
+
+.auth-input:focus {
+ background: white;
+ border-color: rgb(var(--color-accent-500));
+}
+
+.auth-link {
+ font-size: 10px;
+ font-weight: 700;
+ letter-spacing: 0.2em;
+ text-transform: uppercase;
+ color: rgb(var(--color-accent-700));
+ transition: color var(--transition-base);
+}
+
+.auth-link:hover {
+ color: rgb(var(--color-accent-500));
+}
+
+.feedback-message {
+ display: flex;
+ align-items: flex-start;
+ gap: 0.75rem;
+ border-radius: var(--radius-md);
+ border: 1px solid transparent;
+ padding: 1rem;
+ font-size: var(--text-sm);
+ font-weight: 500;
+ transition: all var(--transition-base);
+}
+
+.feedback-message-error {
+ border-color: rgba(220,38,38,0.2);
+ background: rgba(220,38,38,0.05);
+ color: rgb(220 38 38);
+}
+
+.feedback-message-success {
+ border-color: rgba(16,185,129,0.2);
+ background: rgba(16,185,129,0.05);
+ color: rgb(5 150 105);
+}
+
 /* ─────────────────────────────────────────
  ANIMATION UTILITIES
 ───────────────────────────────────────── */
@@ -718,8 +1098,8 @@
  /* High Fidelity Patterns */
  .hero-bg-pattern {
  background-image:
- radial-gradient(circle at 100% 0%, rgba(232,160,32,0.12) 0%, transparent 40%),
- radial-gradient(circle at 0% 100%, rgba(81,41,18,0.3) 0%, transparent 40%),
+ radial-gradient(circle at 100% 0%, rgba(232,160,32,0.15) 0%, transparent 40%),
+ radial-gradient(circle at 0% 100%, rgba(81,41,18,0.45) 0%, transparent 50%),
  repeating-linear-gradient(
  -45deg,
  transparent,

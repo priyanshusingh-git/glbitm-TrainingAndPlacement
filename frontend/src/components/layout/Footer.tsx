@@ -1,68 +1,121 @@
-import React from "react";
-import Link from "next/link";
-import { footerLinks } from "@/data/landing";
+import Link from "next/link"
+import { footerLinks } from "@/data/landing"
 
 export default function Footer() {
   return (
-    <footer className="bg-brown-900 pt-20 px-[5vw] pb-10 text-white relative overflow-hidden">
-      <div className="absolute inset-x-0 top-0 h-px bg-white/5" />
-      <div className="absolute inset-0 bg-diagonal-lines opacity-5" />
-      
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] gap-16 lg:gap-24 mb-16">
-          <div className="space-y-6">
-            <Link href="/" className="inline-block">
-              <div className="relative w-[140px] h-[48px]">
-                <img 
-                  src="/glbitm-logo.png" 
-                  alt="GL Bajaj Logo" 
-                  className="w-full h-full object-contain filter brightness-0 invert"
-                />
+    <footer className="border-t border-white/5 bg-brown-900 px-4 pb-5 pt-10 text-white sm:px-6 lg:px-[max(80px,calc((100vw-1200px)/2))]">
+      <div className="mx-auto max-w-[1200px]">
+        <div className="mb-8 grid gap-8 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] lg:gap-9">
+          <div>
+            <Link href="/" className="inline-flex items-center gap-3 no-underline">
+              <div className="grid h-10 w-10 place-items-center rounded-[10px] bg-gradient-to-br from-amber-500 to-amber-700 font-display text-base font-bold text-brown-900">
+                GL
+              </div>
+              <div>
+                <div className="text-[14px] font-semibold leading-[1.15] text-white">GL Bajaj Institute</div>
+                <div className="mt-0.5 text-[8.5px] uppercase tracking-[0.24em] text-amber-500/50">Training &amp; Placement · CDC</div>
               </div>
             </Link>
-            <p className="text-white/40 text-sm leading-relaxed font-light max-w-sm">
-              GL Bajaj&apos;s Training & Placement Cell and Career Development Centre are dedicated to transforming raw talent into industry-ready professionals through year-round training and global connections.
+
+            <p className="mt-3 max-w-[18rem] text-[11.5px] leading-[1.72] text-white/36">
+              {footerLinks.overview}
             </p>
-          </div>
 
-          <div>
-            <h5 className="text-[10px] tracking-[0.2em] uppercase text-amber-500 mb-6 font-bold">University</h5>
-            <div className="flex flex-col gap-3">
-              {footerLinks.university.map(link => (
-                <a key={link.name} href={link.href} className="text-white/40 hover:text-amber-500 no-underline text-xs font-medium transition-base uppercase tracking-wider">{link.name}</a>
+            <div className="mt-4 flex flex-wrap gap-1.5">
+              {footerLinks.credentials.map((item) => (
+                <span
+                  key={item}
+                  className="rounded-full border border-white/8 bg-white/5 px-2.5 py-1 text-[9.5px] font-semibold text-white/46"
+                >
+                  {item}
+                </span>
               ))}
             </div>
           </div>
 
           <div>
-            <h5 className="text-[10px] tracking-[0.2em] uppercase text-amber-500 mb-6 font-bold">Portals</h5>
-            <div className="flex flex-col gap-3">
-              {footerLinks.portals.map(link => (
-                <Link key={link.name} href={link.href} className="text-white/40 hover:text-amber-500 no-underline text-xs font-medium transition-base uppercase tracking-wider">{link.name}</Link>
+            <h4 className="mb-3 text-[9px] font-bold uppercase tracking-[0.2em] text-white/28">Quick Links</h4>
+            <div className="flex flex-col gap-1.5">
+              {footerLinks.quick.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className="inline-block py-1 text-xs text-white/48 transition-colors hover:text-amber-400"
+                >
+                  {link.name}
+                </Link>
               ))}
             </div>
           </div>
 
           <div>
-            <h5 className="text-[10px] tracking-[0.2em] uppercase text-amber-500 mb-6 font-bold">Contact</h5>
-            <div className="flex flex-col gap-4 text-white/40 text-xs font-medium uppercase tracking-wider">
-              <a href={`mailto:${footerLinks.contact.email}`} className="hover:text-amber-500 no-underline transition-base">{footerLinks.contact.email}</a>
-              <p className="leading-relaxed">
-                {footerLinks.contact.phone}<br />
-                {footerLinks.contact.address.split(',').map((line, i) => <React.Fragment key={i}>{line}<br /></React.Fragment>)}
-              </p>
+            <h4 className="mb-3 text-[9px] font-bold uppercase tracking-[0.2em] text-white/28">CDC</h4>
+            <div className="flex flex-col gap-1.5">
+              {footerLinks.cdc.map((link) =>
+                link.external ? (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block py-1 text-xs text-white/48 transition-colors hover:text-amber-400"
+                  >
+                    {link.name}
+                  </a>
+                ) : (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className="inline-block py-1 text-xs text-white/48 transition-colors hover:text-amber-400"
+                  >
+                    {link.name}
+                  </Link>
+                )
+              )}
+            </div>
+          </div>
+
+          <div>
+            <h4 className="mb-3 text-[9px] font-bold uppercase tracking-[0.2em] text-white/28">Contact</h4>
+            <div className="space-y-2 text-xs text-white/48">
+              <a href={`mailto:${footerLinks.contact.email}`} className="block transition-colors hover:text-amber-400">
+                {footerLinks.contact.email}
+              </a>
+              <a href={`tel:${footerLinks.contact.phone.replace(/\s+/g, "")}`} className="block transition-colors hover:text-amber-400">
+                {footerLinks.contact.phone}
+              </a>
+              <p className="leading-[1.7] text-white/48">{footerLinks.contact.address}</p>
+              <a
+                href={footerLinks.contact.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block transition-colors hover:text-amber-400"
+              >
+                Visit main website ↗
+              </a>
             </div>
           </div>
         </div>
 
-        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-white/20 text-[11px] font-bold uppercase tracking-[0.1em] gap-4">
-          <div>© {new Date().getFullYear()} GL Bajaj Institute of Technology & Management.</div>
-          <div className="flex gap-8">
-            <Link href="/privacy" className="hover:text-amber-500 transition-base">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-amber-500 transition-base">Terms of Service</Link>
+        <div className="flex flex-col items-center gap-2 border-t border-white/6 pt-4 text-center md:flex-row md:justify-between md:text-left">
+          <p className="text-[10.5px] text-white/24">
+            © {new Date().getFullYear()} GL Bajaj Institute of Technology &amp; Management. All rights reserved.
+          </p>
+          <div className="flex items-center gap-4 text-[10.5px]">
+            <Link href="/login" className="text-amber-500/55 transition-colors hover:text-amber-400">
+              Portal Login
+            </Link>
+            <a
+              href="https://www.glbitm.org/placements"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-amber-500/55 transition-colors hover:text-amber-400"
+            >
+              Placement Page ↗
+            </a>
           </div>
         </div>
       </div>
     </footer>
-  );
+  )
 }

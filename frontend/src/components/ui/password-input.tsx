@@ -2,7 +2,6 @@
 
 import * as React from"react"
 import { Eye, EyeOff, Check, X } from"lucide-react"
-import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { cn } from"@/lib/utils"
 import { checkPasswordStrength } from"@/lib/validators"
@@ -65,22 +64,20 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
  onChange={handleChange}
  {...props}
  />
- <Button
+ <button
  type="button"
- variant="ghost"
- size="sm"
- className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+ className="absolute right-0 top-0 flex h-full items-center justify-center rounded-r-lg border-0 bg-transparent px-3 text-brown-400 shadow-none transition-colors hover:bg-transparent hover:text-brown-800 focus-visible:outline-none"
  onClick={() => setShowPassword(!showPassword)}
  >
  {showPassword ? (
- <EyeOff className="h-4 w-4 text-muted-foreground" />
+ <EyeOff className="h-4 w-4" />
  ) : (
- <Eye className="h-4 w-4 text-muted-foreground" />
+ <Eye className="h-4 w-4" />
  )}
  <span className="sr-only">
  {showPassword ?"Hide password" :"Show password"}
  </span>
- </Button>
+ </button>
  </div>
 
  {showStrength && (

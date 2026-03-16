@@ -17,8 +17,8 @@ import { Spinner } from"@/components/ui/spinner";
 function Feedback({ message, success = false }: { message: string; success?: boolean }) {
  return (
  <div
- className={`flex items-start gap-3 rounded-xl border px-4 py-3 text-sm ${
- success ?"border-emerald-200 bg-emerald-50 text-emerald-700" :"border-destructive/20 bg-destructive/5 text-destructive"
+ className={`feedback-message ${
+ success ?"feedback-message-success" :"feedback-message-error"
  }`}
  >
  {success ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /> : <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />}
@@ -87,30 +87,30 @@ export default function ChangePasswordPage() {
  {success && <Feedback message={success} success />}
 
  <div className="space-y-2">
- <Label htmlFor="new">New password</Label>
+ <Label htmlFor="new" className="auth-label">New password</Label>
  <PasswordInput
  id="new"
  value={newPassword}
  onChange={(e) => setNewPassword(e.target.value)}
  required
  showStrength
- className="h-11"
+ className="auth-input"
  />
  </div>
 
  <div className="space-y-2">
- <Label htmlFor="confirm">Confirm password</Label>
+ <Label htmlFor="confirm" className="auth-label">Confirm password</Label>
  <PasswordInput
  id="confirm"
  value={confirmPassword}
  onChange={(e) => setConfirmPassword(e.target.value)}
  required
- className="h-11"
+ className="auth-input"
  />
  </div>
 
  <div className="space-y-3 pt-1">
- <Button type="submit" className="h-11 w-full" disabled={loading || !!success}>
+ <Button type="submit" className="btn-primary w-full" disabled={loading || !!success}>
  {loading ? (
  <>
  <Spinner className="mr-2 h-4 w-4" />
@@ -121,7 +121,7 @@ export default function ChangePasswordPage() {
  )}
  </Button>
 
- <Button variant="outline" type="button" className="h-11 w-full" onClick={logout}>
+ <Button variant="outline" type="button" className="btn-ghost-light w-full justify-center" onClick={logout}>
  Cancel and sign out
  </Button>
  </div>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { sendPasswordResetEmail } from '@/services/email.service';
 import { logger } from '@/lib/logger';
+import { generateOtp, hashOtp } from '@/lib/otp';
 
 export async function POST(req: NextRequest) {
  try {
@@ -14,7 +15,7 @@ export async function POST(req: NextRequest) {
 
  // Always return success to prevent email enumeration attacks
  const genericResponse = NextResponse.json({
- message: 'If an account exists with this email, a password reset has been sent.'
+ message: 'If an account exists with this email, a verification code has been sent.'
  });
 
  // Find user in database
@@ -27,16 +28,19 @@ export async function POST(req: NextRequest) {
  return genericResponse;
  }
 
- // Generate a reset link via Firebase Admin
- const { authAdmin } = await import('@/lib/firebase-admin');
- const resetLink = await authAdmin.generatePasswordResetLink(email.trim().toLowerCase(), {
- url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/login`
+ const otp = generateOtp();
+ const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+
+ await prisma.user.update({
+ where: { id: user.id },
+ data: {
+ otp: hashOtp(otp),
+ otpExpires,
+ }
  });
 
- // Send password reset email with the link (or the standard Firebase email if preferred)
- // For now, we use our custom email service with the Firebase link
- sendPasswordResetEmail(user.email, user.name || 'User', resetLink)
- .catch(err => logger.error('Failed to send password reset email:', err));
+ sendPasswordResetEmail(user.email, user.name || 'User', otp)
+ .catch(err => logger.error('Failed to send password reset OTP email:', err));
 
  return genericResponse;
 

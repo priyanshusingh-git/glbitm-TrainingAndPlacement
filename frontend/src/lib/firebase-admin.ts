@@ -8,12 +8,6 @@ if (!admin.apps.length) {
  privateKey = privateKey.replace(/\\n/g, '\n').replace(/"/g, '');
  }
 
- console.log("=== FIREBASE PRIVATE KEY DEBUG ===");
- console.log("LENGTH:", privateKey?.length);
- console.log("FIRST 20 CHARS:", privateKey?.substring(0, 20));
- console.log("LAST 20 CHARS:", privateKey?.substring(privateKey?.length - 20));
- console.log("==================================");
-
  admin.initializeApp({
  credential: admin.credential.cert({
  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,

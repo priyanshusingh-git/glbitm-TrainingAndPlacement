@@ -1,61 +1,74 @@
 "use client"
-import React from 'react'
-import { GraduationCap, Briefcase, ArrowRight } from 'lucide-react'
-import Link from 'next/link'
-import { AnimatedSection, fadeUp } from '@/components/ui/AnimatedSection'
-import { motion } from 'framer-motion'
+
+import { certificationTracks, trainingModules } from "@/data/landing"
+import { AnimatedSection, fadeUp } from "@/components/ui/AnimatedSection"
+import { motion } from "framer-motion"
 
 export default function ForYou() {
   return (
-    <section id="for-you" className="section-pad bg-muted overflow-hidden relative">
-      <div className="absolute inset-0 bg-diagonal-lines opacity-5" />
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="section-tag">Get Started</div>
-        <h2 className="section-h2">
-          Who are you <br />
-          <span className="text-amber-600 italic">here for?</span>
-        </h2>
-        <div className="gold-rule mb-14" />
-        
-        <AnimatedSection className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* For Students Card */}
-          <motion.div variants={fadeUp} className="card-dark p-12 flex flex-col justify-between group min-h-[400px] border-white/10 bg-brown-900">
-             <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-             <div>
-              <div className="w-16 h-16 rounded-sm bg-white/10 flex items-center justify-center mb-8 text-3xl border border-white/10 shadow-inner">
-                🎓
-              </div>
-              <h3 className="font-display text-3xl font-bold text-white mb-4">
-                I&apos;m a Student
-              </h3>
-              <p className="text-white/60 text-lg leading-relaxed font-light max-w-sm">
-                Access aptitude training, mock interviews, resume clinics, soft-skills coaching, industry mentorships — and direct exposure to 500+ companies recruiting on campus.
-              </p>
+    <section id="training" className="bg-brown-50 px-4 py-14 sm:px-5 md:px-8 md:py-16 lg:px-[clamp(28px,5vw,80px)] lg:py-[84px] xl:px-[clamp(40px,6vw,80px)]">
+      <div className="mx-auto max-w-[1200px]">
+        <div className="mb-10 grid gap-3 lg:grid-cols-2 lg:items-end lg:gap-10 lg:mb-12">
+          <div>
+            <div className="mb-3 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.28em] text-amber-700">
+              <span className="h-0.5 w-5 rounded-full bg-gradient-to-r from-amber-700 to-amber-400" />
+              T&amp;P Training Cell
             </div>
-            <Link href="/login" className="btn-accent self-start mt-8">
-              Start Your Journey →
-            </Link>
-          </motion.div>
+            <h2 className="section-h2">
+              Year-Round Training
+              <br />
+              <span className="text-brown-600 italic">That Builds Careers</span>
+            </h2>
+          </div>
+          <p className="max-w-[32rem] text-sm leading-[1.85] text-muted-foreground lg:justify-self-end">
+            Not just pre-season cramming. A structured four-year programme of aptitude, technical, and soft-skill development anchored to what top recruiters actually test for.
+          </p>
+        </div>
 
-          {/* For Recruiters Card */}
-          <motion.div variants={fadeUp} className="card-base p-12 flex flex-col justify-between group min-h-[400px]">
-             <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-brown-900/5 rounded-full blur-3xl pointer-events-none" />
-             <div>
-              <div className="w-16 h-16 rounded-sm bg-muted flex items-center justify-center mb-8 text-3xl border border-border shadow-inner">
-                🏢
-              </div>
-              <h3 className="font-display text-3xl font-bold text-brown-900 mb-4">
-                I&apos;m a Recruiter
-              </h3>
-              <p className="text-muted-foreground text-lg leading-relaxed font-light max-w-sm">
-                Partner with GL Bajaj to access pre-screened, industry-ready graduates in CSE, AI/ML, ECE, Mechanical and MBA. On-campus or virtual drives — your choice.
-              </p>
+        <div className="grid gap-7 lg:grid-cols-[1fr_0.95fr] lg:gap-11">
+          <AnimatedSection className="flex flex-col gap-2.5">
+            {trainingModules.map((module) => (
+              <motion.div
+                key={module.title}
+                variants={fadeUp}
+                className="flex items-start gap-3 rounded-2xl border border-border bg-white px-4 py-4 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:translate-x-1 hover:border-brown-800/30"
+              >
+                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-brown-800 to-brown-700 text-base">
+                  {module.icon}
+                </div>
+                <div>
+                  <h3 className="text-[13px] font-bold text-brown-900">{module.title}</h3>
+                  <p className="mt-1 text-[11.5px] leading-[1.65] text-muted-foreground">{module.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatedSection>
+
+          <div>
+            <div className="mb-4 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.28em] text-amber-700">
+              <span className="h-0.5 w-5 rounded-full bg-gradient-to-r from-amber-700 to-amber-400" />
+              Industry Certifications Offered
             </div>
-            <Link href="/login" className="btn-primary self-start mt-8">
-              Schedule a Drive →
-            </Link>
-          </motion.div>
-        </AnimatedSection>
+
+            <AnimatedSection className="rounded-[24px] border border-border bg-white px-5 py-2 shadow-[0_2px_12px_rgba(81,41,18,0.07)]">
+              {certificationTracks.map((track) => (
+                <motion.div
+                  key={track.title}
+                  variants={fadeUp}
+                  className="flex items-start gap-3 border-b border-border py-4 last:border-b-0"
+                >
+                  <div className="rounded-full bg-gradient-to-br from-brown-800 to-brown-700 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.05em] text-white">
+                    {track.badge}
+                  </div>
+                  <div>
+                    <div className="text-[12.5px] font-bold text-brown-900">{track.title}</div>
+                    <div className="mt-0.5 text-[10.5px] text-muted-foreground">{track.description}</div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatedSection>
+          </div>
+        </div>
       </div>
     </section>
   )

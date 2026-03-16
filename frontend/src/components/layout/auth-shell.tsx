@@ -1,9 +1,9 @@
 "use client"
 
-import Link from "next/image"
 import NextLink from "next/link"
-import { ArrowLeft, CheckCircle2, ShieldCheck, Sparkles } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { AuthBrandPanel } from "@/components/layout/auth-brand-panel"
 
 interface AuthShellProps {
   title: string
@@ -15,75 +15,79 @@ interface AuthShellProps {
 }
 
 const highlights = [
-  "Placement, training, and testing workflows in one portal",
-  "Industry-aligned skill upskilling and mock interview drills",
-  "Real-time tracking of applications and selection status",
+  {
+    icon: "🔐",
+    title: "Secure credential handling",
+    description: "Passwords are updated through protected identity flows and never sent in plain text.",
+  },
+  {
+    icon: "📈",
+    title: "One portal for every workflow",
+    description: "Training, placement drives, and account management stay aligned inside one interface.",
+  },
+  {
+    icon: "🛡️",
+    title: "Recovery built for speed",
+    description: "OTP-based recovery keeps the process short while preserving verification and auditability.",
+  },
 ]
 
 export function AuthShell({
   title,
   description,
   children,
-  asideTitle = "GL Bajaj Career Portal",
-  asideDescription = "Empowering students with industry-ready skills and global placement opportunities.",
+  asideTitle = "Secure Access",
+  asideDescription = "Access the GL Bajaj Training & Placement and CDC portal with the same brand and security system used across the platform.",
   className,
 }: AuthShellProps) {
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-[45%_55%] bg-background selection:bg-amber-500/20">
-      {/* ASIDE PANEL */}
-      <section className="bg-brown-900 relative hidden lg:flex flex-col justify-between p-16 overflow-hidden text-white border-r border-white/5">
-        <div className="absolute inset-0 bg-hero-gradient opacity-60" />
-        <div className="absolute inset-0 bg-diagonal-lines opacity-20" />
-        
-        <div className="relative z-10">
-          <NextLink href="/" className="inline-flex items-center gap-4 no-underline group">
-                       <div className="w-12 h-12 rounded-sm bg-amber-500 grid place-items-center font-display font-bold text-xl text-brown-900 shadow-xl group-hover:scale-110 transition-base">GL</div>
-            <div className="text-white font-bold text-lg leading-tight">
-              GL Bajaj
-              <span className="text-amber-500/60 block text-[10px] tracking-[0.3em] font-bold uppercase mt-1">T&P Portal</span>
-            </div>
-          </NextLink>
-        </div>
-
-        <div className="relative z-10 max-w-[440px]">
-          <div className="eyebrow-dark mb-8 uppercase tracking-[0.2em]">{asideTitle}</div>
-          <h1 className="font-display text-[48px] font-bold leading-[1.05] mb-8 tracking-tighter">
-            Build your <span className="text-amber-500 italic">legacy</span> with us.
-          </h1>
-          <p className="text-white/50 text-lg leading-relaxed font-light mb-12">
-            {asideDescription}
-          </p>
-
-          <div className="space-y-4">
-            {highlights.map((item, i) => (
-              <div key={i} className="flex items-center gap-4 text-white/40 group">
-                <ShieldCheck className="w-5 h-5 text-amber-500 group-hover:scale-110 transition-base" />
-                <span className="text-sm font-medium tracking-wide">{item}</span>
+    <div className="min-h-screen bg-brown-50 text-foreground lg:grid lg:grid-cols-[1fr_1fr]">
+      <AuthBrandPanel
+        eyebrow={asideTitle}
+        title={
+          <>
+            Access the
+            <br />
+            <span className="text-amber-500 italic">secure side</span>
+            <br />
+            of your portal.
+          </>
+        }
+        description={asideDescription}
+        bottom={
+          <div className="space-y-3 rounded-2xl border border-white/9 bg-white/5 p-5">
+            {highlights.map((item) => (
+              <div key={item.title} className="flex items-start gap-3">
+                <div className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg bg-amber-500/12 text-[15px]">
+                  {item.icon}
+                </div>
+                <div>
+                  <div className="text-[13px] font-semibold text-white/75">{item.title}</div>
+                  <div className="text-[12px] leading-[1.5] text-white/40">{item.description}</div>
+                </div>
               </div>
             ))}
           </div>
-        </div>
+        }
+      />
 
-        <div className="relative z-10 flex items-center justify-between text-white/20 text-[10px] font-bold uppercase tracking-widest pt-8 border-t border-white/5">
-          <div>© {new Date().getFullYear()} GLBITM. Secure Portal.</div>
-          <div className="flex gap-6">
-            <span className="flex items-center gap-1.5"><ShieldCheck size={12}/> AES-256</span>
-          </div>
-        </div>
-      </section>
+      <section className={cn("relative flex min-h-screen items-center justify-center overflow-y-auto bg-brown-50 px-6 py-10 md:px-10 lg:px-[5vw]", className)}>
+        <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(232,160,32,0.08)_0%,transparent_70%)]" />
 
-      {/* FORM PANEL */}
-      <section className={cn("flex flex-col justify-center p-8 md:p-16 lg:p-24 relative bg-background", className)}>
-        <NextLink href="/login" className="absolute top-12 left-12 inline-flex items-center gap-2 text-brown-900 hover:text-amber-600 transition-base text-xs font-bold uppercase tracking-widest">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Login
-        </NextLink>
+        <div className="relative z-10 w-full max-w-[400px]">
+          <NextLink
+            href="/login"
+            className="mb-7 inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-brown-800"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Login
+          </NextLink>
 
-        <div className="w-full max-w-[420px] mx-auto">
-          <div className="mb-10 space-y-3">
-             <div className="eyebrow-dark border-amber-500/20 text-amber-600">Secure Access</div>
-             <h1 className="section-h2 text-4xl">{title}</h1>
-             <p className="text-muted-foreground text-sm font-light leading-relaxed">{description}</p>
+          <div className="mb-7">
+            <h1 className="mb-1 font-display text-[34px] font-bold leading-[1.1] tracking-[-0.025em] text-brown-900 [font-variation-settings:'opsz'_48,'SOFT'_0,'WONK'_0]">
+              {title}
+            </h1>
+            <p className="text-sm font-light leading-[1.65] text-muted-foreground">{description}</p>
           </div>
 
           {children}

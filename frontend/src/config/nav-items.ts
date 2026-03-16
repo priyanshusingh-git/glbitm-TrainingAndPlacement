@@ -13,6 +13,8 @@ import {
  Calendar,
  Image as ImageIcon,
  Activity,
+ Code,
+ Trophy,
 } from"lucide-react"
 
 export const studentNavItems = [
@@ -26,6 +28,12 @@ export const studentNavItems = [
 
   { type: "header", label: "PLACEMENT" },
   { label: "Placements", href: "/student/placements", icon: Briefcase, count: 2 },
+
+  { type: "header", label: "TECHNICAL PROFILE" },
+  { label: "My Projects", href: "/student/portfolio/projects", icon: FolderKanban },
+  { label: "Certifications", href: "/student/portfolio/certifications", icon: Award },
+  { label: "Coding Profiles", href: "/student/portfolio/coding-profiles", icon: Code },
+  { label: "Hackathons", href: "/student/portfolio/hackathons", icon: Trophy },
 ]
 
 export const adminNavItems = [
@@ -49,7 +57,6 @@ export const adminNavItems = [
 
  { type:"header", label:"System Administration" },
  { label:"Activity Log", href:"/admin/activity", icon: Activity },
- { label:"Top Placements Slider", href:"/admin/settings/hero", icon: ImageIcon },
  { label:"Settings", href:"/admin/settings", icon: Settings },
 ]
 

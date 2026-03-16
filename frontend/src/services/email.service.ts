@@ -13,7 +13,7 @@ const getEmailConfig = async () => {
  port: parseInt(settings.find((s: any) => s.key ==="smtp_port")?.value ||"587"),
  user: settings.find((s: any) => s.key ==="smtp_user")?.value || process.env.EMAIL_USER,
  pass: settings.find((s: any) => s.key ==="smtp_pass")?.value || process.env.EMAIL_PASS,
- fromName: settings.find((s: any) => s.key ==="smtp_from_name")?.value ||"CDC Platform"
+ fromName: settings.find((s: any) => s.key ==="smtp_from_name")?.value ||"GL Bajaj T&P Cell"
  };
 
  return config;
@@ -24,7 +24,7 @@ const getEmailConfig = async () => {
  port: 587,
  user: process.env.EMAIL_USER,
  pass: process.env.EMAIL_PASS,
- fromName:"CDC Platform"
+ fromName:"GL Bajaj T&P Cell"
  };
  }
 };
@@ -75,201 +75,228 @@ const getSiteUrl = () => {
 
 const currentYear = () => new Date().getFullYear();
 
-// ─── Base Template ─────────────────────────────────────────────
-// Table-based layout for maximum Gmail / Outlook / Apple Mail compatibility.
-const baseTemplate = (body: string) => `
+// ─── GL Bajaj Email Shell ─────────────────────────────────────
+const brandShell = (content: string, previewText = '') => `
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <meta http-equiv="X-UA-Compatible" content="IE=edge">
- <meta name="color-scheme" content="light">
- <meta name="supported-color-schemes" content="light">
- <title>CDC Platform</title>
- <!--[if mso]>
- <noscript><xml>
- <o:OfficeDocumentSettings>
- <o:PixelsPerInch>96</o:PixelsPerInch>
- </o:OfficeDocumentSettings>
- </xml></noscript>
- <![endif]-->
- <style>
- /* Reset */
- body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
- table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; }
- img { -ms-interpolation-mode: bicubic; border: 0; height: auto; line-height: 100%; outline: none; text-decoration: none; }
- body { margin: 0; padding: 0; width: 100% !important; }
- a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; }
- @media only screen and (max-width: 620px) {
- .email-container { width: 100% !important; }
- .fluid { max-width: 100% !important; height: auto !important; }
- .stack-column { display: block !important; width: 100% !important; }
- .content-padding { padding-left: 20px !important; padding-right: 20px !important; }
- }
- </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="x-apple-disable-message-reformatting"/>
+  <title>GL Bajaj T&amp;P Portal</title>
+  <!--[if mso]>
+  <noscript><xml><o:OfficeDocumentSettings>
+    <o:PixelsPerInch>96</o:PixelsPerInch>
+  </o:OfficeDocumentSettings></xml></noscript>
+  <![endif]-->
 </head>
-<body style="margin: 0; padding: 0; background-color: #f0f2f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+<body style="margin:0;padding:0;background-color:#F2EAD8;font-family:Arial,sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+  <div style="display:none;max-height:0;overflow:hidden;color:#F2EAD8;font-size:1px;">
+    ${previewText}&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌&nbsp;‌
+  </div>
 
- <!-- Preheader (hidden preview text) -->
- <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">
- CDC Platform — Career Development Cell
- </div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F2EAD8;min-height:100vh;">
+    <tr>
+      <td align="center" style="padding:32px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background-color:#FDF7EF;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(81,41,18,0.12);">
+          <tr>
+            <td style="background-color:#3A1C0B;padding:0;">
+              <div style="height:4px;background:linear-gradient(90deg,#512912,#E8A020);"></div>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="padding:28px 40px 24px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="vertical-align:middle;">
+                          <div style="width:44px;height:44px;background:linear-gradient(135deg,#E8A020,#C07A10);border-radius:10px;display:inline-block;text-align:center;line-height:44px;font-family:Georgia,serif;font-size:18px;font-weight:700;color:#3A1C0B;">GL</div>
+                        </td>
+                        <td style="padding-left:13px;vertical-align:middle;">
+                          <div style="color:#ffffff;font-family:Arial,sans-serif;font-size:14px;font-weight:600;line-height:1.2;">GL Bajaj Institute</div>
+                          <div style="color:rgba(232,160,32,0.65);font-family:Arial,sans-serif;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;margin-top:2px;">Training &amp; Placement · CDC</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
 
- <!-- Outer wrapper -->
- <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f0f2f5;">
- <tr>
- <td style="padding: 30px 10px;">
- <!-- Inner container 600px -->
- <table role="presentation" class="email-container" cellspacing="0" cellpadding="0" border="0" width="600" align="center" style="margin: auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06);">
+          <tr>
+            <td style="padding:40px 40px 32px;">
+              ${content}
+            </td>
+          </tr>
 
- <!-- ====== HEADER ====== -->
- <tr>
- <td style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%); padding: 48px 40px; text-align: center;">
- <!-- Logo / Brand Icon -->
- <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center">
- <tr>
- <td style="width: 64px; height: 64px; background-color: rgba(255,255,255,0.2); border-radius: 16px; text-align: center; vertical-align: middle; padding: 8px;">
- <img src="${getSiteUrl()}/cdc-logo.png" alt="CDC Logo" width="64" height="64" style="display: block; margin: auto;">
- </td>
- </tr>
- </table>
- <h1 style="margin: 20px 0 6px 0; font-size: 26px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">
- CDC Platform
- </h1>
- <p style="margin: 0; font-size: 15px; color: rgba(255,255,255,0.85); font-weight: 400;">
- Career Development Cell
- </p>
- </td>
- </tr>
+          <tr>
+            <td style="padding:0 40px;">
+              <div style="height:1px;background-color:#E8D8C0;"></div>
+            </td>
+          </tr>
 
- <!-- ====== BODY ====== -->
- ${body}
+          <tr>
+            <td style="padding:24px 40px 32px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td>
+                    <p style="margin:0 0 6px;font-family:Arial,sans-serif;font-size:12px;color:#7A5C42;line-height:1.6;">
+                      GL Bajaj Institute of Technology &amp; Management<br/>
+                      Plot No. 2, APJ Abdul Kalam Road, Knowledge Park 3<br/>
+                      Greater Noida, Uttar Pradesh — 201306
+                    </p>
+                    <p style="margin:8px 0 0;font-family:Arial,sans-serif;font-size:11px;color:#9A7A60;">
+                      <a href="https://www.glbitm.org" style="color:#C07A10;text-decoration:none;">www.glbitm.org</a>
+                      &nbsp;·&nbsp;
+                      <a href="mailto:tnp@glbitm.org" style="color:#C07A10;text-decoration:none;">tnp@glbitm.org</a>
+                      &nbsp;·&nbsp;
+                      <span>+91 99999 08292</span>
+                    </p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding-top:16px;">
+                    <p style="margin:0;font-family:Arial,sans-serif;font-size:10px;color:#B09070;line-height:1.5;">
+                      This email was sent to you because you have an account on the GL Bajaj T&amp;P Portal.
+                      If you did not expect this email, please contact
+                      <a href="mailto:tnp@glbitm.org" style="color:#C07A10;text-decoration:none;">tnp@glbitm.org</a>
+                      immediately.
+                    </p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
 
- <!-- ====== FOOTER ====== -->
- <tr>
- <td style="padding: 0 40px;">
- <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
- <tr><td style="border-top: 1px solid #e5e7eb; height: 1px; font-size: 0;">&nbsp;</td></tr>
- </table>
- </td>
- </tr>
- <tr>
- <td style="padding: 28px 40px 36px 40px; text-align: center;">
- <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #374151;">
- Career Development Cell
- </p>
- <p style="margin: 0 0 16px 0; font-size: 13px; color: #9ca3af; line-height: 1.5;">
- GL Bajaj Institute of Technology &amp; Management<br>
- Greater Noida, Uttar Pradesh
- </p>
- <p style="margin: 0; font-size: 12px; color: #d1d5db;">
- &copy; ${currentYear()} CDC Platform. All rights reserved.<br>
- This is an automated message — please do not reply.
- </p>
- </td>
- </tr>
-
- </table>
- <!-- /Inner container -->
- </td>
- </tr>
- </table>
+          <tr>
+            <td style="background-color:#3A1C0B;padding:14px 40px;">
+              <p style="margin:0;font-family:Arial,sans-serif;font-size:11px;color:rgba(232,160,32,0.55);text-align:center;">
+                © ${currentYear()} GL Bajaj Institute of Technology &amp; Management. All rights reserved.
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>
 `.trim();
+
+function btnPrimary(text: string, url: string) {
+ return `
+   <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 0;">
+     <tr>
+       <td style="background:linear-gradient(135deg,#E8A020,#C07A10);border-radius:8px;">
+         <a href="${url}" style="display:inline-block;padding:14px 28px;font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#3A1C0B;text-decoration:none;letter-spacing:0.3px;border-radius:8px;">
+           ${text}
+         </a>
+       </td>
+     </tr>
+   </table>`
+}
+
+function btnGhost(text: string, url: string) {
+ return `
+   <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:12px 0 0;">
+     <tr>
+       <td style="border:2px solid #512912;border-radius:8px;">
+         <a href="${url}" style="display:inline-block;padding:12px 24px;font-family:Arial,sans-serif;font-size:13px;font-weight:600;color:#512912;text-decoration:none;border-radius:6px;">
+           ${text}
+         </a>
+       </td>
+     </tr>
+   </table>`
+}
+
+function credBox(rows: { label: string; value: string }[]) {
+ const rowsHtml = rows.map(row => `
+   <tr>
+     <td style="padding:10px 20px;border-bottom:1px solid #E8D8C0;font-family:Arial,sans-serif;font-size:11px;font-weight:700;color:#7A5C42;text-transform:uppercase;letter-spacing:0.5px;width:35%;vertical-align:top;">
+       ${row.label}
+     </td>
+     <td style="padding:10px 20px;border-bottom:1px solid #E8D8C0;font-family:'Courier New',monospace;font-size:13px;font-weight:700;color:#3A1C0B;vertical-align:top;">
+       ${row.value}
+     </td>
+   </tr>`).join('')
+
+ return `
+   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F2EAD8;border-radius:10px;margin:24px 0;border:1px solid #E8D8C0;overflow:hidden;">
+     <tbody>${rowsHtml}</tbody>
+   </table>`
+}
+
+function alertBox(text: string, type: 'warning' | 'info' | 'success' = 'warning') {
+ const palette = {
+ warning: { bg: '#FEF2E8', border: '#C07A10', text: '#7C2D12', icon: '⚠' },
+ info: { bg: '#EFF6FF', border: '#3B82F6', text: '#1E3A5F', icon: 'ℹ' },
+ success: { bg: '#F0FDF4', border: '#16A34A', text: '#14532D', icon: '✓' },
+ }
+
+ const tone = palette[type]
+
+ return `
+   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:20px 0;background-color:${tone.bg};border-radius:8px;border-left:4px solid ${tone.border};overflow:hidden;">
+     <tr>
+       <td style="padding:14px 18px;">
+         <p style="margin:0;font-family:Arial,sans-serif;font-size:13px;color:${tone.text};line-height:1.6;">
+           <strong>${tone.icon}&nbsp;&nbsp;</strong>${text}
+         </p>
+       </td>
+     </tr>
+   </table>`
+}
+
+function emailH2(text: string) {
+ return `<h2 style="margin:0 0 10px;font-family:Georgia,serif;font-size:26px;font-weight:700;color:#3A1C0B;line-height:1.1;letter-spacing:-0.5px;">${text}</h2>`
+}
+
+function emailP(text: string) {
+ return `<p style="margin:0 0 16px;font-family:Arial,sans-serif;font-size:15px;color:#5A3A22;line-height:1.75;">${text}</p>`
+}
+
+function emailSmall(text: string) {
+ return `<p style="margin:12px 0 0;font-family:Arial,sans-serif;font-size:12px;color:#9A7A60;line-height:1.6;">${text}</p>`
+}
+
+function statStrip(stats: { val: string; label: string }[]) {
+ const columns = stats.map(stat => `
+   <td style="padding:20px 16px;text-align:center;border-right:1px solid rgba(255,255,255,0.07);">
+     <div style="font-family:Georgia,serif;font-size:28px;font-weight:700;color:#F5BB40;line-height:1;">${stat.val}</div>
+     <div style="font-family:Arial,sans-serif;font-size:11px;color:rgba(255,255,255,0.5);margin-top:5px;">${stat.label}</div>
+   </td>`).join('')
+
+ return `
+   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0;background-color:#3A1C0B;border-radius:12px;overflow:hidden;">
+     <tr>${columns}</tr>
+   </table>`
+}
 
 // ─── Welcome Email ─────────────────────────────────────────────
 export const sendWelcomeEmail = async (email: string, name: string, password: string) => {
  const loginUrl = `${getSiteUrl()}/login`;
 
- const body = `
- <tr>
- <td class="content-padding" style="padding: 44px 40px 0 40px;">
- <h2 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 700; color: #111827;">
- Welcome aboard, ${name}! 👋
- </h2>
- <p style="margin: 0 0 28px 0; font-size: 16px; color: #6b7280; line-height: 1.6;">
- Your account has been created on the CDC Platform. Use the credentials below to log in and get started.
- </p>
- </td>
- </tr>
+ const content = `
+ ${emailH2(`Welcome, ${name.split(' ')[0]}!`)}
+ ${emailP(`Your GL Bajaj T&P Portal account has been created. You now have access to placement drives, CDC training programmes, and your full academic profile.`)}
 
- <!-- Credentials Card -->
- <tr>
- <td class="content-padding" style="padding: 0 40px;">
- <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden;">
- <tr>
- <td style="padding: 6px 24px 0 24px;">
- <p style="margin: 0; font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1.2px;">
- Your Login Credentials
- </p>
- </td>
- </tr>
- <tr>
- <td style="padding: 16px 24px;">
- <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
- <tr>
- <td style="padding: 8px 0;">
- <span style="font-size: 13px; font-weight: 600; color: #64748b;">Email</span><br>
- <span style="font-size: 16px; font-weight: 600; color: #0f172a; font-family: 'Courier New', monospace; background-color: #ffffff; padding: 4px 10px; border-radius: 6px; border: 1px solid #e2e8f0; display: inline-block; margin-top: 4px;">
- ${email}
- </span>
- </td>
- </tr>
- <tr>
- <td style="padding: 12px 0 4px 0;">
- <span style="font-size: 13px; font-weight: 600; color: #64748b;">Password</span><br>
- <span style="font-size: 16px; font-weight: 600; color: #0f172a; font-family: 'Courier New', monospace; background-color: #ffffff; padding: 4px 10px; border-radius: 6px; border: 1px solid #e2e8f0; display: inline-block; margin-top: 4px;">
- ${password}
- </span>
- </td>
- </tr>
- </table>
- </td>
- </tr>
- </table>
- </td>
- </tr>
+ ${credBox([
+ { label: 'Email', value: email },
+ { label: 'Temporary Password', value: password },
+ { label: 'Your Role', value: 'Student / Portal User' },
+ ])}
 
- <!-- Security Notice -->
- <tr>
- <td class="content-padding" style="padding: 20px 40px 0 40px;">
- <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #fefce8; border: 1px solid #fde68a; border-radius: 8px;">
- <tr>
- <td style="padding: 14px 18px;">
- <p style="margin: 0; font-size: 14px; color: #92400e; line-height: 1.5;">
- <strong>🔒 Security Notice:</strong> You will be required to change your password upon your first login for security purposes.
- </p>
- </td>
- </tr>
- </table>
- </td>
- </tr>
+ ${alertBox('This temporary password expires in 48 hours. You will be asked to set your own password the moment you log in. Do not share this email with anyone.', 'warning')}
 
- <!-- CTA Button -->
- <tr>
- <td class="content-padding" style="padding: 28px 40px 44px 40px; text-align: center;">
- <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center">
- <tr>
- <td style="border-radius: 8px; background: linear-gradient(135deg, #4f46e5, #7c3aed);">
- <a href="${loginUrl}" target="_blank" style="display: inline-block; padding: 14px 36px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 8px;">
- Login to Your Account &rarr;
- </a>
- </td>
- </tr>
- </table>
- <p style="margin: 12px 0 0 0; font-size: 13px; color: #9ca3af;">
- Or visit: <a href="${loginUrl}" style="color: #6366f1;">${loginUrl}</a>
- </p>
- </td>
- </tr>
+ ${btnPrimary('Sign In to Your Portal →', loginUrl)}
+
+ ${emailSmall(`If you did not expect this email or believe your account was created in error, contact the T&P office immediately at <a href="tel:+919999908292" style="color:#C07A10;">+91 99999 08292</a> or <a href="mailto:tnp@glbitm.org" style="color:#C07A10;">tnp@glbitm.org</a>.`)}
  `;
 
  return sendMailWithRetry({
  to: email,
- subject: '🎓 Welcome to CDC Platform — Your Account is Ready',
- html: baseTemplate(body)
+ subject: 'Your GL Bajaj T&P Portal Account is Ready',
+ html: brandShell(content, `Welcome ${name}! Your GL Bajaj T&P Portal account is ready.`)
  });
 };
 
@@ -277,136 +304,79 @@ export const sendWelcomeEmail = async (email: string, name: string, password: st
 export const sendAdminPasswordResetEmail = async (email: string, name: string, password: string) => {
  const loginUrl = `${getSiteUrl()}/login`;
 
- const body = `
- <tr>
- <td class="content-padding" style="padding: 44px 40px 0 40px;">
- <h2 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 700; color: #111827;">
- Password Reset Successful 🔐
- </h2>
- <p style="margin: 0 0 28px 0; font-size: 16px; color: #6b7280; line-height: 1.6;">
- An administrator has reset your password for the CDC Platform. Please use the temporary credentials below to log in.
- </p>
- </td>
- </tr>
+ const content = `
+ ${emailH2('Password Reset Successful')}
+ ${emailP(`Dear ${name.split(' ')[0]}, an administrator has reset your GL Bajaj T&P Portal password. Use the temporary password below to sign in.`)}
 
- <!-- Credentials Card -->
- <tr>
- <td class="content-padding" style="padding: 0 40px;">
- <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden;">
- <tr>
- <td style="padding: 16px 24px;">
- <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
- <tr>
- <td style="padding: 8px 0;">
- <span style="font-size: 13px; font-weight: 600; color: #64748b;">New Password</span><br>
- <span style="font-size: 18px; font-weight: 700; color: #000000; font-family: 'Courier New', monospace; background-color: #ffffff; padding: 6px 14px; border-radius: 6px; border: 1px solid #cbd5e1; display: inline-block; margin-top: 8px; letter-spacing: 1px;">
- ${password}
- </span>
- </td>
- </tr>
- </table>
- </td>
- </tr>
- </table>
- </td>
- </tr>
+ ${credBox([
+ { label: 'Login Email', value: email },
+ { label: 'Temporary Password', value: password },
+ ])}
 
- <!-- Security Notice -->
- <tr>
- <td class="content-padding" style="padding: 20px 40px 0 40px;">
- <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #fefce8; border: 1px solid #fde68a; border-radius: 8px;">
- <tr>
- <td style="padding: 14px 18px;">
- <p style="margin: 0; font-size: 14px; color: #92400e; line-height: 1.5;">
- <strong>⚠️ Security Reminder:</strong> You will be asked to set a permanent password immediately after logging in.
- </p>
- </td>
- </tr>
- </table>
- </td>
- </tr>
+ ${alertBox('This temporary password expires in 48 hours. You will be asked to set your own password the moment you log in. Do not share this email with anyone.', 'warning')}
 
- <!-- CTA Button -->
- <tr>
- <td class="content-padding" style="padding: 28px 40px 44px 40px; text-align: center;">
- <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center">
- <tr>
- <td style="border-radius: 8px; background: linear-gradient(135deg, #4f46e5, #7c3aed);">
- <a href="${loginUrl}" target="_blank" style="display: inline-block; padding: 14px 36px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 8px;">
- Go to Login &rarr;
- </a>
- </td>
- </tr>
- </table>
- </td>
- </tr>
+ ${btnPrimary('Sign In to Your Portal →', loginUrl)}
  `;
 
  return sendMailWithRetry({
  to: email,
- subject: '🔐 Temporary Password — CDC Platform',
- html: baseTemplate(body)
+ subject: 'Temporary Password — GL Bajaj T&P Portal',
+ html: brandShell(content, 'Your temporary GL Bajaj T&P Portal password is ready.')
  });
 };
 
 // ─── Password Reset Email ──────────────────────────────────────
-export const sendPasswordResetEmail = async (email: string, name: string, resetUrl: string) => {
- const body = `
- <tr>
- <td class="content-padding" style="padding: 44px 40px 0 40px;">
- <h2 style="margin: 0 0 8px 0; font-size: 22px; font-weight: 700; color: #111827;">
- Reset Your Password
- </h2>
- <p style="margin: 0 0 4px 0; font-size: 16px; color: #6b7280; line-height: 1.6;">
- Hello <strong>${name}</strong>,
- </p>
- <p style="margin: 0 0 28px 0; font-size: 16px; color: #6b7280; line-height: 1.6;">
- We received a request to reset your password for the CDC Platform. Click the button below to set a new password.
- </p>
- </td>
- </tr>
- 
- <!-- CTA Button -->
- <tr>
- <td class="content-padding" style="padding: 0 40px 44px 40px; text-align: center;">
- <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center">
- <tr>
- <td style="border-radius: 8px; background: linear-gradient(135deg, #4f46e5, #7c3aed);">
- <a href="${resetUrl}" target="_blank" style="display: inline-block; padding: 14px 40px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 8px; letter-spacing: 0.5px;">
- Reset Password &rarr;
- </a>
- </td>
- </tr>
+export const sendPasswordResetEmail = async (email: string, name: string, otp: string) => {
+ const digits = otp.split('').map(digit => `
+ <span style="display:inline-block;width:44px;height:52px;background-color:#F2EAD8;border:2px solid #C07A10;border-radius:8px;margin:0 4px;font-family:Georgia,serif;font-size:26px;font-weight:700;color:#3A1C0B;text-align:center;line-height:52px;">${digit}</span>
+ `).join('')
+
+ const content = `
+ ${emailH2('Reset Your Password')}
+ ${emailP(`Hi ${name.split(' ')[0]}, we received a password reset request for your GL Bajaj T&P Portal account. Enter the verification code below to continue.`)}
+
+ <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0;background-color:#FDF7EF;border:1px solid #E8D8C0;border-radius:12px;overflow:hidden;">
+   <tr>
+     <td style="padding:28px;text-align:center;">
+       <p style="margin:0 0 16px;font-family:Arial,sans-serif;font-size:11px;font-weight:700;color:#7A5C42;letter-spacing:2px;text-transform:uppercase;">Your Verification Code</p>
+       <div style="text-align:center;">${digits}</div>
+       <p style="margin:16px 0 0;font-family:Arial,sans-serif;font-size:12px;color:#9A7A60;">
+         This code expires in <strong style="color:#3A1C0B;">10 minutes</strong>
+       </p>
+     </td>
+   </tr>
  </table>
- <p style="margin: 24px 0 0 0; font-size: 13px; color: #9ca3af; line-height: 1.5;">
- If the button doesn't work, copy and paste this link into your browser:<br>
- <a href="${resetUrl}" style="color: #6366f1; text-decoration: none; word-break: break-all;">${resetUrl}</a>
- </p>
- <p style="margin: 20px 0 0 0; font-size: 13px; color: #ef4444; font-weight: 500;">
- This link will expire in 1 hour.
- </p>
- </td>
- </tr>
- 
- <!-- Security Notice -->
- <tr>
- <td class="content-padding" style="padding: 0 40px 20px 40px;">
- <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
- <tr>
- <td style="padding: 14px 18px;">
- <p style="margin: 0; font-size: 13px; color: #64748b; line-height: 1.5;">
- If you didn't request a password reset, you can safely ignore this email. Your password will remain unchanged.
- </p>
- </td>
- </tr>
- </table>
- </td>
- </tr>
+
+ ${alertBox('If you did not request a password reset, ignore this email. Your password will not change. Contact the T&P office if you are concerned about account security.', 'warning')}
+
+ ${btnPrimary('Go to Password Reset →', `${getSiteUrl()}/forgot-password`)}
+
+ ${emailSmall('For security: this code is single-use and will expire after it is used or after 10 minutes, whichever comes first.')}
  `;
 
  return sendMailWithRetry({
  to: email,
- subject: '🔐 Reset Your Password — CDC Platform',
- html: baseTemplate(body)
+ subject: `${otp} is your GL Bajaj T&P verification code`,
+ html: brandShell(content, `Your verification code is ${otp}. Expires in 10 minutes.`)
+ });
+};
+
+export const sendPasswordChangedEmail = async (email: string, name: string) => {
+ const loginUrl = `${getSiteUrl()}/login`;
+
+ const content = `
+ ${emailH2('Password Updated')}
+ ${emailP(`Hi ${name.split(' ')[0]}, your GL Bajaj T&P Portal password was successfully changed at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })} IST.`)}
+
+ ${alertBox('If you did not make this change, contact the T&P office immediately. Your account may have been compromised.', 'warning')}
+
+ ${btnPrimary('Sign In With New Password →', loginUrl)}
+ ${btnGhost('Contact T&P Office', 'mailto:tnp@glbitm.org')}
+ `;
+
+ return sendMailWithRetry({
+ to: email,
+ subject: 'Your GL Bajaj T&P Portal password has been changed',
+ html: brandShell(content, 'Your password was successfully updated.')
  });
 };

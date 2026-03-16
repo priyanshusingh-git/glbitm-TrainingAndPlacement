@@ -1,39 +1,49 @@
 "use client"
-import React from"react";
-import { processSteps } from "@/data/landing";
-import { AnimatedSection, fadeUp } from "@/components/ui/AnimatedSection";
-import { motion } from "framer-motion";
+
+import { processSteps } from "@/data/landing"
+import { AnimatedSection, fadeUp } from "@/components/ui/AnimatedSection"
+import { motion } from "framer-motion"
 
 export default function Process() {
   return (
-    <section id="process" className="section-pad bg-muted overflow-hidden relative">
-      <div className="absolute inset-0 bg-diagonal-lines opacity-5" />
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="section-tag">How It Works</div>
-        <h2 className="section-h2">
-          Your 6-step path to a <br />
-          <span className="text-amber-600 italic">dream placement</span>
-        </h2>
-        <div className="gold-rule mb-14" />
-
-        <AnimatedSection className="relative">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 relative z-10">
-            {processSteps.map((s: { n: string; t: string; d: string }, i: number) => (
-              <motion.div 
-                key={i} 
-                variants={fadeUp}
-                className="text-center group"
-              >
-                <div className="w-14 h-14 mx-auto mb-6 rounded-sm bg-brown-900 border border-amber-500/30 grid place-items-center font-display text-xl font-bold text-amber-500 shadow-lg group-hover:scale-110 transition-base">
-                  {s.n}
-                </div>
-                <h4 className="text-sm font-bold text-brown-900 mb-2">{s.t}</h4>
-                <p className="text-muted-foreground text-xs leading-relaxed font-light px-2">{s.d}</p>
-              </motion.div>
-            ))}
+    <section id="process" className="bg-brown-50 px-4 py-14 sm:px-5 md:px-8 md:py-16 lg:px-[clamp(28px,5vw,80px)] lg:py-[84px] xl:px-[clamp(40px,6vw,80px)]">
+      <div className="mx-auto max-w-[1200px]">
+        <div className="mb-10 grid gap-3 lg:grid-cols-2 lg:items-end lg:gap-10 lg:mb-12">
+          <div>
+            <div className="mb-3 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.28em] text-amber-700">
+              <span className="h-0.5 w-5 rounded-full bg-gradient-to-r from-amber-700 to-amber-400" />
+              Step-by-Step
+            </div>
+            <h2 className="section-h2">
+              The Placement
+              <br />
+              <span className="text-brown-600 italic">Process</span>
+            </h2>
           </div>
+          <p className="max-w-[32rem] text-sm leading-[1.85] text-muted-foreground lg:justify-self-end">
+            A transparent, year-round journey from eligibility check to offer letter - designed around student readiness, recruiter coordination, and clarity at every step.
+          </p>
+        </div>
+
+        <AnimatedSection className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {processSteps.map((step) => (
+            <motion.div
+              key={step.n}
+              variants={fadeUp}
+              className="group relative overflow-hidden rounded-2xl border border-border bg-white px-5 py-6 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-1 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)]"
+            >
+              <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-brown-800 to-amber-500" />
+              <div className="mb-4 grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-brown-800 to-brown-700 font-display text-[17px] font-bold text-white">
+                {step.n}
+              </div>
+              <h3 className="font-display text-[20px] font-bold leading-[1.12] tracking-[-0.02em] text-brown-900">
+                {step.t}
+              </h3>
+              <p className="mt-2 text-[12.5px] leading-[1.72] text-muted-foreground">{step.d}</p>
+            </motion.div>
+          ))}
         </AnimatedSection>
       </div>
     </section>
-  );
+  )
 }
