@@ -518,7 +518,7 @@ export const landingTestimonials = [
 
 export const teamMembers = [
   {
-    role: "Director",
+    role: "Training & Placement Director",
     name: "Dr. Manju Khatri",
     detail: "Training & Placement",
     phone: "+91 99999 08292",
@@ -526,31 +526,31 @@ export const teamMembers = [
   },
   {
     role: "General Manager",
-    name: "Sanjay Kumar",
+    name: "Sunil Chaurasia",
     detail: "Placements & Industry Relations",
     phone: "+91 93507 53651",
-    initial: "SK",
+    initial: "SC",
   },
   {
     role: "Training Head",
-    name: "Pooja Verma",
+    name: "Anant Aggarwal",
     detail: "Aptitude & Technical Training",
     phone: "+91 98184 84644",
-    initial: "PV",
+    initial: "AA",
   },
   {
-    role: "CDC Head",
-    name: "Rakesh Sharma",
+    role: "CDC Dean",
+    name: "V.R. Mishra",
     detail: "Career Development Centre",
     phone: "+91 99530 77590",
-    initial: "RS",
+    initial: "VRM",
   },
   {
     role: "Placement Executive",
-    name: "Amit Mishra",
+    name: "Amit Pandey",
     detail: "Drive Coordination & Logistics",
     phone: "+91 99990 08082",
-    initial: "AM",
+    initial: "AP",
   },
 ]
 

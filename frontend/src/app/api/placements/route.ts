@@ -7,7 +7,7 @@ import { getPlacementDrives, createPlacementDrive } from '@/services/placement.s
  * GET /api/placements - Fetch all placement drives
  */
 export async function GET(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STUDENT', 'STAFF']);
+ const authResult = await authorize(req, ['ADMIN', 'STUDENT']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {

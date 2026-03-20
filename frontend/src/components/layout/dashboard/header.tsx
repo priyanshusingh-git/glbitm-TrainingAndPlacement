@@ -44,7 +44,7 @@ import { cn } from"@/lib/utils"
 import { validateStrongPassword } from"@/lib/validators"
 
 interface HeaderProps {
- role:"student" |"admin" |"trainer"
+ role:"student" |"admin" |"trainer" |"recruiter"
  user: {
  name: string
  email: string
@@ -300,7 +300,7 @@ export function Header({ role, user, headerAction }: HeaderProps) {
  </div>
  <DropdownMenuSeparator className="m-0" />
  <DropdownMenuItem className="justify-center py-2.5 font-medium text-brown-800 transition-colors focus:bg-brown-800/5 focus:text-brown-800" asChild>
- <Link href={role ==="student" ?"/student/updates" :"/admin/updates"}>View all updates</Link>
+ <Link href={role ==="student" ?"/student/updates" : role === "admin" ?"/admin/updates" : role === "trainer" ? "/trainer" : "/recruiter"}>View all updates</Link>
  </DropdownMenuItem>
  </DropdownMenuContent>
  </DropdownMenu>
@@ -324,7 +324,7 @@ export function Header({ role, user, headerAction }: HeaderProps) {
  <DropdownMenuLabel>My Account</DropdownMenuLabel>
  <DropdownMenuSeparator />
  <DropdownMenuItem asChild>
- <Link href={role ==="student" ?"/student/profile" : (role ==="admin" ?"/admin/settings" :"/trainer/profile")}>Profile</Link>
+ <Link href={role ==="student" ?"/student/profile" : role ==="admin" ?"/admin/settings" : role === "trainer" ? "/trainer/profile" : "/recruiter"}>Profile</Link>
  </DropdownMenuItem>
  <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setChangePasswordOpen(true); }} className="cursor-pointer">
  Change Password

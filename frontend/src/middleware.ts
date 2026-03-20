@@ -1,57 +1,110 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { rateLimit } from '@/lib/rate-limit'
+import { applyRateLimitHeaders, generalApiLimiter } from '@/lib/auth-rate-limit'
+import { getIpAddress } from '@/lib/request-context'
+import { getDashboardPath, ROLE_COOKIE_NAME, SESSION_COOKIE_NAME, verifyRoleCookie } from '@/lib/role-cookie'
 
-// Limiters
-const authLimiter = rateLimit({ uniqueTokenPerInterval: 500, interval: 60000 })
-const generalLimiter = rateLimit({ uniqueTokenPerInterval: 1000, interval: 60000 })
+function applySecurityHeaders(response: NextResponse) {
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN')
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  response.headers.set('Referrer-Policy', 'strict-origin')
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+  response.headers.set('X-DNS-Prefetch-Control', 'on')
+
+  if (process.env.NODE_ENV === 'production') {
+    response.headers.set(
+      'Strict-Transport-Security',
+      'max-age=63072000; includeSubDomains; preload'
+    )
+  }
+
+  return response
+}
 
 export async function middleware(request: NextRequest) {
-    const url = request.nextUrl.clone()
-    const path = url.pathname
-    const ip = (request.headers.get("x-forwarded-for") ?? "127.0.0.1").split(",")[0]
+  const url = request.nextUrl.clone()
+  const path = url.pathname
+  const ip = getIpAddress(request)
 
-    // Rate Limiting
-    try {
-        if (path.startsWith('/api/auth') || path.startsWith('/login')) {
-            await authLimiter.check(30, ip)
-        } else if (path.startsWith('/api')) {
-            await generalLimiter.check(100, ip)
-        }
-    } catch {
-        return NextResponse.json({ error: 'Too Many Requests' }, { status: 429 })
+  try {
+    if (path.startsWith('/api') && !path.startsWith('/api/auth/') && path !== '/api/auth/csrf') {
+      const result = await generalApiLimiter.limit(ip)
+      if (!result.success) {
+        const retryAfter = Math.max(
+          1,
+          Math.ceil((Number(result.reset ?? Date.now()) - Date.now()) / 1000)
+        )
+        const response = NextResponse.json(
+          { error: 'Too Many Requests', retryAfter },
+          { status: 429 }
+        )
+        applyRateLimitHeaders(response, result, retryAfter)
+        return applySecurityHeaders(response)
+      }
+    }
+  } catch {
+    return applySecurityHeaders(
+      NextResponse.json({ error: 'Too Many Requests' }, { status: 429 })
+    )
+  }
+
+  const response = NextResponse.next()
+  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value
+  const roleCookie = request.cookies.get(ROLE_COOKIE_NAME)?.value
+  const protectedRoutes = [
+    { prefix: '/student', role: 'STUDENT' },
+    { prefix: '/admin', role: 'ADMIN' },
+    { prefix: '/trainer', role: 'TRAINER' },
+    { prefix: '/recruiter', role: 'RECRUITER' },
+  ] as const
+  const roleSession = sessionCookie && roleCookie ? await verifyRoleCookie(roleCookie).catch(() => null) : null
+
+  if (roleSession && (path === '/' || path === '/login')) {
+    url.pathname = roleSession.mustChangePassword ? '/change-password' : getDashboardPath(roleSession.role)
+    return applySecurityHeaders(NextResponse.redirect(url))
+  }
+
+  if (path === '/change-password') {
+    if (!roleSession) {
+      url.pathname = '/login'
+      return applySecurityHeaders(NextResponse.redirect(url))
     }
 
-    // Security Headers
-    const response = NextResponse.next()
+    if (!roleSession.mustChangePassword) {
+      url.pathname = getDashboardPath(roleSession.role)
+      return applySecurityHeaders(NextResponse.redirect(url))
+    }
+  }
 
-    // Handle authenticated redirection for landing and login pages
-    // Using fb-token and fb-user-role to match Firebase AuthContext
-    const token = request.cookies.get('fb-token')?.value
-    const role = request.cookies.get('fb-user-role')?.value
-
-    if (token && role && (path === '/' || path === '/login')) {
-        const userRole = role.toLowerCase()
-        url.pathname = `/${userRole}`
-        return NextResponse.redirect(url)
+  const matchedProtectedRoute = protectedRoutes.find((route) => path === route.prefix || path.startsWith(`${route.prefix}/`))
+  if (matchedProtectedRoute) {
+    if (!roleSession) {
+      url.pathname = '/login'
+      url.searchParams.set('redirect', path)
+      return applySecurityHeaders(NextResponse.redirect(url))
     }
 
-    // Redirect consolidated login pages to the main login page
-    if (path.startsWith('/admin/login') || path.startsWith('/student/login')) {
-        url.pathname = '/login'
-        return NextResponse.redirect(url)
+    if (roleSession.mustChangePassword && path !== '/change-password') {
+      url.pathname = '/change-password'
+      return applySecurityHeaders(NextResponse.redirect(url))
     }
 
-    response.headers.set('X-Frame-Options', 'DENY')
-    response.headers.set('X-Content-Type-Options', 'nosniff')
-    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+    if (roleSession.role !== matchedProtectedRoute.role) {
+      url.pathname = getDashboardPath(roleSession.role)
+      return applySecurityHeaders(NextResponse.redirect(url))
+    }
+  }
 
-    return response
+  if (path.startsWith('/admin/login') || path.startsWith('/student/login')) {
+    url.pathname = '/login'
+    return applySecurityHeaders(NextResponse.redirect(url))
+  }
+
+  return applySecurityHeaders(response)
 }
 
 export const config = {
-    matcher: [
-        '/((?!_next/static|_next/image|favicon.ico).*)',
-    ],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+  ],
 }

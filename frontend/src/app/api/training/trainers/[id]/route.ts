@@ -13,7 +13,7 @@ export async function GET(
 
  try {
  const { id } = await params;
- if (authResult.role !== 'ADMIN' && authResult.role !== 'STAFF') {
+ if (authResult.role !== 'ADMIN') {
  return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
  }
 

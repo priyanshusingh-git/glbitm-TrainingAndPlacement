@@ -3,9 +3,7 @@
 import { useEffect, useState } from"react";
 import Link from"next/link";
 import { useRouter, useSearchParams } from"next/navigation";
-import { signInWithEmailAndPassword, updatePassword } from"firebase/auth";
 import { AlertCircle, CheckCircle2 } from"lucide-react";
-import { auth } from"@/lib/firebase";
 import { api } from"@/lib/api";
 import { useAuth } from"@/contexts/auth-context";
 import { validateStrongPassword } from"@/lib/validators";
@@ -35,7 +33,7 @@ function Feedback({ message, variant ="error" }: { message: string; variant?:"er
 export function LoginForm() {
  const searchParams = useSearchParams();
  const router = useRouter();
- const { user, updateUser } = useAuth();
+ const { user, login, updateUser } = useAuth();
  const { toast } = useToast();
 
  const [email, setEmail] = useState("");
@@ -71,8 +69,9 @@ export function LoginForm() {
 
  setLoading(false);
  if (user.role ==="STUDENT") router.push("/student");
- else if (user.role ==="ADMIN" || user.role ==="STAFF") router.push("/admin");
+ else if (user.role ==="ADMIN") router.push("/admin");
  else if (user.role ==="TRAINER") router.push("/trainer");
+ else if (user.role ==="RECRUITER") router.push("/recruiter");
  else router.push("/");
  }, [router, searchParams, toast, user]);
 
@@ -84,7 +83,14 @@ export function LoginForm() {
  setError(null);
 
  try {
- await signInWithEmailAndPassword(auth, email, password);
+ const response = await api.post("/auth/login", {
+ email,
+ password,
+ role:"STUDENT",
+ rememberMe: false,
+ username:"",
+ }, { skipRedirect: true });
+ login(response.user);
  } catch (err: any) {
  setError(err.message ||"Invalid email or password");
  setLoading(false);
@@ -110,11 +116,7 @@ export function LoginForm() {
  }
 
  try {
- const firebaseUser = auth.currentUser;
- if (!firebaseUser) throw new Error("No authenticated user found");
-
- await updatePassword(firebaseUser, newPassword);
- await api.post("/auth/change-password", { action:"confirm" });
+ await api.post("/auth/change-password", { newPassword });
 
  updateUser({ mustChangePassword: false });
  setChangePwSuccess("Password changed successfully. Redirecting...");

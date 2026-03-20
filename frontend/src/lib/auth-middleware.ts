@@ -1,29 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authAdmin } from '@/lib/firebase-admin';
 import prisma from '@/lib/db';
+import { SESSION_COOKIE_NAME } from '@/lib/role-cookie';
+import { verifyServerSession } from '@/lib/session';
 
 export type AuthUser = {
  id: string;
  email: string;
  role: string;
+ mustChangePassword: boolean;
 };
 
 export async function authenticate(req: NextRequest): Promise<AuthUser | NextResponse> {
-  let token = req.headers.get("Authorization")?.replace("Bearer ", "");
-  if (!token) {
-    token = req.cookies.get("fb-token")?.value;
-  }
-  if (!token) {
+  const sessionCookie = req.cookies.get(SESSION_COOKIE_NAME)?.value;
+
+  if (!sessionCookie) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
  try {
- const decodedToken = await authAdmin.verifyIdToken(token);
+ const decodedToken = await verifyServerSession(sessionCookie);
  const firebaseUid = decodedToken.uid;
 
  const dbUser = await prisma.user.findUnique({
  where: { id: firebaseUid },
- select: { id: true, email: true, role: true }
+ select: { id: true, email: true, role: true, mustChangePassword: true }
  });
 
  if (!dbUser) {
@@ -33,11 +33,11 @@ export async function authenticate(req: NextRequest): Promise<AuthUser | NextRes
  return {
  id: dbUser.id,
  email: dbUser.email,
- role: dbUser.role
+ role: dbUser.role,
+ mustChangePassword: dbUser.mustChangePassword,
  };
  } catch (error: any) {
- console.error('Firebase Auth Error:', error);
- return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 });
+ return NextResponse.json({ error: 'Invalid or expired session' }, { status: 401 });
  }
 }
 

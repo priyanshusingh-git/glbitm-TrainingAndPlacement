@@ -5,7 +5,7 @@ import { logger } from '@/lib/logger';
 
 // GET /api/training/questions
 export async function GET(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF', 'TRAINER']);
+ const authResult = await authorize(req, ['ADMIN', 'TRAINER']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
 
 // POST /api/training/questions
 export async function POST(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF', 'TRAINER']);
+ const authResult = await authorize(req, ['ADMIN', 'TRAINER']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {

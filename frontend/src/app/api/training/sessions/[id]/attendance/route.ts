@@ -8,7 +8,7 @@ export async function GET(
  req: NextRequest,
  { params }: { params: Promise<{ id: string }> }
 ) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF', 'TRAINER']);
+ const authResult = await authorize(req, ['ADMIN', 'TRAINER']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {
@@ -84,7 +84,7 @@ export async function POST(
  req: NextRequest,
  { params }: { params: Promise<{ id: string }> }
 ) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF', 'TRAINER']);
+ const authResult = await authorize(req, ['ADMIN', 'TRAINER']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {

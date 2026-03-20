@@ -71,3 +71,8 @@ export const trainerNavItems = [
  { type:"header", label:"System" },
  { label:"Settings", href:"/trainer/settings", icon: Settings },
 ]
+
+export const recruiterNavItems = [
+ { type:"header", label:"Overview" },
+ { label:"Dashboard", href:"/recruiter", icon: LayoutDashboard },
+]

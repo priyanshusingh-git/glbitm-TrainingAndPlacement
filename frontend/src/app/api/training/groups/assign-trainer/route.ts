@@ -3,7 +3,7 @@ import { authorize } from '@/lib/auth-middleware';
 import prisma from '@/lib/db';
 
 export async function POST(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF']);
+ const authResult = await authorize(req, ['ADMIN']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF']);
+ const authResult = await authorize(req, ['ADMIN']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {

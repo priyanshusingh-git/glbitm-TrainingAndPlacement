@@ -29,7 +29,7 @@ export const useSidebar = () => useContext(SidebarContext)
 
 interface DashboardLayoutProps {
  children: React.ReactNode
- role:"student" |"admin" |"trainer"
+ role:"student" |"admin" |"trainer" |"recruiter"
  user: {
  name: string
  email: string

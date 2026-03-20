@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
  try {
  // Admin or Staff can list trainers
- if (authResult.role !== 'ADMIN' && authResult.role !== 'STAFF') {
+ if (authResult.role !== 'ADMIN') {
  return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
  }
 

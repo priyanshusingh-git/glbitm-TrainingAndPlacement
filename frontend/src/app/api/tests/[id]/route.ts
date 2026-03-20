@@ -7,7 +7,7 @@ export async function GET(
  req: NextRequest,
  { params }: { params: Promise<{ id: string }> }
 ) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF', 'TRAINER', 'STUDENT']);
+ const authResult = await authorize(req, ['ADMIN', 'TRAINER', 'STUDENT']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {
@@ -61,7 +61,7 @@ export async function PUT(
  req: NextRequest,
  { params }: { params: Promise<{ id: string }> }
 ) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF', 'TRAINER']);
+ const authResult = await authorize(req, ['ADMIN', 'TRAINER']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {
@@ -99,7 +99,7 @@ export async function DELETE(
  req: NextRequest,
  { params }: { params: Promise<{ id: string }> }
 ) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF']);
+ const authResult = await authorize(req, ['ADMIN']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {

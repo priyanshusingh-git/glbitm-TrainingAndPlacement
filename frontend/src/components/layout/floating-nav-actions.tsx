@@ -6,7 +6,7 @@ import { ChevronUp, House } from "lucide-react"
 import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 
-const DASHBOARD_PREFIXES = ["/admin", "/student", "/trainer"]
+const DASHBOARD_PREFIXES = ["/admin", "/student", "/trainer", "/recruiter"]
 
 export function FloatingNavActions() {
   const pathname = usePathname()

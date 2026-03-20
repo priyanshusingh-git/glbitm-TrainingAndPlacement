@@ -11,20 +11,26 @@ import { Button } from"@/components/ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from"@/components/ui/collapsible"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from"@/components/ui/tooltip"
 import { useSidebar } from"@/components/layout/dashboard/dashboard-layout"
-import { studentNavItems, adminNavItems, trainerNavItems } from "@/config/nav-items"
+import { studentNavItems, adminNavItems, trainerNavItems, recruiterNavItems } from "@/config/nav-items"
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet"
 import { useAuth } from "@/contexts/auth-context"
 import { LogOut } from "lucide-react"
 
 interface SidebarProps {
- role:"student" |"admin" |"trainer"
+ role:"student" |"admin" |"trainer" |"recruiter"
 }
 
 export function Sidebar({ role }: SidebarProps) {
  const pathname = usePathname()
  const { collapsed, setCollapsed, mobileOpen, setMobileOpen, expandOnHover } = useSidebar()
   const { user, logout } = useAuth()
-  const navItems = role === "student" ? studentNavItems : (role === "admin" ? adminNavItems : trainerNavItems)
+  const navItems = role === "student"
+    ? studentNavItems
+    : role === "admin"
+      ? adminNavItems
+      : role === "recruiter"
+        ? recruiterNavItems
+        : trainerNavItems
 
   const handleMouseEnter = () => {
     if (expandOnHover && collapsed) {
@@ -41,7 +47,7 @@ export function Sidebar({ role }: SidebarProps) {
   const NavContent = () => (
     <div className="flex h-full flex-col bg-brown-900 text-white">
       <div className={cn("flex h-20 items-center transition-all duration-300", collapsed ? "justify-center" : "px-6")}>
-        <Link href={role === "student" ? "/student" : role === "trainer" ? "/trainer" : "/admin"} className="flex items-center gap-3 overflow-hidden group">
+        <Link href={role === "student" ? "/student" : role === "trainer" ? "/trainer" : role === "recruiter" ? "/recruiter" : "/admin"} className="flex items-center gap-3 overflow-hidden group">
           <div className={cn("relative shrink-0 transition-all duration-300", collapsed ? "h-10 w-10" : "h-10 w-10 ml-1")}>
             <Image 
               src="/glbitm-logo.png" 
@@ -79,7 +85,7 @@ export function Sidebar({ role }: SidebarProps) {
             )
           }
 
-          const isRootPath = item.href === "/student" || item.href === "/admin" || item.href === "/trainer";
+          const isRootPath = item.href === "/student" || item.href === "/admin" || item.href === "/trainer" || item.href === "/recruiter";
           const isActive = isRootPath
             ? pathname === item.href
             : pathname === item.href || (item.items && item.items.some((subItem: any) => pathname.startsWith(item.href) || pathname === subItem.href));

@@ -4,7 +4,7 @@ import prisma from '@/lib/db';
 import { logger } from '@/lib/logger';
 
 export async function GET(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF', 'STUDENT']);
+ const authResult = await authorize(req, ['ADMIN', 'STUDENT']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {

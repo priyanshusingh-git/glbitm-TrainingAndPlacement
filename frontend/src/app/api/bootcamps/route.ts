@@ -4,7 +4,7 @@ import prisma from '@/lib/db';
 
 // GET /api/bootcamps
 export async function GET(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF', 'TRAINER', 'STUDENT']);
+ const authResult = await authorize(req, ['ADMIN', 'TRAINER', 'STUDENT']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
 
 // POST /api/bootcamps
 export async function POST(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF']);
+ const authResult = await authorize(req, ['ADMIN']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {

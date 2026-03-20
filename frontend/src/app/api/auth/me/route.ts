@@ -1,21 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authAdmin } from '@/lib/firebase-admin';
 import prisma from '@/lib/db';
-import { logger } from '@/lib/logger';
+import { authenticate } from '@/lib/auth-middleware';
 
 export async function GET(req: NextRequest) {
- const token = req.headers.get('Authorization')?.replace('Bearer ', '');
-
- if (!token) {
- return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
- }
+ const authResult = await authenticate(req);
+ if (authResult instanceof NextResponse) return authResult;
 
  try {
- const decodedToken = await authAdmin.verifyIdToken(token);
- const firebaseUid = decodedToken.uid;
-
  const dbUser = await prisma.user.findUnique({
- where: { id: firebaseUid },
+ where: { id: authResult.id },
  select: {
  id: true,
  email: true,
@@ -43,8 +36,7 @@ export async function GET(req: NextRequest) {
  photoUrl: dbUser.studentProfile?.photoUrl
  });
 
- } catch (err: any) {
- logger.error('Error fetching user profile:', err);
+ } catch {
  return NextResponse.json({ error: 'Auth failed' }, { status: 401 });
  }
 }
