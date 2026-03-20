@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authenticate } from '@/lib/auth-middleware';
+import { authorize } from '@/lib/auth-middleware';
 import prisma from '@/lib/db';
 
 // --- PROJECTS ---
 export async function GET(req: NextRequest) {
- const authResult = await authenticate(req);
+ const authResult = await authorize(req, ['STUDENT']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {
@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
- const authResult = await authenticate(req);
+ const authResult = await authorize(req, ['STUDENT']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {

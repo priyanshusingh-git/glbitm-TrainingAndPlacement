@@ -101,6 +101,7 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ tone: "error" | "success" | "info"; text: string } | null>(null)
   const [resendCooldown, setResendCooldown] = useState(0)
+  const [resendCount, setResendCount] = useState(0)
   const [resetToken, setResetToken] = useState("")
 
   const otpValue = useMemo(() => otpDigits.join(""), [otpDigits])
@@ -148,6 +149,7 @@ export default function ForgotPasswordPage() {
 
     try {
       await requestOtp()
+      setResendCount(0)
     } catch (error: any) {
       setMessage({
         tone: "error",
@@ -160,12 +162,20 @@ export default function ForgotPasswordPage() {
 
   const handleResend = async () => {
     if (loading || resendCooldown > 0) return
+    if (resendCount >= 3) {
+      setMessage({
+        tone: "error",
+        text: "You have reached the maximum resend attempts for this session.",
+      })
+      return
+    }
 
     setLoading(true)
     setMessage(null)
 
     try {
       await requestOtp()
+      setResendCount((current) => current + 1)
     } catch (error: any) {
       setMessage({
         tone: "error",
@@ -428,10 +438,14 @@ export default function ForgotPasswordPage() {
                 <button
                   type="button"
                   onClick={handleResend}
-                  disabled={loading || resendCooldown > 0}
+                  disabled={loading || resendCooldown > 0 || resendCount >= 3}
                   className="font-semibold text-amber-700 transition-colors hover:text-brown-800 disabled:cursor-not-allowed disabled:text-muted-foreground"
                 >
-                  {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend Code"}
+                  {resendCooldown > 0
+                    ? `Resend in ${resendCooldown}s`
+                    : resendCount >= 3
+                      ? "Resend limit reached"
+                      : "Resend Code"}
                 </button>
               </div>
 
