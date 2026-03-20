@@ -274,7 +274,7 @@ export function TestWizard({ isOpen, onClose, onSuccess, initialData }: TestWiza
  Test Structure
  </Label>
  {selectedQuestions.map((q, idx) => (
- <div key={q.id} className="flex items-center gap-3 p-2 bg-muted/30 rounded-lg border group animate-in fade-in slide-in-from-right-1 duration-300" style={{ animationDelay: `${idx * 50}ms` }}>
+ <div key={q.id} className={`flex items-center gap-3 p-2 bg-muted/30 rounded-lg border group animate-in fade-in slide-in-from-right-1 duration-300 ${TEST_WIZARD_DELAY_CLASSES[Math.min(idx, TEST_WIZARD_DELAY_CLASSES.length - 1)]}`}>
  <Badge variant="outline" className="h-6 w-6 rounded-full p-0 flex items-center justify-center border-brown-800/20 bg-background text-[10px] font-bold">
  {idx + 1}
  </Badge>
@@ -323,3 +323,11 @@ export function TestWizard({ isOpen, onClose, onSuccess, initialData }: TestWiza
  </Dialog>
  )
 }
+const TEST_WIZARD_DELAY_CLASSES = [
+ "delay-0",
+ "delay-75",
+ "delay-100",
+ "delay-150",
+ "delay-200",
+ "delay-300",
+]

@@ -2,9 +2,10 @@ import crypto from "crypto"
 import { SignJWT, jwtVerify } from "jose"
 import type { NextRequest, NextResponse } from "next/server"
 
-export const CSRF_COOKIE_NAME = "__Host-glbitm-csrf"
-
 const isProduction = process.env.NODE_ENV === "production"
+export const CSRF_COOKIE_NAME = isProduction
+  ? "__Host-glbitm-csrf"
+  : "glbitm-csrf"
 
 function getCsrfSecret() {
   return new TextEncoder().encode(process.env.CSRF_SECRET)

@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { motion } from "framer-motion"
 import Navbar from "@/components/layout/Navbar"
 import Footer from "@/components/layout/Footer"
 import NumbersBar from "@/components/sections/NumbersBar"
@@ -32,11 +31,7 @@ export default function Home() {
         <div className="absolute bottom-32 right-[28%] h-[min(180px,50vw)] w-[min(180px,50vw)] rounded-full bg-amber-500/8 blur-[80px]" />
 
         <div className="relative z-10 mx-auto grid w-full max-w-[1200px] gap-7 lg:grid-cols-[1fr_370px] lg:gap-16">
-          <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.75, ease: "easeOut" }}
-          >
+          <div className="animate-in fade-in slide-in-from-bottom-2 duration-700">
             <div className="hero-badge mb-5">
               <div className="live-dot" />
               <span className="text-[10.5px] font-semibold uppercase tracking-[0.15em] text-amber-400">{heroContent.eyebrow}</span>
@@ -60,14 +55,9 @@ export default function Home() {
                 {heroContent.secondaryCta.label}
               </Link>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.97, y: 18 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.85, ease: "easeOut", delay: 0.1 }}
-            className="panel-dark-glass overflow-hidden rounded-[24px] border border-white/10 bg-white/6 p-0 backdrop-blur-[10px] lg:block"
-          >
+          <div className="panel-dark-glass animate-in fade-in slide-in-from-bottom-3 duration-700 overflow-hidden rounded-[24px] border border-white/10 bg-white/6 p-0 backdrop-blur-[10px] lg:block">
             <div className="hidden px-6 pb-0 pt-6 text-[9px] font-bold uppercase tracking-[0.25em] text-white/30 lg:block">
               Placement Highlights 2024
             </div>
@@ -91,7 +81,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 

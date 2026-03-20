@@ -1,8 +1,7 @@
 "use client"
 
 import { processSteps } from "@/data/landing"
-import { AnimatedSection, fadeUp } from "@/components/ui/AnimatedSection"
-import { motion } from "framer-motion"
+import { AnimatedSection } from "@/components/ui/AnimatedSection"
 
 export default function Process() {
   return (
@@ -27,9 +26,8 @@ export default function Process() {
 
         <AnimatedSection className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {processSteps.map((step) => (
-            <motion.div
+            <div
               key={step.n}
-              variants={fadeUp}
               className="group relative overflow-hidden rounded-2xl border border-border bg-white px-5 py-6 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-1 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)]"
             >
               <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-brown-800 to-amber-500" />
@@ -40,7 +38,7 @@ export default function Process() {
                 {step.t}
               </h3>
               <p className="mt-2 text-[12.5px] leading-[1.72] text-muted-foreground">{step.d}</p>
-            </motion.div>
+            </div>
           ))}
         </AnimatedSection>
       </div>

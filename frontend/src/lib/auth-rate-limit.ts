@@ -57,6 +57,14 @@ function getIpEmailSetKey(ip: string) {
   return `auth:emails:${ip}`
 }
 
+function getPasswordResetAbuseKey(email: string) {
+  return `auth:reset-abuse:${email.trim().toLowerCase()}`
+}
+
+function getOtpResendKey(ip: string, email: string) {
+  return `auth:otp-resends:${ip}:${email.trim().toLowerCase()}`
+}
+
 export async function recordPasswordFailure(email: string) {
   const key = getFailureKey(email)
   const count = await redis.incr(key)
@@ -139,6 +147,32 @@ export async function trackCredentialStuffing(ip: string, email: string) {
   }
 
   return { blocked: false, uniqueEmails }
+}
+
+export async function trackPasswordResetAbuse(email: string) {
+  const key = getPasswordResetAbuseKey(email)
+  const count = await redis.incr(key)
+
+  if (count === 1) {
+    await redis.expire(key, 24 * 60 * 60)
+  }
+
+  return Number(count)
+}
+
+export async function clearOtpResendCount(ip: string, email: string) {
+  await redis.del(getOtpResendKey(ip, email))
+}
+
+export async function recordOtpResend(ip: string, email: string) {
+  const key = getOtpResendKey(ip, email)
+  const count = await redis.incr(key)
+
+  if (count === 1) {
+    await redis.expire(key, 10 * 60)
+  }
+
+  return Number(count)
 }
 
 export async function blockIp(ip: string, seconds: number) {

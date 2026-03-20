@@ -20,7 +20,7 @@ export function AuthBrandPanel({
   decoText = "GL",
 }: AuthBrandPanelProps) {
   return (
-    <aside className="relative hidden min-h-screen flex-col justify-between overflow-hidden border-r border-white/5 bg-brown-900 px-[52px] py-12 text-white lg:flex">
+    <aside className="relative hidden flex-col justify-between overflow-hidden border-r border-white/5 bg-brown-900 px-[52px] py-12 text-white lg:flex lg:h-full">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_110%_20%,rgba(232,160,32,0.13)_0%,transparent_55%),radial-gradient(ellipse_60%_80%_at_-10%_80%,rgba(14,8,3,0.5)_0%,transparent_55%)]" />
       <div className="absolute inset-0 bg-diagonal-lines opacity-[0.13]" />
       <div className="pointer-events-none absolute -bottom-20 -right-8 select-none font-display text-[22rem] font-bold leading-none tracking-[-0.08em] text-amber-500/5">

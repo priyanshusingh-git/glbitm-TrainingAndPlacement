@@ -32,6 +32,7 @@ import {
  DialogTitle,
 } from"@/components/ui/dialog"
 import { api } from"@/lib/api"
+import { getAuthErrorMessage } from"@/lib/auth-ui-messages"
 import { Avatar, AvatarFallback, AvatarImage } from"@/components/ui/avatar"
 import { Badge } from"@/components/ui/badge"
 import Link from"next/link"
@@ -133,8 +134,8 @@ export function Header({ role, user, headerAction }: HeaderProps) {
  } catch (error: any) {
  toast({
  variant:"destructive",
- title:"Error",
- description: error.response?.data?.error ||"Failed to update password",
+ title:"Password update failed",
+ description: getAuthErrorMessage(error, { flow:"change-password" }),
  })
  } finally {
  setLoading(false);
@@ -355,6 +356,7 @@ export function Header({ role, user, headerAction }: HeaderProps) {
  required
  minLength={8}
  showStrength={true}
+ showBreachCheck={true}
  placeholder="Enter new password"
  />
  </div>

@@ -1,8 +1,7 @@
 "use client"
 
 import { advisoryMembers } from "@/data/landing"
-import { AnimatedSection, fadeUp } from "@/components/ui/AnimatedSection"
-import { motion } from "framer-motion"
+import { AnimatedSection } from "@/components/ui/AnimatedSection"
 
 export default function Advisory() {
   return (
@@ -27,9 +26,8 @@ export default function Advisory() {
 
         <AnimatedSection className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {advisoryMembers.map((member) => (
-            <motion.article
+            <article
               key={member.name}
-              variants={fadeUp}
               className="rounded-2xl border border-border bg-white px-4 py-5 text-center shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)]"
             >
               <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-brown-800 to-brown-700 font-display text-base font-bold text-white">
@@ -40,7 +38,7 @@ export default function Advisory() {
               <div className="mt-3 inline-flex rounded-full bg-brown-100 px-3 py-1 text-[10px] font-bold text-brown-800">
                 {member.company}
               </div>
-            </motion.article>
+            </article>
           ))}
         </AnimatedSection>
       </div>

@@ -7,6 +7,12 @@ import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 
 const DASHBOARD_PREFIXES = ["/admin", "/student", "/trainer", "/recruiter"]
+const AUTH_PATHS = new Set([
+  "/login",
+  "/forgot-password",
+  "/reset-password",
+  "/change-password",
+])
 
 export function FloatingNavActions() {
   const pathname = usePathname()
@@ -22,7 +28,10 @@ export function FloatingNavActions() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  if (DASHBOARD_PREFIXES.some((prefix) => pathname.startsWith(prefix))) {
+  if (
+    DASHBOARD_PREFIXES.some((prefix) => pathname.startsWith(prefix)) ||
+    AUTH_PATHS.has(pathname)
+  ) {
     return null
   }
 

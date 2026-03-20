@@ -105,6 +105,10 @@ export async function POST(req: NextRequest) {
  });
 
  const userId = fbUser.uid;
+ await authAdmin.setCustomUserClaims(userId, {
+  role: 'student',
+  mustChangePassword: true
+ });
 
  await prisma.$transaction(async (tx: any) => {
  const user = await tx.user.create({

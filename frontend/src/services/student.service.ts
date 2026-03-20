@@ -105,6 +105,10 @@ export const createStudent = async (data: { email: string; admissionId: string; 
  });
  return { user, profile };
  });
+ await authAdmin.setCustomUserClaims(userId, {
+  role: 'student',
+  mustChangePassword: true
+ });
 
  // 5. Send Welcome Email (Non-blocking but logged)
  const emailSent = await sendWelcomeEmail(email, name, password);

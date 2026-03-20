@@ -3,13 +3,19 @@ import prisma from "@/lib/db"
 import { logAuthEvent } from "@/lib/auth-audit"
 import {
   applyRateLimitHeaders,
+  clearOtpResendCount,
   otpRequestLimiter,
   passwordResetLimiter,
+  recordOtpResend,
+  trackPasswordResetAbuse,
 } from "@/lib/auth-rate-limit"
+import { authAdmin } from "@/lib/firebase-admin"
 import { validateCsrfToken } from "@/lib/csrf"
 import { logger } from "@/lib/logger"
 import { generateOtp, hashOtp } from "@/lib/otp"
+import { attachRequestContextHeaders } from "@/lib/request-context"
 import { getIpAddress, getUserAgent } from "@/lib/request-context"
+import { createProblemResponse, handleApiError } from "@/lib/problem-details"
 import { redis } from "@/lib/redis"
 import { sendPasswordResetEmail } from "@/services/email.service"
 
@@ -26,14 +32,21 @@ export async function POST(req: NextRequest) {
     const csrfToken = body?.csrfToken ?? req.headers.get("x-csrf-token")
 
     if (!(await validateCsrfToken(req, csrfToken))) {
-      return NextResponse.json(
-        { error: "Security validation failed.", code: "CSRF_INVALID" },
-        { status: 403 }
-      )
+      return createProblemResponse(req, {
+        status: 403,
+        code: "CSRF_INVALID",
+        title: "Security validation failed",
+        detail: "Security validation failed.",
+      })
     }
 
     if (!email || typeof email !== "string") {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 })
+      return createProblemResponse(req, {
+        status: 400,
+        code: "VALIDATION_ERROR",
+        title: "Invalid request",
+        detail: "Email is required.",
+      })
     }
 
     const [otpLimit, resetLimit] = await Promise.all([
@@ -47,7 +60,10 @@ export async function POST(req: NextRequest) {
         1,
         Math.ceil((Number(rateLimitResult.reset ?? Date.now()) - Date.now()) / 1000)
       )
-      const response = NextResponse.json({ message: GENERIC_MESSAGE }, { status: 200 })
+      const response = attachRequestContextHeaders(
+        req,
+        NextResponse.json({ message: GENERIC_MESSAGE }, { status: 200 })
+      )
       applyRateLimitHeaders(response, rateLimitResult, retryAfter)
       await logAuthEvent({
         action: "RATE_LIMITED",
@@ -63,16 +79,76 @@ export async function POST(req: NextRequest) {
       return response
     }
 
-    const genericResponse = NextResponse.json({ message: GENERIC_MESSAGE })
+    const genericResponse = attachRequestContextHeaders(
+      req,
+      NextResponse.json({ message: GENERIC_MESSAGE })
+    )
 
     const user = await prisma.user.findUnique({
       where: { email },
-      select: { id: true, name: true, email: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        isSuspended: true,
+      },
     })
 
     if (!user) {
       await new Promise((resolve) => setTimeout(resolve, 250))
       return genericResponse
+    }
+
+    if (user.isSuspended) {
+      await new Promise((resolve) => setTimeout(resolve, 250))
+      return genericResponse
+    }
+
+    const resetAbuseCount = await trackPasswordResetAbuse(user.email)
+    if (resetAbuseCount > 3) {
+      await authAdmin.revokeRefreshTokens(user.id)
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          isSuspended: true,
+          suspendedReason:
+            "Your account has been suspended. Contact the T&P office.",
+          suspendedAt: new Date(),
+        },
+      })
+      await logAuthEvent({
+        action: "ACCOUNT_SUSPENDED",
+        ip,
+        userId: user.id,
+        email: user.email,
+        userAgent,
+        metadata: {
+          reason: "password_reset_abuse",
+          resetRequestCount24h: resetAbuseCount,
+        },
+      })
+      await logAuthEvent({
+        action: "SESSION_REVOKED",
+        ip,
+        userId: user.id,
+        email: user.email,
+        userAgent,
+        metadata: {
+          reason: "account_suspended_password_reset_abuse",
+        },
+      })
+      await new Promise((resolve) => setTimeout(resolve, 250))
+      return genericResponse
+    }
+
+    const existingOtp = await redis.get(`otp:${user.email}`)
+    if (existingOtp) {
+      const resendCount = await recordOtpResend(ip, user.email)
+      if (resendCount > 3) {
+        return genericResponse
+      }
+    } else {
+      await clearOtpResendCount(ip, user.email)
     }
 
     const otp = generateOtp()
@@ -104,7 +180,13 @@ export async function POST(req: NextRequest) {
 
     return genericResponse
   } catch (error) {
-    logger.error("Request Password Reset Error:", error)
-    return NextResponse.json({ error: "Server error" }, { status: 500 })
+    return handleApiError(req, error, {
+      event: "auth.password_reset_request.failed",
+      message: "Password reset request failed",
+      context: {
+        ip,
+        userAgent,
+      },
+    })
   }
 }

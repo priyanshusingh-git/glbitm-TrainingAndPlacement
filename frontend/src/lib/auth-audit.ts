@@ -16,6 +16,7 @@ export type AuthAuditAction =
   | "PASSWORD_RESET_SUCCESS"
   | "SESSION_CREATED"
   | "SESSION_REVOKED"
+  | "ACCOUNT_SUSPENDED"
   | "CREDENTIAL_STUFFING"
 
 function hashEmail(email: string) {

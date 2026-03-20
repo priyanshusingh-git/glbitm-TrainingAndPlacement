@@ -1,0 +1,4 @@
+ALTER TABLE "User"
+ADD COLUMN "isSuspended" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN "suspendedReason" TEXT,
+ADD COLUMN "suspendedAt" TIMESTAMP(3);

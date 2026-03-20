@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getOrCreateCsrfToken, setCsrfCookie } from "@/lib/csrf"
 import { isCaptchaRequired } from "@/lib/auth-rate-limit"
-import { getIpAddress } from "@/lib/request-context"
+import { attachRequestContextHeaders, getIpAddress } from "@/lib/request-context"
 
 export async function GET(req: NextRequest) {
   const csrf = await getOrCreateCsrfToken(req)
@@ -13,5 +13,5 @@ export async function GET(req: NextRequest) {
   response.headers.set("Cache-Control", "no-store")
   setCsrfCookie(response, csrf.signedCookie)
 
-  return response
+  return attachRequestContextHeaders(req, response)
 }

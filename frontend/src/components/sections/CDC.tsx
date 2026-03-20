@@ -1,8 +1,7 @@
 "use client"
 
 import { cdcFeatures, internshipCallout } from "@/data/landing"
-import { AnimatedSection, fadeUp } from "@/components/ui/AnimatedSection"
-import { motion } from "framer-motion"
+import { AnimatedSection } from "@/components/ui/AnimatedSection"
 
 export default function CDC() {
   return (
@@ -25,9 +24,8 @@ export default function CDC() {
 
         <AnimatedSection className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {cdcFeatures.map((feature) => (
-            <motion.div
+            <div
               key={feature.title}
-              variants={fadeUp}
               className="rounded-2xl border border-white/7 bg-white/5 px-5 py-5 transition hover:-translate-y-0.5 hover:border-amber-500/26 hover:bg-white/9"
             >
               <div className="mb-3 text-[22px]">{feature.icon}</div>
@@ -45,7 +43,7 @@ export default function CDC() {
                   </span>
                 ))}
               </div>
-            </motion.div>
+            </div>
           ))}
         </AnimatedSection>
 

@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { logAuthEvent } from "@/lib/auth-audit"
 import { validateCsrfToken } from "@/lib/csrf"
 import { createPasswordResetToken, hashOtp } from "@/lib/otp"
-import { getIpAddress, getUserAgent } from "@/lib/request-context"
+import { attachRequestContextHeaders, getIpAddress, getUserAgent } from "@/lib/request-context"
+import { createProblemResponse } from "@/lib/problem-details"
 import { redis } from "@/lib/redis"
 
 export async function POST(req: NextRequest) {
@@ -15,14 +16,21 @@ export async function POST(req: NextRequest) {
   const csrfToken = body?.csrfToken ?? req.headers.get("x-csrf-token")
 
   if (!(await validateCsrfToken(req, csrfToken))) {
-    return NextResponse.json(
-      { error: "Security validation failed.", code: "CSRF_INVALID" },
-      { status: 403 }
-    )
+    return createProblemResponse(req, {
+      status: 403,
+      code: "CSRF_INVALID",
+      title: "Security validation failed",
+      detail: "Security validation failed.",
+    })
   }
 
   if (!email || typeof email !== "string" || !otp || typeof otp !== "string") {
-    return NextResponse.json({ error: "Email and OTP are required" }, { status: 400 })
+    return createProblemResponse(req, {
+      status: 400,
+      code: "VALIDATION_ERROR",
+      title: "Invalid request",
+      detail: "Email and verification code are required.",
+    })
   }
 
   const record = await redis.get<{
@@ -40,7 +48,12 @@ export async function POST(req: NextRequest) {
       email,
       userAgent,
     })
-    return NextResponse.json({ error: "Invalid or expired verification code" }, { status: 400 })
+    return createProblemResponse(req, {
+      status: 400,
+      code: "OTP_INVALID",
+      title: "Invalid request",
+      detail: "Invalid or expired verification code.",
+    })
   }
 
   if (Number(record.attempts) >= 3) {
@@ -56,19 +69,28 @@ export async function POST(req: NextRequest) {
         reason: "too_many_attempts",
       },
     })
-    return NextResponse.json({ error: "Invalid or expired verification code" }, { status: 400 })
+    return createProblemResponse(req, {
+      status: 400,
+      code: "OTP_INVALID",
+      title: "Invalid request",
+      detail: "Invalid or expired verification code.",
+    })
   }
 
   if (record.hash !== hashOtp(otp)) {
     const nextAttempts = Number(record.attempts) + 1
-    const elapsedSeconds = Math.floor((Date.now() - Number(record.createdAt)) / 1000)
-    const remainingTtl = Math.max(1, 10 * 60 - elapsedSeconds)
+    if (nextAttempts >= 3) {
+      await redis.del(`otp:${email}`)
+    } else {
+      const elapsedSeconds = Math.floor((Date.now() - Number(record.createdAt)) / 1000)
+      const remainingTtl = Math.max(1, 10 * 60 - elapsedSeconds)
 
-    await redis.set(
-      `otp:${email}`,
-      { ...record, attempts: nextAttempts },
-      { ex: remainingTtl }
-    )
+      await redis.set(
+        `otp:${email}`,
+        { ...record, attempts: nextAttempts },
+        { ex: remainingTtl }
+      )
+    }
 
     await logAuthEvent({
       action: "OTP_FAILED",
@@ -80,7 +102,12 @@ export async function POST(req: NextRequest) {
         attemptCount: nextAttempts,
       },
     })
-    return NextResponse.json({ error: "Invalid or expired verification code" }, { status: 400 })
+    return createProblemResponse(req, {
+      status: 400,
+      code: "OTP_INVALID",
+      title: "Invalid request",
+      detail: "Invalid or expired verification code.",
+    })
   }
 
   await redis.del(`otp:${email}`)
@@ -97,5 +124,8 @@ export async function POST(req: NextRequest) {
     userAgent,
   })
 
-  return NextResponse.json({ message: "Verification successful", resetToken })
+  return attachRequestContextHeaders(
+    req,
+    NextResponse.json({ message: "Verification successful", resetToken })
+  )
 }

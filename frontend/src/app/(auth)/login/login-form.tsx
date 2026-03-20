@@ -5,6 +5,7 @@ import Link from"next/link";
 import { useRouter, useSearchParams } from"next/navigation";
 import { AlertCircle, CheckCircle2 } from"lucide-react";
 import { api } from"@/lib/api";
+import { consumeSessionExpiredFlag, getAuthErrorMessage } from"@/lib/auth-ui-messages";
 import { useAuth } from"@/contexts/auth-context";
 import { validateStrongPassword } from"@/lib/validators";
 import { Button } from"@/components/ui/button";
@@ -47,16 +48,12 @@ export function LoginForm() {
  const [changePwSuccess, setChangePwSuccess] = useState<string | null>(null);
 
  useEffect(() => {
- if (typeof window !=="undefined") {
- const sessionExpired = sessionStorage.getItem("sessionExpired");
- if (sessionExpired) {
+ if (consumeSessionExpiredFlag()) {
  toast({
  title:"Session expired",
  description:"Please sign in again to continue.",
  variant:"destructive",
  });
- sessionStorage.removeItem("sessionExpired");
- }
  }
 
  if (!user) return;
@@ -92,7 +89,7 @@ export function LoginForm() {
  }, { skipRedirect: true });
  login(response.user);
  } catch (err: any) {
- setError(err.message ||"Invalid email or password");
+ setError(getAuthErrorMessage(err, { flow:"login", role:"STUDENT" }));
  setLoading(false);
  }
  };
@@ -126,7 +123,7 @@ export function LoginForm() {
  setLoading(false);
  }, 900);
  } catch (err: any) {
- setError(err.message ||"Failed to change password");
+ setError(getAuthErrorMessage(err, { flow:"change-password" }));
  setLoading(false);
  }
  };
@@ -150,6 +147,7 @@ export function LoginForm() {
  placeholder="Create a strong password"
  required
  showStrength
+ showBreachCheck
  className="h-11"
  />
  </div>

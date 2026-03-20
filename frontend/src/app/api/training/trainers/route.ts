@@ -70,6 +70,10 @@ export async function POST(req: NextRequest) {
  });
 
  firebaseUserId = fbUser.uid;
+ await authAdmin.setCustomUserClaims(firebaseUserId, {
+  role: 'trainer',
+  mustChangePassword: true
+ });
 
  // 2. Create User in local DB
  let trainer = await prisma.user.create({

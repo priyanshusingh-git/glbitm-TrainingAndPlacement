@@ -22,25 +22,40 @@ const getHeaders = (isFormData = false) => {
 };
 
 const handleResponse = async (res: Response, skipRedirect = false) => {
- if (res.status === 401) {
- if (typeof window !== 'undefined' && !skipRedirect) {
- const isLoginPage = window.location.pathname ==="/login";
- if (!isLoginPage) {
- sessionStorage.setItem("sessionExpired","true");
- window.location.href ="/login";
- }
- }
- throw new Error("Session expired. Please log in again.");
- }
-
  if (!res.ok) {
- const error = await res.json().catch(() => ({}));
- const nextError = new Error(error.error || `API Error: ${res.statusText}`) as Error & Record<string, any>;
- Object.assign(nextError, error);
+ const payload = await res.json().catch(() => ({}));
+ const message =
+  payload.detail ||
+  payload.error ||
+  payload.message ||
+  payload.title ||
+  `API Error: ${res.statusText}`;
 
- if (res.status === 403 && error.code === "CSRF_INVALID") {
- csrfStateCache = null;
- csrfStatePromise = null;
+ const nextError = new Error(message) as Error & Record<string, any>;
+ Object.assign(nextError, payload, {
+  status: payload.status || res.status,
+  requestId: payload.requestId || res.headers.get("x-request-id") || undefined,
+ });
+
+ const isSessionFailure =
+  res.status === 401 &&
+  (payload.code === "UNAUTHORIZED" || payload.code === "INVALID_SESSION");
+
+ if (isSessionFailure) {
+  if (typeof window !== 'undefined' && !skipRedirect) {
+   const isLoginPage = window.location.pathname ==="/login";
+   if (!isLoginPage) {
+    sessionStorage.setItem("sessionExpired","true");
+    window.location.href ="/login";
+   }
+  }
+
+  nextError.message = "Session expired. Please log in again.";
+ }
+
+ if (res.status === 403 && payload.code === "CSRF_INVALID") {
+  csrfStateCache = null;
+  csrfStatePromise = null;
  }
 
  throw nextError;

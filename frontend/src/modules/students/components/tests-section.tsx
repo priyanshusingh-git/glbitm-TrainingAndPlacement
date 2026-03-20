@@ -22,7 +22,7 @@ interface TestsSectionProps {
 const chartConfig = {
  score: {
  label:"Score",
- color:"var(--chart-1)",
+ color:"var(--primary)",
  },
 }
 

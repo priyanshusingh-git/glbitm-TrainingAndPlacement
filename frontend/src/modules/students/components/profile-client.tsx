@@ -2,7 +2,6 @@
 
 
 import { useEffect, useState } from"react";
-import { motion } from"framer-motion";
 import { useAuth } from"@/contexts/auth-context";
 import { api, API_BASE_URL } from"@/lib/api";
 import { cn, getImageUrl } from"@/lib/utils";
@@ -45,15 +44,6 @@ import {
  AlertDialogHeader,
  AlertDialogTitle,
 } from"@/components/ui/alert-dialog"
-
-// Custom styles to maintain better readability for disabled fields (85% opacity instead of default 50%)
-const customStyles = `
- input:disabled,
- select:disabled {
- opacity: 0.85 !important;
- cursor: not-allowed;
- }
-`;
 
 type StudentProfile = {
  id: string;
@@ -973,7 +963,6 @@ export default function StudentProfilePage() {
 
  return (
  <div className="space-y-6">
- <style dangerouslySetInnerHTML={{ __html: customStyles }} />
  <div className="flex items-center justify-between">
  <h1 className="text-3xl font-bold">My Profile</h1>
  </div>
@@ -1884,23 +1873,13 @@ export default function StudentProfilePage() {
  <div className="space-y-6">
  {/* Profile Image - No Background, Increased Size, No Text */}
  <div className="flex justify-center pb-4">
- <motion.div
- className="relative group w-40 h-40"
- whileHover={{ scale: 1.05 }}
- transition={{ type:"spring", stiffness: 400, damping: 10 }}
- >
- <motion.div
- animate={!profile?.photoUrl ? {
- boxShadow: ["0 0 0 0px rgba(59, 130, 246, 0)","0 0 0 4px rgba(59, 130, 246, 0.2)","0 0 0 0px rgba(59, 130, 246, 0)"]
- } : {}}
- transition={{ duration: 2, repeat: Infinity }}
- className="rounded-lg h-40 w-40"
- >
+ <div className="group relative h-40 w-40 transition-transform duration-200 hover:scale-105">
+ <div className={cn("h-40 w-40 rounded-lg", !profile?.photoUrl && "profile-photo-pulse")}>
  <Avatar className="h-40 w-40 rounded-lg border-4 border-white shadow-lg cursor-pointer">
  <AvatarImage src={fullPhotoUrl} className="object-cover" />
  <AvatarFallback className="text-4xl bg-muted">ST</AvatarFallback>
  </Avatar>
- </motion.div>
+ </div>
 
  {!isLocked && (
  <>
@@ -1918,9 +1897,7 @@ export default function StudentProfilePage() {
 
  {/* Professional Badge: Delete (Bottom Right - Only if photo exists) */}
  {profile?.photoUrl && (
- <motion.button
- whileHover={{ scale: 1.1 }}
- whileTap={{ scale: 0.9 }}
+ <button
  onClick={(e) => {
  e.preventDefault();
  e.stopPropagation();
@@ -1938,7 +1915,7 @@ export default function StudentProfilePage() {
  ) : (
  <Trash2 className="h-4 w-4" />
  )}
- </motion.button>
+ </button>
  )}
 
  {/* Desktop Hover Hint */}
@@ -1947,7 +1924,7 @@ export default function StudentProfilePage() {
  </>
  )}
  <input id="photo-upload" type="file" className="hidden" onChange={onSelectFile} disabled={uploading || isLocked} />
- </motion.div>
+ </div>
  </div>
 
  {/* Policy Advisory - Separated from card */}

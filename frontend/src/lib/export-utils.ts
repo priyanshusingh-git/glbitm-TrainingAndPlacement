@@ -27,7 +27,7 @@ export const exportToCSV = (data: any[], fileName: string, columns: { key: strin
  const url = URL.createObjectURL(blob);
  link.setAttribute('href', url);
  link.setAttribute('download', `${fileName}_${new Date().toISOString().split('T')[0]}.csv`);
- link.style.visibility = 'hidden';
+ link.hidden = true;
  document.body.appendChild(link);
  link.click();
  document.body.removeChild(link);

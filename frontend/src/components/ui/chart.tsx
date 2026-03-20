@@ -5,8 +5,7 @@ import * as RechartsPrimitive from 'recharts'
 
 import { cn } from '@/lib/utils'
 
-// Format: { THEME_NAME: CSS_SELECTOR }
-const THEMES = { light: '', dark: '.dark' } as const
+type ChartThemeName = 'light' | 'dark'
 
 export type ChartConfig = {
  [k in string]: {
@@ -14,7 +13,7 @@ export type ChartConfig = {
  icon?: React.ComponentType
  } & (
  | { color?: string; theme?: never }
- | { color?: never; theme: Record<keyof typeof THEMES, string> }
+ | { color?: never; theme: Record<ChartThemeName, string> }
  )
 }
 
@@ -55,50 +54,16 @@ function ChartContainer({
  data-slot="chart"
  data-chart={chartId}
  className={cn(
-"[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line]:stroke-[var(--chart-grid)] [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-polar-grid_line]:stroke-[var(--chart-grid)] [&_.recharts-radial-bar-background-sector]:fill-muted/20 [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted/20 [&_.recharts-reference-line]:stroke-border flex aspect-video justify-center text-xs [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-hidden [&_.recharts-sector]:outline-hidden [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-hidden",
+"[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line]:stroke-border/40 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-polar-grid_line]:stroke-border/40 [&_.recharts-radial-bar-background-sector]:fill-muted/20 [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted/20 [&_.recharts-reference-line]:stroke-border flex aspect-video justify-center text-xs [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-hidden [&_.recharts-sector]:outline-hidden [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-hidden",
  className,
  )}
  {...props}
  >
- <ChartStyle id={chartId} config={config} />
  <RechartsPrimitive.ResponsiveContainer>
  {children}
  </RechartsPrimitive.ResponsiveContainer>
  </div>
  </ChartContext.Provider>
- )
-}
-
-const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
- const colorConfig = Object.entries(config).filter(
- ([, config]) => config.theme || config.color,
- )
-
- if (!colorConfig.length) {
- return null
- }
-
- return (
- <style
- dangerouslySetInnerHTML={{
- __html: Object.entries(THEMES)
- .map(
- ([theme, prefix]) => `
-${prefix} [data-chart=${id}] {
-${colorConfig
- .map(([key, itemConfig]) => {
- const color =
- itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
- itemConfig.color
- return color ? ` --color-${key}: ${color};` : null
- })
- .join('\n')}
-}
-`,
- )
- .join('\n'),
- }}
- />
  )
 }
 
@@ -200,24 +165,24 @@ function ChartTooltipContent({
  <itemConfig.icon />
  ) : (
  !hideIndicator && (
- <div
- className={cn(
- 'shrink-0 rounded-[2px] border-(--color-border) bg-(--color-bg)',
- {
+ <svg
+ aria-hidden="true"
+ className={cn('shrink-0', {
  'h-2.5 w-2.5': indicator === 'dot',
  'w-1': indicator === 'line',
- 'w-0 border-[1.5px] border-dashed bg-transparent':
- indicator === 'dashed',
+ 'w-2.5': indicator === 'dashed',
  'my-0.5': nestLabel && indicator === 'dashed',
- },
+ })}
+ viewBox="0 0 10 10"
+ >
+ {indicator === 'dashed' ? (
+ <line x1="1" y1="5" x2="9" y2="5" stroke={indicatorColor} strokeWidth="1.5" strokeDasharray="2 1" />
+ ) : indicator === 'line' ? (
+ <line x1="5" y1="1" x2="5" y2="9" stroke={indicatorColor} strokeWidth="2" />
+ ) : (
+ <rect x="1" y="1" width="8" height="8" rx="2" fill={indicatorColor} />
  )}
- style={
- {
- '--color-bg': indicatorColor,
- '--color-border': indicatorColor,
- } as React.CSSProperties
- }
- />
+ </svg>
  )
  )}
  <div
@@ -289,12 +254,9 @@ function ChartLegendContent({
  {itemConfig?.icon && !hideIcon ? (
  <itemConfig.icon />
  ) : (
- <div
- className="h-2 w-2 shrink-0 rounded-[2px]"
- style={{
- backgroundColor: item.color,
- }}
- />
+ <svg aria-hidden="true" className="h-2 w-2 shrink-0" viewBox="0 0 8 8">
+ <rect x="0" y="0" width="8" height="8" rx="2" fill={item.color} />
+ </svg>
  )}
  {itemConfig?.label}
  </div>
@@ -349,5 +311,4 @@ export {
  ChartTooltipContent,
  ChartLegend,
  ChartLegendContent,
- ChartStyle,
 }

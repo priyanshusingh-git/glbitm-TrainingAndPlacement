@@ -8,6 +8,7 @@ import { AlertCircle, CheckCircle2, Loader2, LockKeyhole, Mail, MoveRight } from
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/contexts/auth-context"
 import { api, getCsrfState } from "@/lib/api"
+import { consumeSessionExpiredFlag, getAuthErrorMessage } from "@/lib/auth-ui-messages"
 import { generateDeviceFingerprint } from "@/lib/fingerprint"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -121,6 +122,10 @@ function LoginContent() {
   }, [isAuthenticated, isLoading, router, searchParams, user])
 
   useEffect(() => {
+    if (consumeSessionExpiredFlag()) {
+      setError("Your session has expired. Please sign in again.")
+    }
+
     let active = true
 
     const bootstrapSecurity = async () => {
@@ -194,7 +199,7 @@ function LoginContent() {
         }
       }
 
-      setError(err.message || "Unable to sign in right now. Please try again.")
+      setError(getAuthErrorMessage(err, { flow: "login", role }))
       setSuccess(null)
     } finally {
       setLoading(false)
@@ -210,7 +215,7 @@ function LoginContent() {
   }
 
   return (
-    <div className="min-h-screen bg-brown-50 text-foreground lg:grid lg:grid-cols-[1fr_1fr]">
+    <div className="min-h-[100svh] overflow-x-hidden bg-brown-50 text-foreground lg:grid lg:h-screen lg:min-h-0 lg:grid-cols-[1fr_1fr] lg:overflow-hidden">
       <AuthBrandPanel
         eyebrow="Placement Season 2024–25 is Live"
         title={
@@ -235,10 +240,11 @@ function LoginContent() {
         }
       />
 
-      <main className="relative flex min-h-screen items-center justify-center overflow-y-auto bg-brown-50 px-6 py-12 md:px-10 lg:px-[5vw]">
+      <main className="relative min-h-[100svh] overflow-hidden bg-brown-50 px-6 md:px-10 lg:h-full lg:min-h-0 lg:px-[5vw]">
         <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(232,160,32,0.08)_0%,transparent_70%)]" />
 
-        <div className="relative z-10 w-full max-w-[400px]">
+        <div className="relative z-10 flex min-h-[100svh] w-full items-center justify-center overflow-x-hidden overflow-y-auto py-12 lg:h-full lg:min-h-0 lg:py-6">
+        <div className="w-full max-w-[400px]">
           <div className="mb-8">
             <h2 className="mb-1 font-display text-[34px] font-bold leading-[1.1] tracking-[-0.025em] text-brown-900 [font-variation-settings:'opsz'_48,'SOFT'_0,'WONK'_0]">
               Welcome <span className="text-amber-700 italic">back</span>
@@ -399,6 +405,7 @@ function LoginContent() {
               Contact T&amp;P support
             </a>
           </div>
+        </div>
         </div>
       </main>
     </div>

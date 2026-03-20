@@ -1,8 +1,7 @@
 "use client"
 
 import { certificationTracks, trainingModules } from "@/data/landing"
-import { AnimatedSection, fadeUp } from "@/components/ui/AnimatedSection"
-import { motion } from "framer-motion"
+import { AnimatedSection } from "@/components/ui/AnimatedSection"
 
 export default function ForYou() {
   return (
@@ -28,9 +27,8 @@ export default function ForYou() {
         <div className="grid gap-7 lg:grid-cols-[1fr_0.95fr] lg:gap-11">
           <AnimatedSection className="flex flex-col gap-2.5">
             {trainingModules.map((module) => (
-              <motion.div
+              <div
                 key={module.title}
-                variants={fadeUp}
                 className="flex items-start gap-3 rounded-2xl border border-border bg-white px-4 py-4 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:translate-x-1 hover:border-brown-800/30"
               >
                 <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-brown-800 to-brown-700 text-base">
@@ -40,7 +38,7 @@ export default function ForYou() {
                   <h3 className="text-[13px] font-bold text-brown-900">{module.title}</h3>
                   <p className="mt-1 text-[11.5px] leading-[1.65] text-muted-foreground">{module.description}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </AnimatedSection>
 
@@ -52,9 +50,8 @@ export default function ForYou() {
 
             <AnimatedSection className="rounded-[24px] border border-border bg-white px-5 py-2 shadow-[0_2px_12px_rgba(81,41,18,0.07)]">
               {certificationTracks.map((track) => (
-                <motion.div
+                <div
                   key={track.title}
-                  variants={fadeUp}
                   className="flex items-start gap-3 border-b border-border py-4 last:border-b-0"
                 >
                   <div className="rounded-full bg-gradient-to-br from-brown-800 to-brown-700 px-3 py-1 text-[9px] font-bold uppercase tracking-[0.05em] text-white">
@@ -64,7 +61,7 @@ export default function ForYou() {
                     <div className="text-[12.5px] font-bold text-brown-900">{track.title}</div>
                     <div className="mt-0.5 text-[10.5px] text-muted-foreground">{track.description}</div>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </AnimatedSection>
           </div>

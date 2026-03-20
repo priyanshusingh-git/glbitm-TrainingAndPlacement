@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from "next/server"
 import { authenticate } from "@/lib/auth-middleware"
 import { logAuthEvent } from "@/lib/auth-audit"
+import { syncUserAuthClaims } from "@/lib/auth-claims"
 import { validateCsrfToken } from "@/lib/csrf"
 import prisma from "@/lib/db"
 import { logger } from "@/lib/logger"
 import { isPwnedPassword } from "@/lib/pwned"
-import { getIpAddress, getUserAgent } from "@/lib/request-context"
+import { attachRequestContextHeaders, getIpAddress, getUserAgent } from "@/lib/request-context"
+import { createProblemResponse, handleApiError } from "@/lib/problem-details"
 import { getCookieTtlSeconds, ROLE_COOKIE_NAME, signRoleCookie, verifyRoleCookie } from "@/lib/role-cookie"
 import { validateStrongPassword } from "@/lib/validators"
 
@@ -22,44 +24,59 @@ export async function POST(req: NextRequest) {
     const csrfToken = body?.csrfToken ?? req.headers.get("x-csrf-token")
 
     if (!(await validateCsrfToken(req, csrfToken))) {
-      return NextResponse.json(
-        { error: "Security validation failed.", code: "CSRF_INVALID" },
-        { status: 403 }
-      )
+      return createProblemResponse(req, {
+        status: 403,
+        code: "CSRF_INVALID",
+        title: "Security validation failed",
+        detail: "Security validation failed.",
+      })
     }
 
     if (!newPassword || typeof newPassword !== "string") {
-      return NextResponse.json(
-        { error: "A valid new password is required" },
-        { status: 400 }
-      )
+      return createProblemResponse(req, {
+        status: 400,
+        code: "VALIDATION_ERROR",
+        title: "Invalid request",
+        detail: "A valid new password is required.",
+      })
     }
 
     const passwordError = validateStrongPassword(newPassword)
     if (passwordError) {
-      return NextResponse.json({ error: passwordError }, { status: 400 })
+      return createProblemResponse(req, {
+        status: 400,
+        code: "PASSWORD_WEAK",
+        title: "Invalid request",
+        detail: passwordError,
+      })
     }
 
     if (newPassword.trim().toLowerCase() === authResult.email.toLowerCase()) {
-      return NextResponse.json(
-        { error: "Password cannot be the same as your email address." },
-        { status: 400 }
-      )
+      return createProblemResponse(req, {
+        status: 400,
+        code: "PASSWORD_EMAIL_MATCH",
+        title: "Invalid request",
+        detail: "Password cannot be the same as your email address.",
+      })
     }
 
     try {
       if (await isPwnedPassword(newPassword)) {
-        return NextResponse.json(
-          { error: "This password has appeared in known data breaches. Choose a different password." },
-          { status: 400 }
-        )
+        return createProblemResponse(req, {
+          status: 400,
+          code: "PASSWORD_PWNED",
+          title: "Invalid request",
+          detail: "This password has appeared in known data breaches. Choose a different password.",
+        })
       }
     } catch (error) {
       logger.warn("HIBP validation unavailable during password change:", error)
-      return NextResponse.json(
-        { error: "Password validation is temporarily unavailable. Try again shortly." },
-        { status: 503 }
-      )
+      return createProblemResponse(req, {
+        status: 503,
+        code: "PASSWORD_VALIDATION_UNAVAILABLE",
+        title: "Service temporarily unavailable",
+        detail: "Password validation is temporarily unavailable. Try again shortly.",
+      })
     }
 
     const { authAdmin } = await import("@/lib/firebase-admin")
@@ -70,15 +87,22 @@ export async function POST(req: NextRequest) {
       await authAdmin.revokeRefreshTokens(authResult.id)
     } catch (authError) {
       logger.error("Firebase change password error:", authError)
-      return NextResponse.json(
-        { error: "Failed to update password in Auth" },
-        { status: 500 }
-      )
+      return createProblemResponse(req, {
+        status: 500,
+        code: "PASSWORD_CHANGE_FAILED",
+        title: "Request failed",
+        detail: "We could not update your password right now. Please try again later.",
+      })
     }
 
     await prisma.user.update({
       where: { id: authResult.id },
       data: { mustChangePassword: false },
+    })
+    await syncUserAuthClaims({
+      uid: authResult.id,
+      role: authResult.role as "ADMIN" | "STUDENT" | "TRAINER" | "RECRUITER",
+      mustChangePassword: false,
     })
 
     const response = NextResponse.json({ message: "Password changed successfully" })
@@ -132,9 +156,16 @@ export async function POST(req: NextRequest) {
       }),
     ])
 
-    return response
+    return attachRequestContextHeaders(req, response)
   } catch (error) {
-    logger.error("Change Password Error:", error)
-    return NextResponse.json({ error: "Server error" }, { status: 500 })
+    return handleApiError(req, error, {
+      event: "auth.password_change.failed",
+      message: "Password change failed",
+      context: {
+        userId: authResult.id,
+        ip,
+        userAgent,
+      },
+    })
   }
 }

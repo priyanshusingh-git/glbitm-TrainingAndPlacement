@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { AlertCircle, ArrowLeft, CheckCircle2, Info, Loader2, LockKeyhole, Mail, RefreshCw, ShieldCheck } from "lucide-react"
 import { api } from "@/lib/api"
+import { getAuthErrorMessage } from "@/lib/auth-ui-messages"
 import { validateStrongPassword } from "@/lib/validators"
 import { AuthBrandPanel } from "@/components/layout/auth-brand-panel"
 import { Button } from "@/components/ui/button"
@@ -153,7 +154,7 @@ export default function ForgotPasswordPage() {
     } catch (error: any) {
       setMessage({
         tone: "error",
-        text: error.message || "Unable to start password recovery right now.",
+        text: getAuthErrorMessage(error, { flow: "forgot-password" }),
       })
     } finally {
       setLoading(false)
@@ -179,7 +180,7 @@ export default function ForgotPasswordPage() {
     } catch (error: any) {
       setMessage({
         tone: "error",
-        text: error.message || "Unable to resend the verification code.",
+        text: getAuthErrorMessage(error, { flow: "forgot-password" }),
       })
     } finally {
       setLoading(false)
@@ -234,7 +235,7 @@ export default function ForgotPasswordPage() {
     } catch (error: any) {
       setMessage({
         tone: "error",
-        text: error.message || "Invalid OTP. Please check the code and try again.",
+        text: getAuthErrorMessage(error, { flow: "verify-otp" }),
       })
     } finally {
       setLoading(false)
@@ -270,7 +271,7 @@ export default function ForgotPasswordPage() {
     } catch (error: any) {
       setMessage({
         tone: "error",
-        text: error.message || "Unable to reset your password right now.",
+        text: getAuthErrorMessage(error, { flow: "reset-password" }),
       })
     } finally {
       setLoading(false)
@@ -278,7 +279,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-brown-50 text-foreground lg:grid lg:grid-cols-[1fr_1fr]">
+    <div className="min-h-[100svh] overflow-x-hidden bg-brown-50 text-foreground lg:grid lg:h-screen lg:min-h-0 lg:grid-cols-[1fr_1fr] lg:overflow-hidden">
       <AuthBrandPanel
         eyebrow="Secure Account Recovery"
         title={
@@ -322,10 +323,11 @@ export default function ForgotPasswordPage() {
         }
       />
 
-      <main className="relative flex min-h-screen items-center justify-center overflow-y-auto bg-brown-50 px-6 py-10 md:px-10 lg:px-[5vw]">
+      <main className="relative min-h-[100svh] overflow-hidden bg-brown-50 px-6 md:px-10 lg:h-full lg:min-h-0 lg:px-[5vw]">
         <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(232,160,32,0.08)_0%,transparent_70%)]" />
 
-        <div className="relative z-10 w-full max-w-[400px]">
+        <div className="relative z-10 flex min-h-[100svh] w-full items-center justify-center overflow-x-hidden overflow-y-auto py-10 lg:h-full lg:min-h-0 lg:py-6">
+        <div className="w-full max-w-[400px]">
           {step !== "success" && <StepIndicator currentStep={step} />}
 
           {step === 1 && (
@@ -495,6 +497,7 @@ export default function ForgotPasswordPage() {
                       placeholder="Min. 8 characters"
                       className="auth-input pl-11"
                       showStrength
+                      showBreachCheck
                       required
                     />
                   </div>
@@ -552,6 +555,7 @@ export default function ForgotPasswordPage() {
               </Button>
             </section>
           )}
+        </div>
         </div>
       </main>
     </div>

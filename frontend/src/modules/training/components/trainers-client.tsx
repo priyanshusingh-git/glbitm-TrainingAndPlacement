@@ -10,7 +10,6 @@ import {
  Pencil, Filter, MoreHorizontal, FileDown, CheckCircle2, Shield,
  RotateCcw, Building2, MapPin, Globe, Phone, Plus, ExternalLink
 } from"lucide-react"
-import { motion, AnimatePresence } from"framer-motion"
 import { cn } from"@/lib/utils"
 import { Badge } from"@/components/ui/badge"
 import {
@@ -296,15 +295,8 @@ export default function AdminTrainersPage() {
  </TableRow>
  </TableHeader>
  <TableBody>
- <AnimatePresence mode="popLayout">
  {filteredTrainers.map((trainer) => (
- <motion.tr key={trainer.id}
- className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
- layout
- initial={{ opacity: 0 }}
- animate={{ opacity: 1 }}
- exit={{ opacity: 0 }}
- >
+ <TableRow key={trainer.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
  <TableCell>
  <div className="flex items-center gap-3">
  <Avatar className="h-9 w-9 ring-2 ring-background">
@@ -356,9 +348,8 @@ export default function AdminTrainersPage() {
  </DropdownMenuContent>
  </DropdownMenu>
  </TableCell>
- </motion.tr>
+ </TableRow>
  ))}
- </AnimatePresence>
  </TableBody>
  </Table>
  </div>

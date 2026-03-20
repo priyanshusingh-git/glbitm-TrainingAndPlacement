@@ -14,12 +14,15 @@ import {
   trackCredentialStuffing,
 } from "@/lib/auth-rate-limit"
 import { logAuthEvent } from "@/lib/auth-audit"
+import { createRoleBoundIdToken } from "@/lib/auth-claims"
 import { validateCsrfToken } from "@/lib/csrf"
 import { signInWithEmailAndPasswordServer } from "@/lib/firebase-rest"
 import { verifyHCaptchaToken } from "@/lib/hcaptcha"
-import { getIpAddress, getUserAgent } from "@/lib/request-context"
+import { attachRequestContextHeaders, getIpAddress, getUserAgent } from "@/lib/request-context"
 import { getDashboardPath } from "@/lib/role-cookie"
 import { applySessionCookies, createSessionCookies } from "@/lib/session"
+import { createProblemResponse } from "@/lib/problem-details"
+import { sendSecurityAlertEmail } from "@/services/email.service"
 
 const loginSchema = z.object({
   email: z.string().email().max(255).transform((value) => value.trim().toLowerCase()),
@@ -40,10 +43,12 @@ export async function POST(req: NextRequest) {
   const parsed = loginSchema.safeParse(body)
 
   if (!parsed.success) {
-    return NextResponse.json(
-      { error: "Invalid email or password.", code: "AUTH_FAILED" },
-      { status: 400 }
-    )
+    return createProblemResponse(req, {
+      status: 400,
+      code: "AUTH_FAILED",
+      title: "Authentication failed",
+      detail: "Invalid email or password.",
+    })
   }
 
   const csrfToken = parsed.data.csrfToken ?? req.headers.get("x-csrf-token")
@@ -61,26 +66,32 @@ export async function POST(req: NextRequest) {
         selectedRole: role,
       },
     })
-    return NextResponse.json({ success: true })
+    return attachRequestContextHeaders(req, NextResponse.json({ success: true }))
   }
 
   if (!(await validateCsrfToken(req, csrfToken))) {
-    return NextResponse.json(
-      { error: "Security validation failed.", code: "CSRF_INVALID" },
-      { status: 403 }
-    )
+    return createProblemResponse(req, {
+      status: 403,
+      code: "CSRF_INVALID",
+      title: "Security validation failed",
+      detail: "Security validation failed.",
+    })
   }
 
   const blockedIp = await isIpBlocked(ip)
   if (blockedIp.blocked) {
-    const response = NextResponse.json(
-      {
-        error: "Too many attempts from your network. Try again later.",
-        code: "RATE_LIMITED",
+    const response = createProblemResponse(req, {
+      status: 429,
+      code: "RATE_LIMITED",
+      title: "Too many requests",
+      detail: "Too many attempts from your network. Try again later.",
+      extensions: {
         retryAfter: blockedIp.retryAfter,
       },
-      { status: 429 }
-    )
+      headers: {
+        "Retry-After": String(blockedIp.retryAfter),
+      },
+    })
     applyRateLimitHeaders(response, {}, blockedIp.retryAfter)
     await logAuthEvent({
       action: "RATE_LIMITED",
@@ -100,14 +111,18 @@ export async function POST(req: NextRequest) {
   const credentialStuffing = await trackCredentialStuffing(ip, email)
   if (credentialStuffing.blocked) {
     const retryAfter = 24 * 60 * 60
-    const response = NextResponse.json(
-      {
-        error: "Too many attempts from your network. Try again later.",
-        code: "RATE_LIMITED",
+    const response = createProblemResponse(req, {
+      status: 429,
+      code: "RATE_LIMITED",
+      title: "Too many requests",
+      detail: "Too many attempts from your network. Try again later.",
+      extensions: {
         retryAfter,
       },
-      { status: 429 }
-    )
+      headers: {
+        "Retry-After": String(retryAfter),
+      },
+    })
     applyRateLimitHeaders(response, {}, retryAfter)
     await logAuthEvent({
       action: "CREDENTIAL_STUFFING",
@@ -118,6 +133,11 @@ export async function POST(req: NextRequest) {
       metadata: {
         uniqueEmails: credentialStuffing.uniqueEmails,
       },
+    })
+    void sendSecurityAlertEmail({
+      ip,
+      uniqueEmails: credentialStuffing.uniqueEmails,
+      userAgent,
     })
     return response
   }
@@ -135,14 +155,18 @@ export async function POST(req: NextRequest) {
       1,
       Math.ceil((Number(rateLimitResult.reset ?? Date.now()) - Date.now()) / 1000)
     )
-    const response = NextResponse.json(
-      {
-        error: "Too many attempts from your network. Try again later.",
-        code: "RATE_LIMITED",
+    const response = createProblemResponse(req, {
+      status: 429,
+      code: "RATE_LIMITED",
+      title: "Too many requests",
+      detail: "Too many attempts from your network. Try again later.",
+      extensions: {
         retryAfter,
       },
-      { status: 429 }
-    )
+      headers: {
+        "Retry-After": String(retryAfter),
+      },
+    })
     applyRateLimitHeaders(response, rateLimitResult, retryAfter)
     await logAuthEvent({
       action: "RATE_LIMITED",
@@ -166,25 +190,27 @@ export async function POST(req: NextRequest) {
   const captchaRequired = await isCaptchaRequired(ip)
   if (captchaRequired) {
     if (!hcaptchaToken) {
-      return NextResponse.json(
-        {
-          error: "Please complete the captcha challenge.",
-          code: "CAPTCHA_REQUIRED",
+      return createProblemResponse(req, {
+        status: 400,
+        code: "CAPTCHA_REQUIRED",
+        title: "Captcha required",
+        detail: "Please complete the captcha challenge.",
+        extensions: {
           captchaRequired: true,
         },
-        { status: 400 }
-      )
+      })
     }
 
     if (!(await verifyHCaptchaToken({ token: hcaptchaToken, ip }))) {
-      return NextResponse.json(
-        {
-          error: "Captcha verification failed. Please try again.",
-          code: "CAPTCHA_REQUIRED",
+      return createProblemResponse(req, {
+        status: 400,
+        code: "CAPTCHA_REQUIRED",
+        title: "Captcha required",
+        detail: "Captcha verification failed. Please try again.",
+        extensions: {
           captchaRequired: true,
         },
-        { status: 400 }
-      )
+      })
     }
   }
 
@@ -196,6 +222,8 @@ export async function POST(req: NextRequest) {
         id: true,
         email: true,
         role: true,
+        isSuspended: true,
+        suspendedReason: true,
         mustChangePassword: true,
         studentProfile: {
           select: {
@@ -222,17 +250,46 @@ export async function POST(req: NextRequest) {
       })
       await applyProgressiveDelay(failure.emailFailureCount)
 
-      return NextResponse.json(
-        {
-          error: "Invalid email or password.",
-          code: "AUTH_FAILED",
+      return createProblemResponse(req, {
+        status: 401,
+        code: "AUTH_FAILED",
+        title: "Authentication failed",
+        detail: "Invalid email or password.",
+        extensions: {
           captchaRequired: failure.captchaRequired,
         },
-        { status: 401 }
-      )
+      })
     }
 
-    if (user.role !== role) {
+    if (user.isSuspended) {
+      await logAuthEvent({
+        action: "ACCOUNT_SUSPENDED",
+        ip,
+        userId: user.id,
+        email,
+        userAgent,
+        fingerprint,
+        metadata: {
+          reason: user.suspendedReason || "manual_or_system_suspension",
+        },
+      })
+
+      return createProblemResponse(req, {
+        status: 403,
+        code: "ACCOUNT_SUSPENDED",
+        title: "Access denied",
+        detail:
+          user.suspendedReason || "Your account has been suspended. Contact the T&P office.",
+      })
+    }
+
+    const roleBoundToken = await createRoleBoundIdToken({
+      uid: user.id,
+      role: user.role as "ADMIN" | "STUDENT" | "TRAINER" | "RECRUITER",
+      mustChangePassword: user.mustChangePassword,
+    })
+
+    if (roleBoundToken.role !== role) {
       const failure = await recordLoginFailure({ ip, email, fingerprint })
       await logAuthEvent({
         action: "LOGIN_ROLE_MISMATCH",
@@ -243,29 +300,30 @@ export async function POST(req: NextRequest) {
         fingerprint,
         metadata: {
           selectedRole: role,
-          actualRole: user.role,
+          actualRole: roleBoundToken.role,
           failCount: failure.emailFailureCount,
         },
       })
       await applyProgressiveDelay(failure.emailFailureCount)
 
-      return NextResponse.json(
-        {
-          error: "Invalid credentials for this role.",
-          code: "ROLE_MISMATCH",
+      return createProblemResponse(req, {
+        status: 401,
+        code: "ROLE_MISMATCH",
+        title: "Authentication failed",
+        detail: "Invalid credentials for this role.",
+        extensions: {
           captchaRequired: failure.captchaRequired,
         },
-        { status: 401 }
-      )
+      })
     }
 
     await clearLoginFailures({ ip, email, fingerprint })
 
     const cookieData = await createSessionCookies({
-      idToken: signInResult.idToken,
+      idToken: roleBoundToken.idToken,
       uid: user.id,
-      role: user.role as "ADMIN" | "STUDENT" | "TRAINER" | "RECRUITER",
-      mustChangePassword: user.mustChangePassword,
+      role: roleBoundToken.role,
+      mustChangePassword: roleBoundToken.mustChangePassword,
       rememberMe,
     })
 
@@ -273,21 +331,20 @@ export async function POST(req: NextRequest) {
       user: {
         id: user.id,
         email: user.email,
-        role: user.role,
-        mustChangePassword: user.mustChangePassword,
+        role: roleBoundToken.role,
+        mustChangePassword: roleBoundToken.mustChangePassword,
         name: user.studentProfile?.name,
         photoUrl: user.studentProfile?.photoUrl,
       },
-      redirectUrl: user.mustChangePassword
+      redirectUrl: roleBoundToken.mustChangePassword
         ? "/change-password"
-        : getDashboardPath(user.role as "ADMIN" | "STUDENT" | "TRAINER" | "RECRUITER"),
+        : getDashboardPath(roleBoundToken.role),
     })
 
     applySessionCookies(response, {
       ...cookieData,
       rememberMe,
     })
-
     await Promise.all([
       logAuthEvent({
         action: "LOGIN_SUCCESS",
@@ -315,7 +372,7 @@ export async function POST(req: NextRequest) {
       }),
     ])
 
-    return response
+    return attachRequestContextHeaders(req, response)
   } catch {
     const failure = await recordLoginFailure({ ip, email, fingerprint })
     await logAuthEvent({
@@ -332,13 +389,14 @@ export async function POST(req: NextRequest) {
     })
     await applyProgressiveDelay(failure.emailFailureCount)
 
-    return NextResponse.json(
-      {
-        error: "Invalid email or password.",
-        code: "AUTH_FAILED",
+    return createProblemResponse(req, {
+      status: 401,
+      code: "AUTH_FAILED",
+      title: "Authentication failed",
+      detail: "Invalid email or password.",
+      extensions: {
         captchaRequired: failure.captchaRequired,
       },
-      { status: 401 }
-    )
+    })
   }
 }

@@ -1,18 +1,21 @@
 "use client"
 
 import * as React from"react"
-import { Eye, EyeOff, Check, X } from"lucide-react"
+import { Eye, EyeOff, Check, X, ShieldAlert, ShieldCheck, Loader2, AlertCircle } from"lucide-react"
 import { Input } from"@/components/ui/input"
+import { api } from"@/lib/api"
+import { getAuthErrorMessage } from"@/lib/auth-ui-messages"
 import { cn } from"@/lib/utils"
 import { checkPasswordStrength } from"@/lib/validators"
 
 export interface PasswordInputProps
  extends React.InputHTMLAttributes<HTMLInputElement> {
  showStrength?: boolean
+ showBreachCheck?: boolean
 }
 
 export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputProps>(
- ({ className, showStrength = false, onChange, ...props }, ref) => {
+ ({ className, showStrength = false, showBreachCheck = false, onChange, value, ...props }, ref) => {
  const [showPassword, setShowPassword] = React.useState(false)
  const [strength, setStrength] = React.useState(0)
  const [requirements, setRequirements] = React.useState({
@@ -22,12 +25,55 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
  number: false,
  special: false,
  })
+ const [breachStatus, setBreachStatus] = React.useState<"idle" | "checking" | "safe" | "breached" | "unavailable">("idle")
+ const [breachMessage, setBreachMessage] = React.useState("")
 
  const calculateStrength = (value: string) => {
  const { score, requirements: newRequirements } = checkPasswordStrength(value)
  setRequirements(newRequirements)
  setStrength(score)
  }
+
+ React.useEffect(() => {
+ const rawValue = typeof value === "string" ? value : ""
+
+ if (!showBreachCheck) {
+ setBreachStatus("idle")
+ setBreachMessage("")
+ return
+ }
+
+ if (rawValue.length < 8) {
+ setBreachStatus("idle")
+ setBreachMessage("")
+ return
+ }
+
+ let active = true
+ setBreachStatus("checking")
+ setBreachMessage("Checking breached-password database...")
+
+ const timer = window.setTimeout(async () => {
+ try {
+ const response = await api.post("/auth/password-check", { password: rawValue }, { skipRedirect: true })
+ if (!active) return
+
+ setBreachStatus(response.breached ? "breached" : "safe")
+ setBreachMessage(response.message)
+ } catch (error: any) {
+ if (!active) return
+
+ const message = getAuthErrorMessage(error, { flow: "change-password" })
+ setBreachStatus(error?.code === "PASSWORD_CHECK_UNAVAILABLE" ? "unavailable" : "idle")
+ setBreachMessage(message)
+ }
+ }, 700)
+
+ return () => {
+ active = false
+ window.clearTimeout(timer)
+ }
+ }, [showBreachCheck, value])
 
  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
  if (showStrength) {
@@ -96,12 +142,11 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
  </span>
  </div>
 
- <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
- <div
- className={cn("h-full transition-all duration-300 ease-out", getStrengthColor(strength))}
- style={{ width: `${strength}%` }}
+ <progress
+ className={cn("password-strength-progress h-1.5 w-full overflow-hidden rounded-full bg-muted", getStrengthColor(strength))}
+ max={100}
+ value={strength}
  />
- </div>
 
  <div className="grid grid-cols-2 gap-1.5 mt-2">
  <RequirementItem label="Min 8 chars" met={requirements.length} />
@@ -110,6 +155,24 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
  <RequirementItem label="Number" met={requirements.number} />
  <RequirementItem label="Symbol" met={requirements.special} />
  </div>
+
+ {showBreachCheck && breachStatus !== "idle" && (
+ <div
+ className={cn(
+ "mt-2 flex items-start gap-2 rounded-md border px-3 py-2 text-xs",
+ breachStatus === "checking" && "border-brown-200 bg-brown-50 text-brown-700",
+ breachStatus === "safe" && "border-emerald-200 bg-emerald-50 text-emerald-700",
+ breachStatus === "breached" && "border-red-200 bg-red-50 text-red-700",
+ breachStatus === "unavailable" && "border-amber-200 bg-amber-50 text-amber-700"
+ )}
+ >
+ {breachStatus === "checking" && <Loader2 className="mt-0.5 h-3.5 w-3.5 shrink-0 animate-spin" />}
+ {breachStatus === "safe" && <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0" />}
+ {breachStatus === "breached" && <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" />}
+ {breachStatus === "unavailable" && <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />}
+ <span>{breachMessage}</span>
+ </div>
+ )}
  </div>
  )}
  </div>

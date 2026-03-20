@@ -16,11 +16,11 @@ import { PageHeader } from"@/components/layout/page-header"
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
 const chartConfig = {
- placed: { label:"Placed", color:"var(--chart-1)" },
- total: { label:"Total Students", color:"var(--chart-2)" },
- count: { label:"Students", color:"var(--chart-1)" },
- percentage: { label:"Placement %", color:"var(--chart-1)" },
- avgPackage: { label:"Avg Package (LPA)", color:"var(--chart-2)" },
+ placed: { label:"Placed", color:"var(--primary)" },
+ total: { label:"Total Students", color:"#93c5fd" },
+ count: { label:"Students", color:"var(--primary)" },
+ percentage: { label:"Placement %", color:"var(--primary)" },
+ avgPackage: { label:"Avg Package (LPA)", color:"#93c5fd" },
 }
 
 export default function AnalyticsPage() {
@@ -155,8 +155,8 @@ export default function AnalyticsPage() {
  <YAxis yAxisId="right" orientation="right" tickLine={false} axisLine={false} />
  <ChartTooltip content={<ChartTooltipContent />} />
  <Legend />
- <Line yAxisId="left" type="monotone" dataKey="percentage" stroke="var(--chart-1)" strokeWidth={2} name="Placement %" />
- <Line yAxisId="right" type="monotone" dataKey="avgPackage" stroke="var(--chart-2)" strokeWidth={2} name="Avg Package" />
+ <Line yAxisId="left" type="monotone" dataKey="percentage" stroke="var(--primary)" strokeWidth={2} name="Placement %" />
+ <Line yAxisId="right" type="monotone" dataKey="avgPackage" stroke="#93c5fd" strokeWidth={2} name="Avg Package" />
  </LineChart>
  </ChartContainer>
  </CardContent>
@@ -174,7 +174,7 @@ export default function AnalyticsPage() {
  <XAxis dataKey="range" tickLine={false} axisLine={false} tickMargin={10} />
  <YAxis tickLine={false} axisLine={false} />
  <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
- <Bar dataKey="count" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
+ <Bar dataKey="count" fill="var(--primary)" radius={[4, 4, 0, 0]} />
  </BarChart>
  </ChartContainer>
  </CardContent>
@@ -196,8 +196,8 @@ export default function AnalyticsPage() {
  <YAxis tickLine={false} axisLine={false} />
  <ChartTooltip content={<ChartTooltipContent />} />
  <Legend />
- <Bar dataKey="placed" fill="var(--chart-1)" name="Placed" radius={[4, 4, 0, 0]} />
- <Bar dataKey="total" fill="var(--chart-2)" name="Total Students" radius={[4, 4, 0, 0]} />
+ <Bar dataKey="placed" fill="var(--primary)" name="Placed" radius={[4, 4, 0, 0]} />
+ <Bar dataKey="total" fill="#93c5fd" name="Total Students" radius={[4, 4, 0, 0]} />
  </BarChart>
  </ChartContainer>
  </CardContent>
@@ -217,7 +217,7 @@ export default function AnalyticsPage() {
  <XAxis type="number" hide />
  <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} width={100} />
  <ChartTooltip content={<ChartTooltipContent />} />
- <Bar dataKey="students" fill="var(--chart-1)" radius={[0, 4, 4, 0]} barSize={32} />
+ <Bar dataKey="students" fill="var(--primary)" radius={[0, 4, 4, 0]} barSize={32} />
  </BarChart>
  </ChartContainer>
  </CardContent>
