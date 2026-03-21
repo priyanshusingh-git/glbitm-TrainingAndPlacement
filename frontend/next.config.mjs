@@ -9,10 +9,12 @@ const withSerwist = withSerwistInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   devIndicators: false,
+  turbopack: {},
   images: {
     unoptimized: true,
   },
 }
 
 export default withSerwist(nextConfig)
+
 

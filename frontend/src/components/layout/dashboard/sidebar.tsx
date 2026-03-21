@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect } from "react"
+
 import Link from"next/link"
 import Image from"next/image"
 import { usePathname } from"next/navigation"
@@ -31,6 +33,17 @@ export function Sidebar({ role }: SidebarProps) {
       : role === "recruiter"
         ? recruiterNavItems
         : trainerNavItems
+
+  // Close mobile nav on Escape key (accessibility — spec E.6.9)
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && mobileOpen) {
+        setMobileOpen(false)
+      }
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [mobileOpen, setMobileOpen])
 
   const handleMouseEnter = () => {
     if (expandOnHover && collapsed) {
