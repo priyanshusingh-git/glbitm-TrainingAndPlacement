@@ -69,8 +69,9 @@ const sendMailWithRetry = async (mailOptions: any, retries = 3, delay = 1000): P
 
 // ─── Helpers ───────────────────────────────────────────────────
 const getSiteUrl = () => {
- const url = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
- return url.replace(/\/$/, '');
+  const url = process.env.NEXT_PUBLIC_SITE_URL || 
+              (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : 'http://localhost:3000');
+  return url.replace(/\/$/, '');
 };
 
 const currentYear = () => new Date().getFullYear();

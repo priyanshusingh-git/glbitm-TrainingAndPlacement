@@ -1,7 +1,9 @@
-
-export const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000').replace(/\/api\/?$/, '').replace(/\/$/, '');
+export const API_BASE_URL = (
+  process.env.NEXT_PUBLIC_API_URL || 
+  process.env.NEXT_PUBLIC_SITE_URL || 
+  (process.env.NEXT_PUBLIC_VERCEL_URL ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : 'http://localhost:3000')
+).replace(/\/api\/?$/, '').replace(/\/$/, '');
 export const API_URL = `${API_BASE_URL}/api`;
-
 type CsrfState = {
  csrfToken: string;
  captchaRequired?: boolean;
