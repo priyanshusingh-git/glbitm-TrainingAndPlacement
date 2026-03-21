@@ -96,7 +96,7 @@ export function Sidebar({ role }: SidebarProps) {
               href={item.href}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "group flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all duration-200",
+                "group flex items-center gap-3 rounded-md px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200",
                 isActive
                   ? "bg-amber-500/10 text-amber-500 ring-1 ring-amber-500/20"
                   : "text-white/60 hover:bg-white/5 hover:text-white",

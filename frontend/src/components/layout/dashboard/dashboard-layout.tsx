@@ -75,17 +75,19 @@ export function DashboardLayout({ children, role, user, headerAction, defaultCol
  )}
  >
  <Header role={role} user={user} headerAction={headerAction} />
- <main className="page-shell pb-24 pt-6 md:pb-8 md:pt-8">
+ <main className="page-shell pb-[calc(4rem+env(safe-area-inset-bottom))] pt-6 md:pb-8 md:pt-8">
  {children}
  </main>
  </div>
 
+ {role !== "student" && (
  <div className="md:hidden fixed bottom-6 right-6 z-40">
  <Button size="icon" className="interactive h-14 w-14 rounded-full shadow-glow">
  <Plus className="h-6 w-6" />
  <span className="sr-only">Quick Action</span>
  </Button>
  </div>
+ )}
  </div>
  </SidebarContext.Provider>
  )

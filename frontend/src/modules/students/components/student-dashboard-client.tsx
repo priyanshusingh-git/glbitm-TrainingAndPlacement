@@ -38,7 +38,7 @@ export default function StudentDashboard() {
   return (
     <div className="flex flex-col gap-8 pb-12 animate-fade-up">
       {/* Top Bar for Desktop */}
-      <div className="flex items-center justify-between">
+      <div className="hidden md:flex items-center justify-between">
         <div className="flex flex-col">
           <h2 className="section-h2">Dashboard Overview</h2>
           <p className="text-sm text-muted-foreground">{`Welcome back, ${user?.name?.split(' ')[0]} — Placement Season 2024-25`}</p>
@@ -64,7 +64,7 @@ export default function StudentDashboard() {
       </div>
 
       {/* Hero Banner */}
-      <div className="relative overflow-hidden rounded-xl bg-brown-900 bg-hero-gradient p-8 text-white shadow-lg transition-base hover:shadow-brown-900/20">
+      <div className="relative overflow-hidden rounded-xl bg-brown-900 bg-hero-gradient p-5 md:p-8 text-white shadow-lg transition-base hover:shadow-brown-900/20">
         <div className="absolute inset-0 bg-diagonal-lines opacity-20" />
         
         <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-8">
@@ -95,7 +95,7 @@ export default function StudentDashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((card) => (
           <StatCard 
             key={card.id}
@@ -138,12 +138,10 @@ export default function StudentDashboard() {
 }
 
 function getIcon(tag: string, color: string) {
-  const iconProps = { className: cn("h-6 w-6", {
-    "text-amber-500": color === 'amber',
-    "text-blue-500": color === 'blue',
-    "text-emerald-500": color === 'emerald',
-    "text-indigo-500": color === 'indigo'
-  }) };
+  const colorClass = color === 'amber' || color === 'blue'
+    ? 'text-amber-500'
+    : 'text-muted-foreground';
+  const iconProps = { className: cn("h-6 w-6", colorClass) };
 
   switch (tag) {
     case 'Trophy': return <Trophy {...iconProps} />;

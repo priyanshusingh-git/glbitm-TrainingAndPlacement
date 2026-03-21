@@ -66,7 +66,7 @@ export default function TrainingPage() {
  }
 
  return (
- <div className="space-y-6">
+ <div className="space-y-6 animate-in fade-in duration-300">
  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
  <div>
     <h1 className="section-h2">My Training</h1>

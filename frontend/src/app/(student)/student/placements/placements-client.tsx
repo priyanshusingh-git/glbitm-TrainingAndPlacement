@@ -82,7 +82,7 @@ export default function PlacementsPage() {
  const appliedDrives = filteredDrives.filter(d => d.applications && d.applications.length > 0)
 
  return (
- <div className="space-y-6">
+ <div className="space-y-6 animate-in fade-in duration-300">
  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
  <div>
  <h1 className="text-2xl font-bold tracking-tight">Placement Drives</h1>
@@ -206,7 +206,7 @@ function JobCard({ drive, onApply, applying }: { drive: DriveWithStatus, onApply
  </div>
 
  {!isApplied && (
- <Button size="sm" onClick={onApply} disabled={applying}>
+ <Button className="min-h-[44px]" onClick={onApply} disabled={applying}>
  {applying && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
  Apply Now
  </Button>
