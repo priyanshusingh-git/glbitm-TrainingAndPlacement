@@ -24,7 +24,7 @@ export default function Advisory() {
           </p>
         </div>
 
-        <AnimatedSection className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <AnimatedSection className="grid gap-3 grid-cols-2 lg:grid-cols-4">
           {advisoryMembers.map((member) => (
             <article
               key={member.name}

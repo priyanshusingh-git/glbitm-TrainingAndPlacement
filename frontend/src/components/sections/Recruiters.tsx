@@ -24,11 +24,11 @@ export default function Recruiters() {
           </p>
         </div>
 
-        <AnimatedSection className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <AnimatedSection className="flex gap-3 overflow-x-auto hide-scrollbar pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-4">
           {recruiterCategories.map((category) => (
             <div
               key={category.title}
-              className="rounded-2xl border border-border bg-white px-4 py-4 shadow-[0_2px_12px_rgba(81,41,18,0.07)]"
+              className="min-w-[240px] sm:min-w-0 rounded-2xl border border-border bg-white px-4 py-4 shadow-[0_2px_12px_rgba(81,41,18,0.07)]"
             >
               <div className="font-display text-[18px] font-bold text-brown-900">
                 {category.icon} {category.title}

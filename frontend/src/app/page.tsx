@@ -57,7 +57,8 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="panel-dark-glass animate-in fade-in slide-in-from-bottom-3 duration-700 overflow-hidden rounded-[24px] border border-white/10 bg-white/6 p-0 backdrop-blur-[10px] lg:block">
+          <div className="relative animate-in fade-in slide-in-from-bottom-3 duration-700 overflow-hidden rounded-[24px] border border-white/10 bg-white/6 backdrop-blur-[10px] lg:block">
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-11 bg-gradient-to-r from-transparent to-[rgba(58,28,11,0.92)] lg:hidden" />
             <div className="hidden px-6 pb-0 pt-6 text-[9px] font-bold uppercase tracking-[0.25em] text-white/30 lg:block">
               Placement Highlights 2024
             </div>

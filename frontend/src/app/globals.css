@@ -112,6 +112,12 @@
  }
 }
 
+/* Accessibility: stop animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+ .animate-ticker { animation: none !important; }
+ .live-dot { animation: none !important; }
+}
+
 /* ─────────────────────────────────────────
  GOOGLE FONTS
  Add to layout.tsx instead for Next.js font optimization:
