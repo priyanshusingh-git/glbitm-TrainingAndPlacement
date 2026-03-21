@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authorize } from '@/lib/auth-middleware';
+import { syncUserAuthClaims } from '@/lib/auth-claims';
 import prisma from '@/lib/db';
 import { generateStrongPassword } from '@/lib/password';
 import { sendAdminPasswordResetEmail } from '@/services/email.service';
@@ -38,6 +39,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
  password:"FIREBASE_AUTH", // Ensure placeholder
  mustChangePassword: true
  }
+ });
+ await syncUserAuthClaims({
+  uid: student.userId,
+  role: 'STUDENT',
+  mustChangePassword: true
  });
  console.log(`[RESET_PASSWORD] Local DB synced`);
 

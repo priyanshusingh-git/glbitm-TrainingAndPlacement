@@ -6,12 +6,11 @@ import { cn } from"@/lib/utils"
 interface LoadingCardProps {
  className?: string
  showHeader?: boolean
- style?: React.CSSProperties
 }
 
-export function LoadingCard({ className, showHeader = true, style }: LoadingCardProps) {
+export function LoadingCard({ className, showHeader = true }: LoadingCardProps) {
  return (
- <Card className={cn("animate-in fade-in-50", className)} style={style}>
+ <Card className={cn("animate-in fade-in-50", className)}>
  {showHeader && (
  <CardHeader>
  <Skeleton className="h-6 w-48" />
@@ -32,12 +31,13 @@ export function LoadingCard({ className, showHeader = true, style }: LoadingCard
 export function LoadingTable({
  rows = 5,
  cols = 4,
- columnWidths
+ columnWidths: _columnWidths
 }: {
  rows?: number;
  cols?: number;
  columnWidths?: string[];
 }) {
+ const delayClasses = ["delay-0", "delay-100", "delay-150", "delay-200", "delay-300", "delay-500"]
  return (
  <div className="space-y-4 w-full">
  {/* Header */}
@@ -48,7 +48,6 @@ export function LoadingTable({
  <div
  key={i}
  className="flex-1"
- style={columnWidths && columnWidths[i] ? { flex: `0 0 ${columnWidths[i]}` } : {}}
  >
  <Skeleton className="h-4 w-24 bg-muted-foreground/20" />
  </div>
@@ -59,14 +58,12 @@ export function LoadingTable({
  {Array.from({ length: rows }).map((_, rowIdx) => (
  <div
  key={rowIdx}
- className="animate-in fade-in-50 slide-in-from-bottom-2 flex items-center gap-4 rounded-lg px-4 py-3 transition-colors duration-500 hover:bg-muted/10"
- style={{ animationDelay: `${rowIdx * 100}ms` }}
+ className={cn("animate-in fade-in-50 slide-in-from-bottom-2 flex items-center gap-4 rounded-lg px-4 py-3 transition-colors duration-500 hover:bg-muted/10", delayClasses[Math.min(rowIdx, delayClasses.length - 1)])}
  >
  {Array.from({ length: cols }).map((_, colIdx) => (
  <div
  key={colIdx}
  className="flex-1"
- style={columnWidths && columnWidths[colIdx] ? { flex: `0 0 ${columnWidths[colIdx]}` } : {}}
  >
  {colIdx === 0 ? (
  <div className="flex items-center gap-3">
@@ -96,13 +93,13 @@ export function LoadingTable({
 }
 
 export function LoadingGrid({ items = 6, className }: { items?: number; className?: string }) {
+ const delayClasses = ["delay-0", "delay-100", "delay-150", "delay-200", "delay-300", "delay-500"]
  return (
  <div className={cn("grid gap-4 md:grid-cols-2 lg:grid-cols-3", className)}>
  {Array.from({ length: items }).map((_, i) => (
  <LoadingCard
  key={i}
- className="animate-in fade-in-50"
- style={{ animationDelay: `${i * 100}ms` }}
+ className={cn("animate-in fade-in-50", delayClasses[Math.min(i, delayClasses.length - 1)])}
  />
  ))}
  </div>

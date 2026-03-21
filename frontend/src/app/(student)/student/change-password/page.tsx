@@ -4,6 +4,7 @@ import { useState } from"react";
 import { useRouter } from"next/navigation";
 import { useAuth } from"@/contexts/auth-context";
 import { api } from"@/lib/api";
+import { getAuthErrorMessage } from"@/lib/auth-ui-messages";
 import { Button } from"@/components/ui/button";
 import { Label } from"@/components/ui/label";
 import { PasswordInput } from"@/components/ui/password-input"
@@ -47,7 +48,7 @@ export default function ChangePasswordPage() {
  router.push("/student");
  }, 2000);
  } catch (err: any) {
- setError(err.message ||"Failed to change password");
+ setError(getAuthErrorMessage(err, { flow:"change-password" }));
  } finally {
  setLoading(false);
  }
@@ -84,6 +85,7 @@ export default function ChangePasswordPage() {
  onChange={(e) => setNewPassword(e.target.value)}
  required
  showStrength={true}
+ showBreachCheck={true}
  placeholder="Enter strong password"
  />
  </div>

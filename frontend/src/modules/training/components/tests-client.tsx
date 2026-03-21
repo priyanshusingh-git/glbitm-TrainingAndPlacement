@@ -89,9 +89,8 @@ export default function AdminTestsPage() {
 
  const loadGroups = async () => {
  try {
- const token = sessionStorage.getItem('token');
  const res = await fetch(`${API_URL}/training/groups`, {
- headers: { 'Authorization': `Bearer ${token}` }
+ credentials: 'include'
  });
  if (res.ok) {
  const data = await res.json();
@@ -123,7 +122,6 @@ export default function AdminTestsPage() {
  e.preventDefault();
  setIsSubmitting(true);
  try {
- const token = sessionStorage.getItem('token');
  const url = editingTest
  ? `${API_URL}/tests/${editingTest.id}`
  : `${API_URL}/tests`;
@@ -134,8 +132,8 @@ export default function AdminTestsPage() {
  method,
  headers: {
  'Content-Type': 'application/json',
- 'Authorization': `Bearer ${token}`
  },
+ credentials: 'include',
  body: JSON.stringify({
  ...formData,
  date: new Date(formData.date).toISOString()
@@ -168,12 +166,9 @@ export default function AdminTestsPage() {
  const handleDelete = async () => {
  if (!deletingTest) return;
  try {
- const token = sessionStorage.getItem('token');
  const res = await fetch(`${API_URL}/tests/${deletingTest.id}`, {
  method: 'DELETE',
- headers: {
- 'Authorization': `Bearer ${token}`
- }
+ credentials: 'include'
  });
 
  if (!res.ok) throw new Error("Deletion failed");

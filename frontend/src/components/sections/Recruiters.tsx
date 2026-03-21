@@ -1,8 +1,7 @@
 "use client"
 
 import { recruiterCategories, recruiterShowcase } from "@/data/landing"
-import { AnimatedSection, fadeUp } from "@/components/ui/AnimatedSection"
-import { motion } from "framer-motion"
+import { AnimatedSection } from "@/components/ui/AnimatedSection"
 
 export default function Recruiters() {
   return (
@@ -27,9 +26,8 @@ export default function Recruiters() {
 
         <AnimatedSection className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {recruiterCategories.map((category) => (
-            <motion.div
+            <div
               key={category.title}
-              variants={fadeUp}
               className="rounded-2xl border border-border bg-white px-4 py-4 shadow-[0_2px_12px_rgba(81,41,18,0.07)]"
             >
               <div className="font-display text-[18px] font-bold text-brown-900">
@@ -43,15 +41,14 @@ export default function Recruiters() {
                   </li>
                 ))}
               </ul>
-            </motion.div>
+            </div>
           ))}
         </AnimatedSection>
 
         <AnimatedSection className="mt-6 grid gap-2.5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {recruiterShowcase.map((company) => (
-            <motion.div
+            <div
               key={`${company.initial}-${company.name}`}
-              variants={fadeUp}
               className="flex flex-col items-center gap-1.5 rounded-2xl border border-border bg-white px-3 py-4 text-center shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-0.5 hover:border-brown-800/25"
             >
               <div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-brown-800 to-brown-700 font-display text-[15px] font-bold text-white">
@@ -59,7 +56,7 @@ export default function Recruiters() {
               </div>
               <div className="text-[10.5px] font-semibold text-brown-900">{company.name}</div>
               <div className="text-[9px] text-muted-foreground">{company.sector}</div>
-            </motion.div>
+            </div>
           ))}
         </AnimatedSection>
 

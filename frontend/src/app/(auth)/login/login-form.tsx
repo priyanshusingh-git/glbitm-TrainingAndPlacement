@@ -3,10 +3,9 @@
 import { useEffect, useState } from"react";
 import Link from"next/link";
 import { useRouter, useSearchParams } from"next/navigation";
-import { signInWithEmailAndPassword, updatePassword } from"firebase/auth";
 import { AlertCircle, CheckCircle2 } from"lucide-react";
-import { auth } from"@/lib/firebase";
 import { api } from"@/lib/api";
+import { consumeSessionExpiredFlag, getAuthErrorMessage } from"@/lib/auth-ui-messages";
 import { useAuth } from"@/contexts/auth-context";
 import { validateStrongPassword } from"@/lib/validators";
 import { Button } from"@/components/ui/button";
@@ -35,7 +34,7 @@ function Feedback({ message, variant ="error" }: { message: string; variant?:"er
 export function LoginForm() {
  const searchParams = useSearchParams();
  const router = useRouter();
- const { user, updateUser } = useAuth();
+ const { user, login, updateUser } = useAuth();
  const { toast } = useToast();
 
  const [email, setEmail] = useState("");
@@ -49,16 +48,12 @@ export function LoginForm() {
  const [changePwSuccess, setChangePwSuccess] = useState<string | null>(null);
 
  useEffect(() => {
- if (typeof window !=="undefined") {
- const sessionExpired = sessionStorage.getItem("sessionExpired");
- if (sessionExpired) {
+ if (consumeSessionExpiredFlag()) {
  toast({
  title:"Session expired",
  description:"Please sign in again to continue.",
  variant:"destructive",
  });
- sessionStorage.removeItem("sessionExpired");
- }
  }
 
  if (!user) return;
@@ -71,8 +66,9 @@ export function LoginForm() {
 
  setLoading(false);
  if (user.role ==="STUDENT") router.push("/student");
- else if (user.role ==="ADMIN" || user.role ==="STAFF") router.push("/admin");
+ else if (user.role ==="ADMIN") router.push("/admin");
  else if (user.role ==="TRAINER") router.push("/trainer");
+ else if (user.role ==="RECRUITER") router.push("/recruiter");
  else router.push("/");
  }, [router, searchParams, toast, user]);
 
@@ -84,9 +80,16 @@ export function LoginForm() {
  setError(null);
 
  try {
- await signInWithEmailAndPassword(auth, email, password);
+ const response = await api.post("/auth/login", {
+ email,
+ password,
+ role:"STUDENT",
+ rememberMe: false,
+ username:"",
+ }, { skipRedirect: true });
+ login(response.user);
  } catch (err: any) {
- setError(err.message ||"Invalid email or password");
+ setError(getAuthErrorMessage(err, { flow:"login", role:"STUDENT" }));
  setLoading(false);
  }
  };
@@ -110,11 +113,7 @@ export function LoginForm() {
  }
 
  try {
- const firebaseUser = auth.currentUser;
- if (!firebaseUser) throw new Error("No authenticated user found");
-
- await updatePassword(firebaseUser, newPassword);
- await api.post("/auth/change-password", { action:"confirm" });
+ await api.post("/auth/change-password", { newPassword });
 
  updateUser({ mustChangePassword: false });
  setChangePwSuccess("Password changed successfully. Redirecting...");
@@ -124,7 +123,7 @@ export function LoginForm() {
  setLoading(false);
  }, 900);
  } catch (err: any) {
- setError(err.message ||"Failed to change password");
+ setError(getAuthErrorMessage(err, { flow:"change-password" }));
  setLoading(false);
  }
  };
@@ -148,6 +147,7 @@ export function LoginForm() {
  placeholder="Create a strong password"
  required
  showStrength
+ showBreachCheck
  className="h-11"
  />
  </div>

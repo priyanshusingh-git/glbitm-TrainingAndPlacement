@@ -23,7 +23,7 @@ export default function AdminClientLayout({
  };
 
  return (
- <RouteGuard allowedRoles={["ADMIN","STAFF"]}>
+ <RouteGuard allowedRoles={["ADMIN"]}>
  <DashboardLayout role="admin" user={adaptedUser} defaultCollapsed={defaultCollapsed}>
  {children}
  </DashboardLayout>

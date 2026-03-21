@@ -16,6 +16,11 @@ interface PlacementPipelineProps {
 }
 
 export function PlacementPipeline({ company, role, stages }: PlacementPipelineProps) {
+  const completedRatio =
+    stages.length > 1
+      ? (stages.filter((stage) => stage.status === "completed").length / (stages.length - 1)) * 100
+      : 0
+
   return (
     <div className="card-base p-6 flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -31,9 +36,11 @@ export function PlacementPipeline({ company, role, stages }: PlacementPipelinePr
       <div className="relative flex items-center justify-between px-2">
         {/* Connection Line */}
         <div className="absolute left-10 right-10 top-5 h-0.5 bg-muted/40" />
-        <div 
-          className="absolute left-10 top-5 h-0.5 bg-amber-500 transition-all duration-500" 
-          style={{ width: `${(stages.filter(s => s.status === 'completed').length / (stages.length - 1)) * 100}%` }}
+        <progress
+          aria-hidden="true"
+          className="placement-pipeline-progress absolute left-10 top-5 h-0.5"
+          max={100}
+          value={completedRatio}
         />
 
         {stages.map((stage, idx) => (

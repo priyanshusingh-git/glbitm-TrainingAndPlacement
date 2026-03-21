@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF']);
+ const authResult = await authorize(req, ['ADMIN']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {
@@ -67,7 +67,7 @@ export async function PUT(req: NextRequest) {
  }
 }
 export async function POST(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF']);
+ const authResult = await authorize(req, ['ADMIN']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {

@@ -4,7 +4,7 @@ import prisma from '@/lib/db';
 
 // GET /api/tests
 export async function GET(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF', 'TRAINER', 'STUDENT']);
+ const authResult = await authorize(req, ['ADMIN', 'TRAINER', 'STUDENT']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {
@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
 
 // POST /api/tests
 export async function POST(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF', 'TRAINER']);
+ const authResult = await authorize(req, ['ADMIN', 'TRAINER']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {

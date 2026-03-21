@@ -1,20 +1,22 @@
 "use client"
 
-import { Suspense, useEffect, useState } from "react"
+import { Suspense, useEffect, useRef, useState } from "react"
+import HCaptcha from "@hcaptcha/react-hcaptcha"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { signInWithEmailAndPassword } from "firebase/auth"
 import { AlertCircle, CheckCircle2, Loader2, LockKeyhole, Mail, MoveRight } from "lucide-react"
-import { auth } from "@/lib/firebase"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/contexts/auth-context"
+import { api, getCsrfState } from "@/lib/api"
+import { consumeSessionExpiredFlag, getAuthErrorMessage } from "@/lib/auth-ui-messages"
+import { generateDeviceFingerprint } from "@/lib/fingerprint"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PasswordInput } from "@/components/ui/password-input"
 import { AuthBrandPanel } from "@/components/layout/auth-brand-panel"
 
-type Role = "STUDENT" | "STAFF" | "TRAINER" | "COMPANY"
+type Role = "STUDENT" | "ADMIN" | "TRAINER" | "RECRUITER"
 
 const ROLE_CONFIG: Record<
   Role,
@@ -35,13 +37,13 @@ const ROLE_CONFIG: Record<
     emailLabel: "Institutional Email",
     emailPlaceholder: "student@glbitm.ac.in",
   },
-  STAFF: {
+  ADMIN: {
     icon: "🛠",
     label: "T&P Admin",
     context: "Access admin controls, analytics, and drive operations.",
-    hint: "Use your staff email registered on the portal.",
-    emailLabel: "Official Email",
-    emailPlaceholder: "staff@glbitm.ac.in",
+    hint: "Use your admin email registered on the portal.",
+    emailLabel: "Admin Email",
+    emailPlaceholder: "admin@glbitm.ac.in",
   },
   TRAINER: {
     icon: "📚",
@@ -51,7 +53,7 @@ const ROLE_CONFIG: Record<
     emailLabel: "Trainer Email",
     emailPlaceholder: "trainer@glbitm.ac.in",
   },
-  COMPANY: {
+  RECRUITER: {
     icon: "🏢",
     label: "Recruiter",
     context: "Manage recruiter-facing access with your registered company email.",
@@ -78,25 +80,34 @@ function Feedback({ message, success = false }: { message: string; success?: boo
 
 function getDashboardPath(role?: string) {
   if (role === "STUDENT") return "/student"
-  if (role === "ADMIN" || role === "STAFF") return "/admin"
+  if (role === "ADMIN") return "/admin"
   if (role === "TRAINER") return "/trainer"
+  if (role === "RECRUITER") return "/recruiter"
   return "/"
 }
 
 function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { isAuthenticated, isLoading, user } = useAuth()
+  const { isAuthenticated, isLoading, user, login } = useAuth()
+  const captchaRef = useRef<any>(null)
 
   const [role, setRole] = useState<Role>("STUDENT")
   const [rememberMe, setRememberMe] = useState(true)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [username, setUsername] = useState("")
+  const [fingerprint, setFingerprint] = useState("")
+  const [csrfToken, setCsrfToken] = useState("")
+  const [captchaRequired, setCaptchaRequired] = useState(false)
+  const [captchaToken, setCaptchaToken] = useState("")
+  const [captchaKey, setCaptchaKey] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
 
   const activeRole = ROLE_CONFIG[role]
+  const hcaptchaSiteKey = process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY
 
   useEffect(() => {
     if (!isAuthenticated || isLoading || !user) return
@@ -110,29 +121,85 @@ function LoginContent() {
     router.replace(requestedPath || getDashboardPath(user.role))
   }, [isAuthenticated, isLoading, router, searchParams, user])
 
+  useEffect(() => {
+    if (consumeSessionExpiredFlag()) {
+      setError("Your session has expired. Please sign in again.")
+    }
+
+    let active = true
+
+    const bootstrapSecurity = async () => {
+      try {
+        const [deviceFingerprint, csrfState] = await Promise.all([
+          generateDeviceFingerprint(),
+          getCsrfState(true),
+        ])
+
+        if (!active) return
+
+        setFingerprint(deviceFingerprint)
+        setCsrfToken(csrfState.csrfToken)
+        setCaptchaRequired(Boolean(csrfState.captchaRequired))
+      } catch {
+        if (!active) return
+        setCaptchaRequired(false)
+      }
+    }
+
+    void bootstrapSecurity()
+
+    return () => {
+      active = false
+    }
+  }, [])
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     if (loading) return
+    if (captchaRequired && !captchaToken) {
+      setError("Please complete the captcha challenge before signing in.")
+      return
+    }
 
     setLoading(true)
     setError(null)
     setSuccess(null)
 
     try {
-      await signInWithEmailAndPassword(auth, email.trim(), password)
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+        role,
+        rememberMe,
+        username,
+        fingerprint,
+        csrfToken,
+        hcaptchaToken: captchaToken || undefined,
+      }, { skipRedirect: true })
+      login(response.user)
       setSuccess("Login successful! Redirecting to your dashboard...")
-
-      if (!rememberMe && typeof window !== "undefined") {
-        sessionStorage.removeItem("token")
-      }
+      const requestedPath = searchParams.get("redirect")
+      router.replace(response.redirectUrl || requestedPath || getDashboardPath(response.user.role))
     } catch (err: any) {
-      if (err.code === "auth/unauthorized-domain") {
-        setError("This domain is not authorized in Firebase. Please add your deployment URL to Authorized Domains.")
-      } else if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
-        setError("Invalid credentials. Please check your email and password.")
-      } else {
-        setError(err.message || "Unable to sign in right now. Please try again.")
+      const nextCaptchaRequired = Boolean(err.captchaRequired || err.code === "CAPTCHA_REQUIRED")
+      if (nextCaptchaRequired) {
+        setCaptchaRequired(true)
+        setCaptchaToken("")
+        setCaptchaKey((current) => current + 1)
+        captchaRef.current?.resetCaptcha()
       }
+
+      if (err.code === "CSRF_INVALID") {
+        try {
+          const nextCsrfState = await getCsrfState(true)
+          setCsrfToken(nextCsrfState.csrfToken)
+          setCaptchaRequired(Boolean(nextCsrfState.captchaRequired) || nextCaptchaRequired)
+        } catch {
+          // Ignore token refresh errors and surface the original failure.
+        }
+      }
+
+      setError(getAuthErrorMessage(err, { flow: "login", role }))
       setSuccess(null)
     } finally {
       setLoading(false)
@@ -148,7 +215,7 @@ function LoginContent() {
   }
 
   return (
-    <div className="min-h-screen bg-brown-50 text-foreground lg:grid lg:grid-cols-[1fr_1fr]">
+    <div className="min-h-[100svh] overflow-x-hidden bg-brown-50 text-foreground lg:grid lg:h-screen lg:min-h-0 lg:grid-cols-[1fr_1fr] lg:overflow-hidden">
       <AuthBrandPanel
         eyebrow="Placement Season 2024–25 is Live"
         title={
@@ -173,10 +240,11 @@ function LoginContent() {
         }
       />
 
-      <main className="relative flex min-h-screen items-center justify-center overflow-y-auto bg-brown-50 px-6 py-12 md:px-10 lg:px-[5vw]">
+      <main className="relative min-h-[100svh] overflow-hidden bg-brown-50 px-6 md:px-10 lg:h-full lg:min-h-0 lg:px-[5vw]">
         <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(232,160,32,0.08)_0%,transparent_70%)]" />
 
-        <div className="relative z-10 w-full max-w-[400px]">
+        <div className="relative z-10 flex min-h-[100svh] w-full items-center justify-center overflow-x-hidden overflow-y-auto py-12 lg:h-full lg:min-h-0 lg:py-6">
+        <div className="w-full max-w-[400px]">
           <div className="mb-8">
             <h2 className="mb-1 font-display text-[34px] font-bold leading-[1.1] tracking-[-0.025em] text-brown-900 [font-variation-settings:'opsz'_48,'SOFT'_0,'WONK'_0]">
               Welcome <span className="text-amber-700 italic">back</span>
@@ -286,7 +354,27 @@ function LoginContent() {
               </Link>
             </div>
 
-            <Button type="submit" className="w-full bg-brown-800 text-brown-50 hover:bg-brown-700" disabled={loading}>
+            {captchaRequired && hcaptchaSiteKey ? (
+              <div className="mb-5 rounded-[16px] border border-brown-800/10 bg-white px-4 py-4">
+                <p className="mb-3 text-[12px] font-medium text-muted-foreground">
+                  Extra verification is required after repeated sign-in failures from this network.
+                </p>
+                <HCaptcha
+                  key={captchaKey}
+                  ref={captchaRef}
+                  sitekey={hcaptchaSiteKey}
+                  onVerify={(token) => setCaptchaToken(token)}
+                  onExpire={() => setCaptchaToken("")}
+                  onError={() => setCaptchaToken("")}
+                />
+              </div>
+            ) : null}
+
+            <Button
+              type="submit"
+              className="w-full bg-brown-800 text-brown-50 hover:bg-brown-700"
+              disabled={loading || (captchaRequired && !captchaToken)}
+            >
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -299,6 +387,16 @@ function LoginContent() {
                 </>
               )}
             </Button>
+            <input
+              type="text"
+              name="username"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              autoComplete="off"
+              tabIndex={-1}
+              className="absolute left-[-9999px] top-auto h-px w-px opacity-0"
+              aria-hidden="true"
+            />
           </form>
 
           <div className="mt-5 text-center text-[13px] text-muted-foreground">
@@ -307,6 +405,7 @@ function LoginContent() {
               Contact T&amp;P support
             </a>
           </div>
+        </div>
         </div>
       </main>
     </div>

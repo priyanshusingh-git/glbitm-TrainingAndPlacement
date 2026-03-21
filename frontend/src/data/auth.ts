@@ -18,7 +18,7 @@ export const forgotPasswordContent = {
 
 export const roles = [
   { id: "STUDENT", label: "Student" },
-  { id: "COMPANY", label: "Company" },
-  { id: "STAFF", label: "Admin/Staff" },
+  { id: "RECRUITER", label: "Recruiter" },
+  { id: "ADMIN", label: "Admin" },
   { id: "TRAINER", label: "Trainer" }
 ];

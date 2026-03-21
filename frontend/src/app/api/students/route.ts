@@ -7,7 +7,7 @@ import { getStudents, createStudent } from '@/services/student.service';
  * GET /api/students - Fetch all students
  */
 export async function GET(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF']);
+ const authResult = await authorize(req, ['ADMIN']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {

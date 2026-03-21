@@ -1,8 +1,7 @@
 "use client"
 
 import { ctaContent } from "@/data/landing"
-import { AnimatedSection, fadeUp } from "@/components/ui/AnimatedSection"
-import { motion } from "framer-motion"
+import { AnimatedSection } from "@/components/ui/AnimatedSection"
 
 export default function CTABand() {
   return (
@@ -29,9 +28,8 @@ export default function CTABand() {
 
             <AnimatedSection className="flex flex-col gap-3">
               {ctaContent.contacts.map((item) => (
-                <motion.a
+                <a
                   key={item.label}
-                  variants={fadeUp}
                   href={item.href}
                   target={item.href.startsWith("http") ? "_blank" : undefined}
                   rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
@@ -45,7 +43,7 @@ export default function CTABand() {
                     <div className="mt-0.5 text-[12.5px] font-semibold text-brown-900">{item.value}</div>
                     <div className="mt-0.5 text-[11px] text-muted-foreground">{item.detail}</div>
                   </div>
-                </motion.a>
+                </a>
               ))}
             </AnimatedSection>
           </div>

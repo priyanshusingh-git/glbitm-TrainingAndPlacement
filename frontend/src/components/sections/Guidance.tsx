@@ -1,8 +1,7 @@
 "use client"
 
 import { guidanceFeatures } from "@/data/landing"
-import { AnimatedSection, fadeUp } from "@/components/ui/AnimatedSection"
-import { motion } from "framer-motion"
+import { AnimatedSection } from "@/components/ui/AnimatedSection"
 
 export default function Guidance() {
   return (
@@ -27,9 +26,8 @@ export default function Guidance() {
 
         <AnimatedSection className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {guidanceFeatures.map((feature) => (
-            <motion.article
+            <article
               key={feature.title}
-              variants={fadeUp}
               className="rounded-2xl border border-border bg-white px-5 py-6 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-1 hover:border-brown-400/35 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)]"
             >
               <div className="mb-3 text-2xl">{feature.icon}</div>
@@ -45,7 +43,7 @@ export default function Guidance() {
                   {feature.cta.label}
                 </a>
               )}
-            </motion.article>
+            </article>
           ))}
         </AnimatedSection>
       </div>

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import { AlertCircle, ArrowLeft, CheckCircle2, Info, Loader2, LockKeyhole, Mail, RefreshCw, ShieldCheck } from "lucide-react"
 import { api } from "@/lib/api"
+import { getAuthErrorMessage } from "@/lib/auth-ui-messages"
 import { validateStrongPassword } from "@/lib/validators"
 import { AuthBrandPanel } from "@/components/layout/auth-brand-panel"
 import { Button } from "@/components/ui/button"
@@ -101,6 +102,8 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ tone: "error" | "success" | "info"; text: string } | null>(null)
   const [resendCooldown, setResendCooldown] = useState(0)
+  const [resendCount, setResendCount] = useState(0)
+  const [resetToken, setResetToken] = useState("")
 
   const otpValue = useMemo(() => otpDigits.join(""), [otpDigits])
 
@@ -132,6 +135,7 @@ export default function ForgotPasswordPage() {
   const requestOtp = async () => {
     await api.post("/auth/request-password-reset", { email })
     setStep(2)
+    setResetToken("")
     setMessage({
       tone: "info",
       text: `A 6-digit verification code has been sent to ${email}. It expires in 10 minutes.`,
@@ -146,10 +150,11 @@ export default function ForgotPasswordPage() {
 
     try {
       await requestOtp()
+      setResendCount(0)
     } catch (error: any) {
       setMessage({
         tone: "error",
-        text: error.message || "Unable to start password recovery right now.",
+        text: getAuthErrorMessage(error, { flow: "forgot-password" }),
       })
     } finally {
       setLoading(false)
@@ -158,16 +163,24 @@ export default function ForgotPasswordPage() {
 
   const handleResend = async () => {
     if (loading || resendCooldown > 0) return
+    if (resendCount >= 3) {
+      setMessage({
+        tone: "error",
+        text: "You have reached the maximum resend attempts for this session.",
+      })
+      return
+    }
 
     setLoading(true)
     setMessage(null)
 
     try {
       await requestOtp()
+      setResendCount((current) => current + 1)
     } catch (error: any) {
       setMessage({
         tone: "error",
-        text: error.message || "Unable to resend the verification code.",
+        text: getAuthErrorMessage(error, { flow: "forgot-password" }),
       })
     } finally {
       setLoading(false)
@@ -215,13 +228,14 @@ export default function ForgotPasswordPage() {
     }
 
     try {
-      await api.post("/auth/verify-reset-otp", { email, otp: otpValue })
+      const response = await api.post("/auth/verify-reset-otp", { email, otp: otpValue })
+      setResetToken(response.resetToken)
       setStep(3)
       setMessage(null)
     } catch (error: any) {
       setMessage({
         tone: "error",
-        text: error.message || "Invalid OTP. Please check the code and try again.",
+        text: getAuthErrorMessage(error, { flow: "verify-otp" }),
       })
     } finally {
       setLoading(false)
@@ -248,8 +262,7 @@ export default function ForgotPasswordPage() {
 
     try {
       await api.post("/auth/reset-password", {
-        email,
-        otp: otpValue,
+        resetToken,
         newPassword,
       })
 
@@ -258,7 +271,7 @@ export default function ForgotPasswordPage() {
     } catch (error: any) {
       setMessage({
         tone: "error",
-        text: error.message || "Unable to reset your password right now.",
+        text: getAuthErrorMessage(error, { flow: "reset-password" }),
       })
     } finally {
       setLoading(false)
@@ -266,7 +279,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-brown-50 text-foreground lg:grid lg:grid-cols-[1fr_1fr]">
+    <div className="min-h-[100svh] overflow-x-hidden bg-brown-50 text-foreground lg:grid lg:h-screen lg:min-h-0 lg:grid-cols-[1fr_1fr] lg:overflow-hidden">
       <AuthBrandPanel
         eyebrow="Secure Account Recovery"
         title={
@@ -310,10 +323,11 @@ export default function ForgotPasswordPage() {
         }
       />
 
-      <main className="relative flex min-h-screen items-center justify-center overflow-y-auto bg-brown-50 px-6 py-10 md:px-10 lg:px-[5vw]">
+      <main className="relative min-h-[100svh] overflow-hidden bg-brown-50 px-6 md:px-10 lg:h-full lg:min-h-0 lg:px-[5vw]">
         <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(232,160,32,0.08)_0%,transparent_70%)]" />
 
-        <div className="relative z-10 w-full max-w-[400px]">
+        <div className="relative z-10 flex min-h-[100svh] w-full items-center justify-center overflow-x-hidden overflow-y-auto py-10 lg:h-full lg:min-h-0 lg:py-6">
+        <div className="w-full max-w-[400px]">
           {step !== "success" && <StepIndicator currentStep={step} />}
 
           {step === 1 && (
@@ -426,10 +440,14 @@ export default function ForgotPasswordPage() {
                 <button
                   type="button"
                   onClick={handleResend}
-                  disabled={loading || resendCooldown > 0}
+                  disabled={loading || resendCooldown > 0 || resendCount >= 3}
                   className="font-semibold text-amber-700 transition-colors hover:text-brown-800 disabled:cursor-not-allowed disabled:text-muted-foreground"
                 >
-                  {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend Code"}
+                  {resendCooldown > 0
+                    ? `Resend in ${resendCooldown}s`
+                    : resendCount >= 3
+                      ? "Resend limit reached"
+                      : "Resend Code"}
                 </button>
               </div>
 
@@ -479,6 +497,7 @@ export default function ForgotPasswordPage() {
                       placeholder="Min. 8 characters"
                       className="auth-input pl-11"
                       showStrength
+                      showBreachCheck
                       required
                     />
                   </div>
@@ -536,6 +555,7 @@ export default function ForgotPasswordPage() {
               </Button>
             </section>
           )}
+        </div>
         </div>
       </main>
     </div>

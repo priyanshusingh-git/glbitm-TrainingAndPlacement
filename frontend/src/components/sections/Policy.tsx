@@ -1,8 +1,7 @@
 "use client"
 
 import { policyGroups } from "@/data/landing"
-import { AnimatedSection, fadeUp } from "@/components/ui/AnimatedSection"
-import { motion } from "framer-motion"
+import { AnimatedSection } from "@/components/ui/AnimatedSection"
 
 export default function Policy() {
   return (
@@ -36,9 +35,8 @@ export default function Policy() {
 
         <AnimatedSection className="grid gap-4 md:grid-cols-2">
           {policyGroups.map((group) => (
-            <motion.article
+            <article
               key={group.title}
-              variants={fadeUp}
               className="rounded-2xl border border-border bg-white p-6 shadow-[0_2px_12px_rgba(81,41,18,0.07)]"
             >
               <h3 className="font-display text-[21px] font-bold tracking-[-0.02em] text-brown-900">
@@ -52,7 +50,7 @@ export default function Policy() {
                   </li>
                 ))}
               </ul>
-            </motion.article>
+            </article>
           ))}
         </AnimatedSection>
       </div>

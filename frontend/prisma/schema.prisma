@@ -11,6 +11,9 @@ model User {
   email              String              @unique
   password           String?
   role               Role                @default(STUDENT)
+  isSuspended        Boolean             @default(false)
+  suspendedReason    String?
+  suspendedAt        DateTime?
   createdAt          DateTime            @default(now())
   updatedAt          DateTime            @updatedAt
   mustChangePassword Boolean             @default(false)
@@ -18,6 +21,7 @@ model User {
   otp                String?
   otpExpires         DateTime?
   auditLogs          AuditLog[]
+  authAuditLogs      AuthAuditLog[]
   createdBootcamps   Bootcamp[]          @relation("BootcampCreator")
   notifications      Notification[]
   studentProfile     StudentProfile?
@@ -527,6 +531,24 @@ model AuditLog {
   @@index([entityType, entityId])
 }
 
+model AuthAuditLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  emailHash   String?
+  action      String
+  ip          String
+  userAgent   String?
+  fingerprint String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([ip])
+  @@index([action])
+  @@index([createdAt])
+}
+
 model SystemSetting {
   id        String   @id @default(cuid())
   key       String   @unique
@@ -539,7 +561,7 @@ model SystemSetting {
 
 enum Role {
   ADMIN
-  STAFF
   TRAINER
+  RECRUITER
   STUDENT
 }

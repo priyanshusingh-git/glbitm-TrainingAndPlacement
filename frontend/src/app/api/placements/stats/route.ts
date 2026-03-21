@@ -5,7 +5,7 @@ import { logger } from '@/lib/logger';
 
 // GET /api/placements/stats
 export async function GET(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF']);
+ const authResult = await authorize(req, ['ADMIN']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {

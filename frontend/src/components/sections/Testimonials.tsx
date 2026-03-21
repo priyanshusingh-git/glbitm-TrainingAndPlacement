@@ -64,17 +64,12 @@ export default function Testimonials() {
         </div>
 
         <div className="overflow-hidden rounded-[24px]">
-          <div
-            className="flex transition-transform duration-500 ease-out"
-            style={{ transform: `translateX(-${page * 100}%)` }}
-          >
-            {pages.map((items, index) => (
-              <div key={index} className="grid min-w-full gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
-                {items.map((testimonial) => (
-                  <article
-                    key={`${testimonial.name}-${testimonial.company}`}
-                    className="relative flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-white/5 px-4 py-5 transition hover:bg-white/8"
-                  >
+          <div className="grid gap-4 p-0 md:grid-cols-2 lg:grid-cols-3">
+            {pages[page]?.map((testimonial) => (
+              <article
+                key={`${testimonial.name}-${testimonial.company}`}
+                className="relative flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-white/5 px-4 py-5 transition hover:bg-white/8 animate-in fade-in slide-in-from-right-1 duration-300"
+              >
                     <div className="mb-4 flex flex-wrap items-center gap-2">
                       <div className="font-display text-[20px] font-bold tracking-[-0.02em] text-amber-400">
                         {testimonial.package}
@@ -104,9 +99,7 @@ export default function Testimonials() {
                         <div className="text-[10px] text-white/34">{testimonial.meta}</div>
                       </div>
                     </div>
-                  </article>
-                ))}
-              </div>
+              </article>
             ))}
           </div>
         </div>

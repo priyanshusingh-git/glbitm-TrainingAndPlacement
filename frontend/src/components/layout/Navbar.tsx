@@ -38,9 +38,9 @@ export default function Navbar() {
   }, [])
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : ""
+    document.body.classList.toggle("overflow-hidden", isOpen)
     return () => {
-      document.body.style.overflow = ""
+      document.body.classList.remove("overflow-hidden")
     }
   }, [isOpen])
 
@@ -52,9 +52,11 @@ export default function Navbar() {
           shadowed && "shadow-[0_4px_40px_rgba(0,0,0,0.55)]"
         )}
       >
-        <div
-          className="pointer-events-none absolute bottom-0 left-0 h-0.5 w-full origin-left bg-gradient-to-r from-amber-700 via-amber-500 to-amber-400 will-change-transform"
-          style={{ transform: `scaleX(${progress / 100})` }}
+        <progress
+          aria-hidden="true"
+          className="nav-progress pointer-events-none absolute bottom-0 left-0 h-0.5 w-full"
+          max={100}
+          value={progress}
         />
 
         <Link href="/" className="inline-flex items-center gap-3 no-underline">

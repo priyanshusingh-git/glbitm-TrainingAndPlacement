@@ -1,6 +1,5 @@
 'use client'
-import { motion, useInView, type Variants } from 'framer-motion'
-import { useRef, ReactNode } from 'react'
+import { ReactNode } from 'react'
 
 interface AnimatedSectionProps {
  children: ReactNode;
@@ -13,29 +12,22 @@ const stagger = {
 }
 
 export function AnimatedSection({ children, className, delay = 0 }: AnimatedSectionProps) {
- const ref = useRef(null)
- const inView = useInView(ref, { once: true, margin: '-80px' })
-
  return (
- <motion.div
- ref={ref}
- variants={stagger}
- initial="hidden"
- animate={inView ? 'visible' : 'hidden'}
+ <div
  className={className}
- transition={{ delay }}
+ data-delay={delay}
  >
  {children}
- </motion.div>
+ </div>
  )
 }
 
-export const fadeUp: Variants = {
+export const fadeUp = {
  hidden: { opacity: 0, y: 24 },
  visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: 'easeOut' } },
 }
 
-export const fadeIn: Variants = {
+export const fadeIn = {
  hidden: { opacity: 0 },
  visible: { opacity: 1, transition: { duration: 0.6 } },
 }

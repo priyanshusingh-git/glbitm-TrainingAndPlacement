@@ -1,8 +1,7 @@
 "use client"
 
 import { campusCard, teamMembers } from "@/data/landing"
-import { AnimatedSection, fadeUp } from "@/components/ui/AnimatedSection"
-import { motion } from "framer-motion"
+import { AnimatedSection } from "@/components/ui/AnimatedSection"
 
 export default function TrustStrip() {
   return (
@@ -27,9 +26,8 @@ export default function TrustStrip() {
 
         <AnimatedSection className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {teamMembers.map((member) => (
-            <motion.article
+            <article
               key={member.name}
-              variants={fadeUp}
               className="flex items-start gap-3 rounded-2xl border border-border bg-white px-4 py-5 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:border-brown-400/40 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)]"
             >
               <div className="grid h-11 w-11 shrink-0 place-items-center rounded-[10px] bg-gradient-to-br from-brown-800 to-amber-700 font-display text-base font-bold text-white">
@@ -49,11 +47,10 @@ export default function TrustStrip() {
                   </a>
                 </div>
               </div>
-            </motion.article>
+            </article>
           ))}
 
-          <motion.article
-            variants={fadeUp}
+          <article
             className="flex items-start gap-3 rounded-2xl border border-transparent bg-gradient-to-br from-brown-900 to-brown-800 px-4 py-5 text-white shadow-[0_6px_32px_rgba(81,41,18,0.16)]"
           >
             <div className="grid h-11 w-11 shrink-0 place-items-center rounded-[10px] bg-amber-500/20 text-lg">📍</div>
@@ -73,7 +70,7 @@ export default function TrustStrip() {
                 </a>
               </div>
             </div>
-          </motion.article>
+          </article>
         </AnimatedSection>
       </div>
     </section>

@@ -1,155 +1,98 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useRef } from"react";
-import { useRouter } from"next/navigation";
-import { api } from"@/lib/api";
-import { auth } from"@/lib/firebase";
-import { onIdTokenChanged, signOut, User as FirebaseUser } from"firebase/auth";
+import { createContext, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { api } from "@/lib/api";
 
 type User = {
- id: string;
- email: string;
- role:"STUDENT" |"ADMIN" |"STAFF" |"TRAINER";
- name?: string;
- photoUrl?: string;
- mustChangePassword?: boolean;
+  id: string;
+  email: string;
+  role: "STUDENT" | "ADMIN" | "TRAINER" | "RECRUITER";
+  name?: string;
+  photoUrl?: string;
+  mustChangePassword?: boolean;
 };
 
 type AuthContextType = {
- user: User | null;
- token: string | null;
- login: (token: string, user: User) => void;
- logout: () => void;
- updateUser: (user: Partial<User>) => void;
- isAuthenticated: boolean;
- isLoading: boolean;
+  user: User | null;
+  login: (user: User) => void;
+  logout: () => Promise<void>;
+  refreshSession: () => Promise<User | null>;
+  updateUser: (user: Partial<User>) => void;
+  isAuthenticated: boolean;
+  isLoading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
- const [user, setUser] = useState<User | null>(null);
- const [token, setToken] = useState<string | null>(null);
- const [isLoading, setIsLoading] = useState(true);
- const handlingSessionRef = useRef<string | null>(null);
- const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
- useEffect(() => {
- // Firebase onIdTokenChanged handles initial session and subsequent changes
- const unsubscribe = onIdTokenChanged(auth, async (firebaseUser) => {
- console.log("Firebase Auth State Changed:", firebaseUser?.email);
+  const refreshSession = async () => {
+    try {
+      const userData = await api.get("/auth/me", { skipRedirect: true });
+      setUser(userData);
+      return userData;
+    } catch {
+      setUser(null);
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
- try {
- if (firebaseUser) {
- const idToken = await firebaseUser.getIdToken();
- await handleSession(idToken);
- } else {
- handleLogout();
- }
- } catch (err: any) {
- console.error("Firebase auth error:", err);
- setIsLoading(false);
- }
- });
+  useEffect(() => {
+    void refreshSession();
+  }, []);
 
- return () => unsubscribe();
- }, []);
+  const login = (nextUser: User) => {
+    setUser(nextUser);
+    setIsLoading(false);
+  };
 
- const handleSession = async (idToken: string) => {
- // Prevent overlapping session handling for the SAME token
- if (handlingSessionRef.current === idToken) {
- return;
- }
+  const updateUser = (updatedFields: Partial<User>) => {
+    setUser((currentUser) => {
+      if (!currentUser) return currentUser;
+      return { ...currentUser, ...updatedFields };
+    });
+  };
 
- // If we already have the profile for this token, skip
- if (token === idToken && user) {
- setIsLoading(false);
- return;
- }
+  const logout = async () => {
+    try {
+      await api.post("/auth/logout", {}, { skipRedirect: true });
+    } catch {
+      // Ignore logout failures and continue clearing client state.
+    }
 
- handlingSessionRef.current = idToken;
+    setUser(null);
+    router.replace("/login");
+  };
 
- try {
- // Fetch detailed user info from backend
- // Note: The backend will now need to verify Firebase Token
- const userData = await api.get("/auth/me", { token: idToken, skipRedirect: true });
-
- setToken(idToken);
- setUser(userData);
- sessionStorage.setItem("token", idToken);
- sessionStorage.setItem("user", JSON.stringify(userData));
-
- // Sync to cookies for middleware redirection
- const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toUTCString();
- document.cookie = `fb-token=${idToken}; path=/; expires=${expires}; SameSite=Lax`;
- document.cookie = `fb-user-role=${userData.role}; path=/; expires=${expires}; SameSite=Lax`;
- } catch (error: any) {
- if (error.message?.includes("Session expired") || error.status === 401) {
- console.warn("Session expired or invalid token. Redirecting...");
- await logout();
- } else {
- console.error("Failed to fetch user profile:", error);
- }
- } finally {
- handlingSessionRef.current = null;
- setIsLoading(false);
- }
- };
-
- const handleLogout = () => {
- setToken(null);
- setUser(null);
- sessionStorage.removeItem("token");
- sessionStorage.removeItem("user");
-
- // Clear cookies
- document.cookie ="fb-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
- document.cookie ="fb-user-role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-
- setIsLoading(false);
- };
-
- const login = async (newToken: string, newUser: User) => {
- setToken(newToken);
- setUser(newUser);
- sessionStorage.setItem("token", newToken);
- sessionStorage.setItem("user", JSON.stringify(newUser));
- };
-
- const updateUser = (updatedFields: Partial<User>) => {
- if (!user) return;
- const newUser = { ...user, ...updatedFields };
- setUser(newUser);
- sessionStorage.setItem("user", JSON.stringify(newUser));
- };
-
- const logout = async () => {
- await signOut(auth);
- handleLogout();
- router.replace("/login");
- };
-
- return (
- <AuthContext.Provider
- value={{
- user,
- token,
- login,
- logout,
- updateUser,
- isAuthenticated: !!token && !!user,
- isLoading,
- }}
- >
- {children}
- </AuthContext.Provider>
- );
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        login,
+        logout,
+        refreshSession,
+        updateUser,
+        isAuthenticated: !!user,
+        isLoading,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
- const context = useContext(AuthContext);
- if (context === undefined) {
- throw new Error("useAuth must be used within an AuthProvider");
- }
- return context;
+  const context = useContext(AuthContext);
+
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+
+  return context;
 }

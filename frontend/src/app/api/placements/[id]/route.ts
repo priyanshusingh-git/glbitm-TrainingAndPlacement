@@ -9,7 +9,7 @@ export async function GET(
  req: NextRequest,
  { params }: { params: Promise<{ id: string }> }
 ) {
- const authResult = await authorize(req, ['ADMIN', 'STUDENT', 'STAFF']);
+ const authResult = await authorize(req, ['ADMIN', 'STUDENT']);
  if (authResult instanceof NextResponse) return authResult;
 
  const { id } = await params;

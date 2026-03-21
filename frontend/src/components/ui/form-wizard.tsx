@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Check, ChevronRight, ChevronLeft, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -33,7 +32,6 @@ export function FormWizard({
  className
 }: FormWizardProps) {
  const [currentStep, setCurrentStep] = useState(0)
- const [direction, setDirection] = useState(1) // 1 for next, -1 for back
  const [isValidating, setIsValidating] = useState(false)
 
  const handleNext = async () => {
@@ -55,7 +53,6 @@ export function FormWizard({
  }
 
  if (currentStep < steps.length - 1) {
- setDirection(1)
  setCurrentStep(prev => prev + 1)
  } else {
  onComplete()
@@ -64,26 +61,10 @@ export function FormWizard({
 
  const handleBack = () => {
  if (currentStep > 0) {
- setDirection(-1)
  setCurrentStep(prev => prev - 1)
  } else {
  onCancel()
  }
- }
-
- const variants = {
- enter: (direction: number) => ({
- x: direction > 0 ? 50 : -50,
- opacity: 0,
- }),
- center: {
- x: 0,
- opacity: 1,
- },
- exit: (direction: number) => ({
- x: direction < 0 ? 50 : -50,
- opacity: 0,
- }),
  }
 
  return (
@@ -91,14 +72,11 @@ export function FormWizard({
  {/* Step Indicator Header */}
  <div className="mb-6">
  <div className="flex items-center justify-between relative px-2">
- <div className="absolute left-6 right-6 top-1/2 -translate-y-1/2 h-[2px] bg-border rounded-full z-0 overflow-hidden">
- <motion.div
- className="h-full bg-brown-800"
- initial={{ width:"0%" }}
- animate={{ width: `${(currentStep / (steps.length - 1)) * 100}%` }}
- transition={{ duration: 0.3, ease:"easeInOut" }}
+ <progress
+ className="form-wizard-progress absolute left-6 right-6 top-1/2 z-0 h-[2px] w-auto -translate-y-1/2 rounded-full"
+ max={Math.max(1, steps.length - 1)}
+ value={currentStep}
  />
- </div>
  {steps.map((step, index) => {
  const isCompleted = index < currentStep;
  const isCurrent = index === currentStep;
@@ -128,23 +106,9 @@ export function FormWizard({
 
  {/* Step Content */}
  <div className="flex-1 overflow-x-hidden relative min-h-[220px]">
- <AnimatePresence mode="popLayout" initial={false} custom={direction}>
- <motion.div
- key={currentStep}
- custom={direction}
- variants={variants}
- initial="enter"
- animate="center"
- exit="exit"
- transition={{
- x: { type:"spring", stiffness: 300, damping: 30 },
- opacity: { duration: 0.2 }
- }}
- className="w-full h-full pb-2"
- >
+ <div key={currentStep} className="w-full h-full pb-2 animate-in fade-in slide-in-from-right-1 duration-200">
  {steps[currentStep].content}
- </motion.div>
- </AnimatePresence>
+ </div>
  </div>
 
  {/* Footer Navigation */}

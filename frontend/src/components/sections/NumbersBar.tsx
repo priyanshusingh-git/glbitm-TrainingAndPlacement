@@ -7,8 +7,7 @@ import {
   placementTable,
   tickerItems,
 } from "@/data/landing"
-import { AnimatedSection, fadeUp } from "@/components/ui/AnimatedSection"
-import { motion } from "framer-motion"
+import { AnimatedSection } from "@/components/ui/AnimatedSection"
 import { cn } from "@/lib/utils"
 
 export default function NumbersBar() {
@@ -49,9 +48,8 @@ export default function NumbersBar() {
 
           <AnimatedSection className="grid overflow-hidden rounded-[24px] border border-white/8 bg-white/4 sm:grid-cols-2 lg:grid-cols-4">
             {placementStats.map((stat, index) => (
-              <motion.div
+              <div
                 key={stat.label}
-                variants={fadeUp}
                 className={cn(
                   "border-b border-white/6 px-5 py-6 sm:px-6 lg:border-b-0 lg:px-8 lg:py-9",
                   index % 2 === 0 && "sm:border-r sm:border-white/6 lg:border-r",
@@ -71,7 +69,7 @@ export default function NumbersBar() {
                 </div>
                 <div className="mt-3 text-[10px] font-semibold uppercase tracking-[0.1em] text-white/48">{stat.label}</div>
                 <div className="mt-1 text-[10px] italic text-white/22 lg:block">{stat.note}</div>
-              </motion.div>
+              </div>
             ))}
           </AnimatedSection>
 
@@ -138,15 +136,12 @@ export default function NumbersBar() {
                 {packageDistribution.map((item) => (
                   <div key={item.label} className="flex items-center gap-3">
                     <span className="w-20 shrink-0 text-[11.5px] text-white/50">{item.label}</span>
-                    <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/7">
-                      <div
-                        className={cn(
-                          "h-full rounded-full bg-gradient-to-r from-brown-700 to-amber-500",
-                          item.accent && "from-amber-700 to-amber-400"
-                        )}
-                        style={{ width: `${item.value}%` }}
-                      />
-                    </div>
+                    <progress
+                      aria-label={`${item.label} ${item.value}%`}
+                      className={cn("numbers-progress h-1.5 flex-1 overflow-hidden rounded-full", item.accent && "numbers-progress-accent")}
+                      max={100}
+                      value={item.value}
+                    />
                     <span className={cn("w-7 text-right text-[11.5px] font-semibold text-white", item.accent && "text-amber-400")}>
                       {item.value}%
                     </span>

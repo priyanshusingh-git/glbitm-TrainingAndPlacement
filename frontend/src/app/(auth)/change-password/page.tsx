@@ -3,10 +3,9 @@
 import { useState } from"react";
 import { useRouter } from"next/navigation";
 import { AlertCircle, CheckCircle2 } from"lucide-react";
-import { updatePassword } from"firebase/auth";
 import { useAuth } from"@/contexts/auth-context";
 import { api } from"@/lib/api";
-import { auth } from"@/lib/firebase";
+import { getAuthErrorMessage } from"@/lib/auth-ui-messages";
 import { validateStrongPassword } from"@/lib/validators";
 import { AuthShell } from"@/components/layout/auth-shell";
 import { Button } from"@/components/ui/button";
@@ -56,22 +55,19 @@ export default function ChangePasswordPage() {
  }
 
  try {
- if (!auth.currentUser) throw new Error("No authenticated user found. Please log in again.");
-
- await updatePassword(auth.currentUser, newPassword);
- await api.post("/auth/change-password", { action:"confirm" });
-
+ await api.post("/auth/change-password", { newPassword });
  updateUser({ mustChangePassword: false });
  setSuccess("Password changed successfully. Redirecting...");
 
  window.setTimeout(() => {
  if (user?.role ==="STUDENT") router.push("/student");
- else if (user?.role ==="ADMIN" || user?.role ==="STAFF") router.push("/admin");
+ else if (user?.role ==="ADMIN") router.push("/admin");
  else if (user?.role ==="TRAINER") router.push("/trainer");
+ else if (user?.role ==="RECRUITER") router.push("/recruiter");
  else router.push("/");
  }, 1200);
  } catch (err: any) {
- setError(err.message ||"Failed to change password");
+ setError(getAuthErrorMessage(err, { flow:"change-password" }));
  } finally {
  setLoading(false);
  }
@@ -94,6 +90,7 @@ export default function ChangePasswordPage() {
  onChange={(e) => setNewPassword(e.target.value)}
  required
  showStrength
+ showBreachCheck
  className="auth-input"
  />
  </div>

@@ -1,7 +1,6 @@
 "use client"
 
 import { cn } from"@/lib/utils"
-import { motion } from"framer-motion"
 
 export const BentoGrid = ({
  className,
@@ -38,8 +37,7 @@ export const BentoGridItem = ({
  onClick?: () => void
 }) => {
  return (
- <motion.div
- whileHover={{ y: -2, transition: { duration: 0.2 } }}
+ <div
  className={cn(
 "group/bento premium-muted row-span-1 flex flex-col justify-between space-y-4 rounded-2xl border border-border/60 bg-card p-5 shadow-sm transition-[border-color,box-shadow,transform,background-color] duration-200 hover:bg-card-hover hover:border-brown-800/20 hover:shadow-md",
  className
@@ -56,6 +54,6 @@ export const BentoGridItem = ({
  {description}
  </div>
  </div>
- </motion.div>
+ </div>
  )
 }

@@ -15,16 +15,20 @@ export default function TrainerClientLayout({
  defaultCollapsed?: boolean
 }) {
  const { user } = useAuth();
+ const pathname = usePathname();
+ const isRecruiterRoute = pathname.startsWith("/recruiter");
  const adaptedUser = {
- name: user?.name ||"Trainer",
+ name: user?.name || (isRecruiterRoute ? "Recruiter" : "Trainer"),
  email: user?.email ||"",
- initials: user?.name ? user.name.split("").map((n) => n[0]).join("").substring(0, 2) :"TR",
+ initials: user?.name ? user.name.split("").map((n) => n[0]).join("").substring(0, 2) : isRecruiterRoute ? "RC" : "TR",
     avatar: getImageUrl(user?.photoUrl),
  };
+ const allowedRoles: ("TRAINER" | "RECRUITER")[] = isRecruiterRoute ? ["RECRUITER"] : ["TRAINER"];
+ const dashboardRole = isRecruiterRoute ? "recruiter" as const : "trainer" as const;
 
  return (
- <RouteGuard allowedRoles={["TRAINER"]}>
- <DashboardLayout role="trainer" user={adaptedUser} defaultCollapsed={defaultCollapsed}>
+ <RouteGuard allowedRoles={allowedRoles}>
+ <DashboardLayout role={dashboardRole} user={adaptedUser} defaultCollapsed={defaultCollapsed}>
  {children}
  </DashboardLayout>
  </RouteGuard>

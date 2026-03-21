@@ -22,7 +22,7 @@ interface ActivitySectionProps {
 const chartConfig = {
  problems: {
  label:"Problems",
- color:"var(--chart-2)",
+ color:"var(--primary)",
  },
 }
 

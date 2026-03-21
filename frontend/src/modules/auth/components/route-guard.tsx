@@ -6,7 +6,7 @@ import { useAuth } from"@/contexts/auth-context"
 
 interface RouteGuardProps {
  children: React.ReactNode
- allowedRoles: ("STUDENT" |"ADMIN" |"STAFF" |"TRAINER")[]
+ allowedRoles: ("STUDENT" |"ADMIN" |"TRAINER" |"RECRUITER")[]
 }
 
 export function RouteGuard({ children, allowedRoles }: RouteGuardProps) {
@@ -29,10 +29,12 @@ export function RouteGuard({ children, allowedRoles }: RouteGuardProps) {
  // e.g. Student tries to access /admin -> send to /student
  if (user.role ==="STUDENT") {
  router.replace("/student")
- } else if (user.role ==="ADMIN" || user.role ==="STAFF") {
+ } else if (user.role ==="ADMIN") {
  router.replace("/admin")
  } else if (user.role ==="TRAINER") {
  router.replace("/trainer")
+ } else if (user.role ==="RECRUITER") {
+ router.replace("/recruiter")
  } else {
  router.replace("/") // Fallback
  }

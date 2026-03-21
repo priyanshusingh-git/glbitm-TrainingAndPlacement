@@ -3,17 +3,15 @@ import { Bootcamp, Group, Test, TestResult } from"@/types/training"; // Assuming
 // I created types in frontend/types/training.ts in step 139.
 
 const getHeaders = () => {
- const token = typeof window !== 'undefined' ? sessionStorage.getItem('token') : null;
  return {
  'Content-Type': 'application/json',
- 'Authorization': `Bearer ${token}`
  };
 };
 
 // --- Bootcamps ---
 
 export const fetchBootcamps = async (): Promise<Bootcamp[]> => {
- const res = await fetch(`${API_URL}/bootcamps`, { headers: getHeaders() });
+ const res = await fetch(`${API_URL}/bootcamps`, { headers: getHeaders(), credentials: 'include' });
  if (!res.ok) {
  console.error(`fetchBootcamps failed: ${res.status} ${res.statusText}`);
  throw new Error(`Failed to fetch bootcamps: ${res.status} ${res.statusText}`);
@@ -25,7 +23,8 @@ export const createBootcamp = async (data: Partial<Bootcamp>): Promise<Bootcamp>
  const res = await fetch(`${API_URL}/bootcamps`, {
  method: 'POST',
  headers: getHeaders(),
- body: JSON.stringify(data)
+ body: JSON.stringify(data),
+ credentials: 'include'
  });
  if (!res.ok) throw new Error("Failed to create bootcamp");
  return res.json();
@@ -34,7 +33,7 @@ export const createBootcamp = async (data: Partial<Bootcamp>): Promise<Bootcamp>
 // --- Groups ---
 
 export const fetchGroups = async (): Promise<Group[]> => {
- const res = await fetch(`${API_URL}/groups`, { headers: getHeaders() });
+ const res = await fetch(`${API_URL}/groups`, { headers: getHeaders(), credentials: 'include' });
  if (!res.ok) throw new Error("Failed to fetch groups");
  return res.json();
 };
@@ -43,14 +42,15 @@ export const createGroup = async (data: Partial<Group>): Promise<Group> => {
  const res = await fetch(`${API_URL}/groups`, {
  method: 'POST',
  headers: getHeaders(),
- body: JSON.stringify(data)
+ body: JSON.stringify(data),
+ credentials: 'include'
  });
  if (!res.ok) throw new Error("Failed to create group");
  return res.json();
 };
 
 export const fetchGroupStudents = async (groupId: string): Promise<any[]> => {
- const res = await fetch(`${API_URL}/groups/${groupId}/students`, { headers: getHeaders() });
+ const res = await fetch(`${API_URL}/groups/${groupId}/students`, { headers: getHeaders(), credentials: 'include' });
  if (!res.ok) throw new Error("Failed to fetch group students");
  return res.json();
 };
@@ -59,7 +59,8 @@ export const assignStudents = async (groupId: string, studentIds: string[]): Pro
  const res = await fetch(`${API_URL}/groups/${groupId}/assign`, {
  method: 'POST',
  headers: getHeaders(),
- body: JSON.stringify({ studentIds })
+ body: JSON.stringify({ studentIds }),
+ credentials: 'include'
  });
  if (!res.ok) throw new Error("Failed to assign students");
  return res.json();
@@ -68,7 +69,7 @@ export const assignStudents = async (groupId: string, studentIds: string[]): Pro
 // --- Tests ---
 
 export const fetchTests = async (): Promise<Test[]> => {
- const res = await fetch(`${API_URL}/tests`, { headers: getHeaders() });
+ const res = await fetch(`${API_URL}/tests`, { headers: getHeaders(), credentials: 'include' });
  if (!res.ok) {
  console.error(`fetchTests failed: ${res.status} ${res.statusText}`);
  throw new Error(`Failed to fetch tests: ${res.status} ${res.statusText}`);
@@ -80,14 +81,15 @@ export const createTest = async (data: Partial<Test>): Promise<Test> => {
  const res = await fetch(`${API_URL}/tests`, {
  method: 'POST',
  headers: getHeaders(),
- body: JSON.stringify(data)
+ body: JSON.stringify(data),
+ credentials: 'include'
  });
  if (!res.ok) throw new Error("Failed to create test");
  return res.json();
 };
 
 export const fetchMyResults = async (): Promise<TestResult[]> => {
- const res = await fetch(`${API_URL}/tests/results/my`, { headers: getHeaders() });
+ const res = await fetch(`${API_URL}/tests/results/my`, { headers: getHeaders(), credentials: 'include' });
  if (!res.ok) {
  console.error(`fetchMyResults failed: ${res.status} ${res.statusText}`);
  throw new Error(`Failed to fetch results: ${res.status} ${res.statusText}`);

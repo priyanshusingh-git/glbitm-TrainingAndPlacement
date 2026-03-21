@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
  * POST /api/training/sessions - Create training sessions (optionally recurring)
  */
 export async function POST(req: NextRequest) {
- const authResult = await authorize(req, ['ADMIN', 'STAFF', 'TRAINER']);
+ const authResult = await authorize(req, ['ADMIN', 'TRAINER']);
  if (authResult instanceof NextResponse) return authResult;
 
  try {

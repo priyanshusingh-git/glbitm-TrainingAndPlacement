@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
  try {
  // Admin or Staff can list trainers
- if (authResult.role !== 'ADMIN' && authResult.role !== 'STAFF') {
+ if (authResult.role !== 'ADMIN') {
  return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
  }
 
@@ -70,6 +70,10 @@ export async function POST(req: NextRequest) {
  });
 
  firebaseUserId = fbUser.uid;
+ await authAdmin.setCustomUserClaims(firebaseUserId, {
+  role: 'trainer',
+  mustChangePassword: true
+ });
 
  // 2. Create User in local DB
  let trainer = await prisma.user.create({

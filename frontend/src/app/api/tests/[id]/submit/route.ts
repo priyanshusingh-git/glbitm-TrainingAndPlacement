@@ -1,6 +1,6 @@
 import { NextResponse } from"next/server"
 import prisma from"@/lib/db"
-import { authenticate } from"@/lib/auth-middleware"
+import { authorize } from"@/lib/auth-middleware"
 import { logger } from"@/lib/logger"
 
 export async function POST(
@@ -9,7 +9,7 @@ export async function POST(
 ) {
  const params = await props.params;
  try {
- const authResult = await authenticate(req as any)
+ const authResult = await authorize(req as any, ["STUDENT"])
  if (authResult instanceof NextResponse) {
  return authResult
  }

@@ -380,3 +380,29 @@ export const sendPasswordChangedEmail = async (email: string, name: string) => {
  html: brandShell(content, 'Your password was successfully updated.')
  });
 };
+
+export const sendSecurityAlertEmail = async (params: {
+ ip: string
+ uniqueEmails: number
+ userAgent?: string
+}) => {
+ const content = `
+ ${emailH2('Security Alert')}
+ ${emailP('The GL Bajaj T&P Portal detected a credential stuffing pattern and blocked the source automatically.')}
+
+ ${credBox([
+ { label: 'Alert Type', value: 'Credential Stuffing' },
+ { label: 'IP Address', value: params.ip },
+ { label: 'Unique Emails', value: String(params.uniqueEmails) },
+ { label: 'User Agent', value: params.userAgent || 'Unknown' },
+ ])}
+
+ ${alertBox('The IP has been blocked for 24 hours. Review audit logs for additional details and determine whether further action is required.', 'warning')}
+ `;
+
+ return sendMailWithRetry({
+ to: process.env.EMAIL_USER,
+ subject: 'Security Alert — Credential Stuffing Detected',
+ html: brandShell(content, 'Credential stuffing was detected and blocked automatically.')
+ });
+};
