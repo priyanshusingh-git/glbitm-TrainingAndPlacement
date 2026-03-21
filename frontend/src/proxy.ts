@@ -33,13 +33,15 @@ function getNonce() {
 }
 
 function buildContentSecurityPolicy(nonce: string) {
+  // Relaxed CSP to allow inline scripts and styles which are currently being blocked in production (Next.js 16 Edge Runtime)
+  // and causing the login page to hang on a loading spinner.
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' https://hcaptcha.com https://*.hcaptcha.com`,
-    "style-src 'self' https://fonts.googleapis.com",
+    `script-src 'self' 'nonce-${nonce}' 'unsafe-inline' 'unsafe-eval' https://hcaptcha.com https://*.hcaptcha.com https://va.vercel-scripts.com`,
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com",
-    "connect-src 'self' https://*.firebase.com https://*.googleapis.com https://*.upstash.io https://api.pwnedpasswords.com https://hcaptcha.com https://*.hcaptcha.com",
+    "connect-src 'self' https://*.firebase.com https://*.googleapis.com https://*.upstash.io https://api.pwnedpasswords.com https://hcaptcha.com https://*.hcaptcha.com https://vitals.vercel-insights.com",
     "frame-src 'self' https://hcaptcha.com https://*.hcaptcha.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
@@ -63,6 +65,10 @@ function finalizeResponse(response: NextResponse, nonce: string, requestId: stri
   return response
 }
 
+/**
+ * Next.js 16 renamed middleware.ts to proxy.ts.
+ * The entry function should be exported as 'proxy'.
+ */
 export async function proxy(request: NextRequest) {
   const url = request.nextUrl.clone()
   const path = url.pathname
