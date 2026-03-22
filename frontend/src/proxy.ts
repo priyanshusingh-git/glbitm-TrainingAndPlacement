@@ -28,15 +28,13 @@ function applySecurityHeaders(response: NextResponse) {
   return response
 }
 
-function getNonce() {
-  return btoa(crypto.randomUUID())
-}
-
-function buildContentSecurityPolicy(nonce: string) {
+function buildContentSecurityPolicy() {
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://hcaptcha.com https://*.hcaptcha.com https://va.vercel-scripts.com`,
-    `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`,
+    // Next.js prerendered pages emit inline hydration scripts without a nonce.
+    // Requiring one here blocks the entire client bundle in production.
+    "script-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com https://va.vercel-scripts.com",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com",
     "connect-src 'self' https://*.firebase.com https://*.googleapis.com https://*.upstash.io https://api.pwnedpasswords.com https://hcaptcha.com https://*.hcaptcha.com https://vitals.vercel-insights.com",
@@ -48,17 +46,15 @@ function buildContentSecurityPolicy(nonce: string) {
 }
 
 function applyContentSecurityPolicy(
-  response: NextResponse,
-  nonce: string
+  response: NextResponse
 ) {
-  response.headers.set("Content-Security-Policy", buildContentSecurityPolicy(nonce))
-  response.headers.set("x-nonce", nonce)
+  response.headers.set("Content-Security-Policy", buildContentSecurityPolicy())
   return response
 }
 
-function finalizeResponse(response: NextResponse, nonce: string, requestId: string) {
+function finalizeResponse(response: NextResponse, requestId: string) {
   applySecurityHeaders(response)
-  applyContentSecurityPolicy(response, nonce)
+  applyContentSecurityPolicy(response)
   response.headers.set("x-request-id", requestId)
   return response
 }
@@ -66,7 +62,6 @@ function finalizeResponse(response: NextResponse, nonce: string, requestId: stri
 export async function proxy(request: NextRequest) {
   const url = request.nextUrl.clone()
   const path = url.pathname
-  const nonce = getNonce()
   const requestId = request.headers.get("x-request-id") ?? crypto.randomUUID()
 
   try {
@@ -82,7 +77,7 @@ export async function proxy(request: NextRequest) {
           { status: 429 }
         )
         applyRateLimitHeaders(response, result, retryAfter)
-        return finalizeResponse(response, nonce, requestId)
+        return finalizeResponse(response, requestId)
       }
     }
   } catch (error) {
@@ -133,31 +128,31 @@ export async function proxy(request: NextRequest) {
 
         const redirectResponse = NextResponse.redirect(redirectUrl)
         clearSessionCookies(redirectResponse)
-        return finalizeResponse(redirectResponse, nonce, requestId)
+        return finalizeResponse(redirectResponse, requestId)
       }
 
       const response = path.startsWith("/api")
         ? NextResponse.next()
         : NextResponse.redirect(new URL("/login", request.url))
       clearSessionCookies(response)
-      return finalizeResponse(response, nonce, requestId)
+      return finalizeResponse(response, requestId)
     }
   }
 
   if (session && (path === "/" || path === "/login")) {
     url.pathname = session.mustChangePassword ? "/change-password" : getDashboardPath(session.role)
-    return finalizeResponse(NextResponse.redirect(url), nonce, requestId)
+    return finalizeResponse(NextResponse.redirect(url), requestId)
   }
 
   if (path === "/change-password") {
     if (!session) {
       url.pathname = "/login"
-      return finalizeResponse(NextResponse.redirect(url), nonce, requestId)
+      return finalizeResponse(NextResponse.redirect(url), requestId)
     }
 
     if (!session.mustChangePassword) {
       url.pathname = getDashboardPath(session.role)
-      return finalizeResponse(NextResponse.redirect(url), nonce, requestId)
+      return finalizeResponse(NextResponse.redirect(url), requestId)
     }
   }
 
@@ -166,27 +161,26 @@ export async function proxy(request: NextRequest) {
     if (!session) {
       url.pathname = "/login"
       url.searchParams.set("redirect", path)
-      return finalizeResponse(NextResponse.redirect(url), nonce, requestId)
+      return finalizeResponse(NextResponse.redirect(url), requestId)
     }
 
     if (session.mustChangePassword && path !== "/change-password") {
       url.pathname = "/change-password"
-      return finalizeResponse(NextResponse.redirect(url), nonce, requestId)
+      return finalizeResponse(NextResponse.redirect(url), requestId)
     }
 
     if (session.role !== matchedProtectedRoute.role) {
       url.pathname = getDashboardPath(session.role)
-      return finalizeResponse(NextResponse.redirect(url), nonce, requestId)
+      return finalizeResponse(NextResponse.redirect(url), requestId)
     }
   }
 
   if (path.startsWith("/admin/login") || path.startsWith("/student/login")) {
     url.pathname = "/login"
-    return finalizeResponse(NextResponse.redirect(url), nonce, requestId)
+    return finalizeResponse(NextResponse.redirect(url), requestId)
   }
 
   const requestHeaders = new Headers(request.headers)
-  requestHeaders.set("x-nonce", nonce)
   requestHeaders.set("x-request-id", requestId)
 
   return finalizeResponse(
@@ -195,7 +189,6 @@ export async function proxy(request: NextRequest) {
         headers: requestHeaders,
       },
     }),
-    nonce,
     requestId
   )
 }

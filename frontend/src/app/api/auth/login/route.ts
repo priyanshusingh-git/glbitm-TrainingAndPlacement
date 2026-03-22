@@ -21,7 +21,7 @@ import { verifyHCaptchaToken } from "@/lib/hcaptcha"
 import { attachRequestContextHeaders, getIpAddress, getUserAgent } from "@/lib/request-context"
 import { getDashboardPath } from "@/lib/role-cookie"
 import { applySessionCookies, createSessionCookies } from "@/lib/session"
-import { createProblemResponse } from "@/lib/problem-details"
+import { createProblemResponse, handleApiError } from "@/lib/problem-details"
 import { sendSecurityAlertEmail } from "@/services/email.service"
 
 const loginSchema = z.object({
@@ -34,6 +34,19 @@ const loginSchema = z.object({
   hcaptchaToken: z.string().min(1).optional(),
   csrfToken: z.string().length(64).optional(),
 })
+
+const FIREBASE_AUTH_FAILURES = new Set([
+  "EMAIL_NOT_FOUND",
+  "INVALID_LOGIN_CREDENTIALS",
+  "INVALID_PASSWORD",
+  "USER_DISABLED",
+  "FIREBASE_SIGN_IN_FAILED",
+])
+
+function isCredentialFailure(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error)
+  return FIREBASE_AUTH_FAILURES.has(message)
+}
 
 export async function POST(req: NextRequest) {
   const ip = getIpAddress(req)
@@ -373,29 +386,41 @@ export async function POST(req: NextRequest) {
     ])
 
     return attachRequestContextHeaders(req, response)
-  } catch {
-    const failure = await recordLoginFailure({ ip, email, fingerprint })
-    await logAuthEvent({
-      action: "LOGIN_FAILED",
-      ip,
-      email,
-      userAgent,
-      fingerprint,
-      metadata: {
-        reason: "firebase_sign_in_failed",
-        failCount: failure.emailFailureCount,
-        ipFailCount: failure.ipFailureCount,
-      },
-    })
-    await applyProgressiveDelay(failure.emailFailureCount)
+  } catch (error) {
+    if (isCredentialFailure(error)) {
+      const failure = await recordLoginFailure({ ip, email, fingerprint })
+      await logAuthEvent({
+        action: "LOGIN_FAILED",
+        ip,
+        email,
+        userAgent,
+        fingerprint,
+        metadata: {
+          reason: error instanceof Error ? error.message : "firebase_sign_in_failed",
+          failCount: failure.emailFailureCount,
+          ipFailCount: failure.ipFailureCount,
+        },
+      })
+      await applyProgressiveDelay(failure.emailFailureCount)
 
-    return createProblemResponse(req, {
-      status: 401,
-      code: "AUTH_FAILED",
-      title: "Authentication failed",
-      detail: "Invalid email or password.",
-      extensions: {
-        captchaRequired: failure.captchaRequired,
+      return createProblemResponse(req, {
+        status: 401,
+        code: "AUTH_FAILED",
+        title: "Authentication failed",
+        detail: "Invalid email or password.",
+        extensions: {
+          captchaRequired: failure.captchaRequired,
+        },
+      })
+    }
+
+    return handleApiError(req, error, {
+      event: "auth.login.unexpected_failure",
+      message: "Login failed unexpectedly",
+      context: {
+        email,
+        role,
+        ip,
       },
     })
   }

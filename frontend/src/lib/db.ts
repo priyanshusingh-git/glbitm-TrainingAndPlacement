@@ -1,8 +1,26 @@
 import { PrismaClient } from "@prisma/client"
-import { withAccelerate } from "@prisma/extension-accelerate"
+import { PrismaPg } from "@prisma/adapter-pg"
+
+function getPrismaClientOptions(): ConstructorParameters<typeof PrismaClient>[0] {
+  const accelerateUrl = process.env.DATABASE_URL
+
+  if (accelerateUrl?.startsWith("prisma://")) {
+    return { accelerateUrl }
+  }
+
+  const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL
+
+  if (!connectionString) {
+    throw new Error("Prisma connection string is not configured.")
+  }
+
+  return {
+    adapter: new PrismaPg({ connectionString }),
+  }
+}
 
 const prismaClientSingleton = () =>
-  new PrismaClient().$extends(withAccelerate())
+  new PrismaClient(getPrismaClientOptions())
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>
 
