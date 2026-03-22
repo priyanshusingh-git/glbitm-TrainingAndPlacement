@@ -2,9 +2,7 @@ import { PrismaClient } from "@prisma/client"
 import { withAccelerate } from "@prisma/extension-accelerate"
 
 const prismaClientSingleton = () =>
-  new PrismaClient({
-    accelerateUrl: process.env.DATABASE_URL,
-  }).$extends(withAccelerate())
+  new PrismaClient().$extends(withAccelerate())
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>
 
