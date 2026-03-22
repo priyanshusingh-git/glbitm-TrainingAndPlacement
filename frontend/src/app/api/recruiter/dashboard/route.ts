@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
     })
 
     // Fetch shortlisted candidates across all drives for this company
-    const shortlistedApplications = await prisma.application.findMany({
+    const shortlistedApplications = await prisma.jobApplication.findMany({
       where: {
         drive: { companyId: company.id },
         status: { in: ['SHORTLISTED', 'OFFERED', 'PLACED'] },
@@ -55,17 +55,17 @@ export async function GET(req: NextRequest) {
           select: {
             user: { select: { name: true, email: true } },
             branch: true,
-            rollNo: true,
+            enrollmentNo: true,
           },
         },
         drive: { select: { role: true } },
       },
-      orderBy: { appliedAt: 'desc' },
+      orderBy: { updatedAt: 'desc' },
       take: 10,
     })
 
     // Total shortlisted count
-    const totalShortlisted = await prisma.application.count({
+    const totalShortlisted = await prisma.jobApplication.count({
       where: {
         drive: { companyId: company.id },
         status: { in: ['SHORTLISTED', 'OFFERED', 'PLACED'] },

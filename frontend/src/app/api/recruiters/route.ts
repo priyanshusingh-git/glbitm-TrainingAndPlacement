@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
     const userAgent = req.headers.get('user-agent') || undefined
     await logAudit({
       action: 'CREATE',
-      entityType: 'USER',
+      entityType: 'RECRUITER',
       entityId: firebaseUserId,
       performedById: authResult.id,
       details: { name, email, companyId },

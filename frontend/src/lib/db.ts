@@ -1,15 +1,8 @@
 import { PrismaClient } from "@prisma/client"
 import { withAccelerate } from "@prisma/extension-accelerate"
 
-const prismaClientSingleton = () => {
-  // During Next.js build, DATABASE_URL may be missing. 
-  // Providing a fallback URL prevents "PrismaClientInitializationError" during static analysis.
-  const url = process.env.DATABASE_URL || "prisma://accelerate.prisma-data.net/?api_key=placeholder"
-  
-  return new PrismaClient({
-    datasourceUrl: url,
-  }).$extends(withAccelerate())
-}
+const prismaClientSingleton = () =>
+  new PrismaClient().$extends(withAccelerate())
 
 type PrismaClientSingleton = ReturnType<typeof prismaClientSingleton>
 

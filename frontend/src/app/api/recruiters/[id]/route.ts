@@ -27,7 +27,7 @@ export async function DELETE(
     const userAgent = req.headers.get('user-agent') || undefined
     await logAudit({
       action: 'DELETE',
-      entityType: 'USER',
+      entityType: 'RECRUITER',
       entityId: id,
       performedById: authResult.id,
       details: { deletedEmail: user.email },
