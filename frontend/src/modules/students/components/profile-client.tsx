@@ -223,7 +223,7 @@ export default function StudentProfilePage() {
  setIsDeletingPhoto(true);
 
  try {
- await api.put("/students/profile", { photoUrl: null });
+ await api.patch("/students/profile", { photoUrl: null });
  setProfile(p => p ? ({ ...p, photoUrl: null }) : null);
  updateUser({ photoUrl: undefined });
  toast({ title:"Photo Removed", description:"Your profile photo has been deleted." });
@@ -531,7 +531,7 @@ export default function StudentProfilePage() {
  const res = await api.post("/upload", fd);
 
  // 2. Sync with Backend
- await api.put("/students/profile", { photoUrl: res.url });
+ await api.patch("/students/profile", { photoUrl: res.url });
 
  // Update with real URL (though visually identical)
  updateUser({ photoUrl: res.url });
@@ -586,7 +586,7 @@ export default function StudentProfilePage() {
  // setSaving("basic"); 
 
  try {
- await api.put("/students/profile", payload);
+ await api.patch("/students/profile", payload);
  toast({ title:"Success", description:"Basic Information saved and locked." });
  } catch (e: any) {
  // 2. Rollback
@@ -634,7 +634,7 @@ export default function StudentProfilePage() {
  setProfile(optimisticProfile);
 
  try {
- await api.put("/students/profile", payload);
+ await api.patch("/students/profile", payload);
  toast({ title:"Success", description:"Class 10 details saved and locked." });
  } catch (e: any) {
  setProfile(previousProfile);
@@ -690,7 +690,7 @@ export default function StudentProfilePage() {
  setProfile(optimisticProfile);
 
  try {
- await api.put("/students/profile", payload);
+ await api.patch("/students/profile", payload);
  toast({ title:"Success", description: `${formData.educationType} details saved and locked.` });
  } catch (e: any) {
  setProfile(previousProfile);
@@ -752,7 +752,7 @@ export default function StudentProfilePage() {
  motherName: formData.motherName,
  };
 
- const updated = await api.put("/students/profile", payload);
+ const updated = await api.patch("/students/profile", payload);
  setProfile(updated);
  toast({ title:"Success", description:"Optional Class 12 details saved and locked." });
  } catch (e: any) {
@@ -794,7 +794,7 @@ export default function StudentProfilePage() {
  setProfile(optimisticProfile);
 
  try {
- await api.put("/students/profile", payload);
+ await api.patch("/students/profile", payload);
  toast({ title:"Success", description:"Diploma details saved and locked." });
  } catch (e: any) {
  // 2. Rollback
@@ -845,7 +845,7 @@ export default function StudentProfilePage() {
  setSemesterResults(optimisticResults);
 
  try {
- await api.put("/students/profile", payload);
+ await api.patch("/students/profile", payload);
  // Success - no further state update needed as optimistic state is correct
  toast({ title:"Success", description: `Semester ${result.semester} details saved.` });
  } catch (e: any) {
@@ -939,7 +939,7 @@ export default function StudentProfilePage() {
  setIsEditingPersonal(false);
 
  try {
- await api.put("/students/profile", payload);
+ await api.patch("/students/profile", payload);
  toast({ title:"Success", description:"Personal Details saved successfully." });
  } catch (e: any) {
  // 2. Rollback
@@ -957,14 +957,14 @@ export default function StudentProfilePage() {
 
   // Standardize naming and URL resolution
   const fullPhotoUrl = getImageUrl(profile?.photoUrl);
-  console.log("[ProfileClient] fullPhotoUrl:", fullPhotoUrl);
+  
  const isLocked = profile?.isProfileLocked;
  const isAnySectionLocked = isLocked || profile?.isClass10Locked || profile?.isClass12Locked || profile?.isDiplomaLocked || semesterResults.some(r => r.isLocked);
 
  return (
  <div className="space-y-6">
  <div className="flex items-center justify-between">
- <h1 className="text-3xl font-bold">My Profile</h1>
+ <h1 className="text-3xl font-bold font-display">My Profile</h1>
  </div>
 
  {/* Admin Lock - Red Alert */}
@@ -980,10 +980,10 @@ export default function StudentProfilePage() {
 
 
 
- <div className="flex flex-col-reverse gap-6 md:grid md:grid-cols-[1fr_300px]">
+ <div className="flex flex-col-reverse gap-6 lg:grid lg:grid-cols-[1fr_280px]">
  <div className="space-y-6">
  <Tabs defaultValue="basic" className="w-full">
- <TabsList className="grid w-full grid-cols-3 h-auto min-h-[56px] overflow-hidden">
+ <TabsList className="grid w-full grid-cols-3 h-auto min-h-[56px] overflow-x-auto">
  <TabsTrigger value="basic" className="h-full whitespace-normal px-1 text-[11px] sm:text-sm py-2 sm:py-3 leading-tight">
  <User className="h-3 w-3 mr-1 block sm:hidden" />
  Basic Details
@@ -1011,7 +1011,7 @@ export default function StudentProfilePage() {
  </div>
  )}
  {!profile?.isBasicInfoLocked && (
- <Button onClick={saveBasicInfo} disabled={saving ==="basic" || isLocked} size="sm">
+ <Button onClick={saveBasicInfo} disabled={saving ==="basic" || isLocked} className="min-h-[44px] text-xs">
  {saving ==="basic" ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Locking...</> :"Save & Lock"}
  </Button>
  )}
@@ -1115,9 +1115,7 @@ export default function StudentProfilePage() {
  </Card>
  </TabsContent>
 
- <TabsContent value="personal" className="space-y-6">
- {/* Personal Details - Always editable, moved here */}
- </TabsContent>
+ 
 
  <TabsContent value="academic" className="space-y-6">
  <Card>
@@ -1133,7 +1131,7 @@ export default function StudentProfilePage() {
  </div>
  )}
  {!profile?.isClass10Locked && (
- <Button onClick={saveClass10} disabled={saving ==="class10" || isLocked} size="sm">
+ <Button onClick={saveClass10} disabled={saving ==="class10" || isLocked} className="min-h-[44px] text-xs">
  {saving ==="class10" ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Locking...</> :"Save & Lock"}
  </Button>
  )}
@@ -1228,7 +1226,7 @@ export default function StudentProfilePage() {
  </div>
  )}
  {!profile?.isClass12Locked && (
- <Button onClick={saveClass12} disabled={saving ==="class12" || isLocked} size="sm">
+ <Button onClick={saveClass12} disabled={saving ==="class12" || isLocked} className="min-h-[44px] text-xs">
  {saving ==="class12" ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Locking...</> :"Save & Lock"}
  </Button>
  )}
@@ -1339,12 +1337,12 @@ export default function StudentProfilePage() {
  <Button
  onClick={() => setShowClass12ForLateralEntry(false)}
  variant="ghost"
- size="sm"
+ className="min-h-[44px] text-xs"
  disabled={isLocked}
  >
  Remove
  </Button>
- <Button onClick={saveOptionalClass12} disabled={saving ==="class12" || isLocked} size="sm">
+ <Button onClick={saveOptionalClass12} disabled={saving ==="class12" || isLocked} className="min-h-[44px] text-xs">
  {saving ==="class12" ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Locking...</> :"Save & Lock"}
  </Button>
  </div>
@@ -1439,7 +1437,7 @@ export default function StudentProfilePage() {
  </div>
  )}
  {!profile?.isDiplomaLocked && (
- <Button onClick={saveDiploma} disabled={saving ==="diploma" || isLocked} size="sm">
+ <Button onClick={saveDiploma} disabled={saving ==="diploma" || isLocked} className="min-h-[44px] text-xs">
  {saving ==="diploma" ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Locking...</> :"Save & Lock"}
  </Button>
  )}
@@ -1559,7 +1557,7 @@ export default function StudentProfilePage() {
  <Button
  onClick={() => saveSemester(originalIndex)}
  disabled={saving === `sem-${result.semester}` || isLocked}
- size="sm"
+ className="min-h-[44px] text-xs"
  >
  {saving === `sem-${result.semester}` ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Locking...</> :"Save & Lock"}
  </Button>
@@ -1594,7 +1592,7 @@ export default function StudentProfilePage() {
  setSemesterResults(newRes);
  }}
  disabled={isLocked || result.isLocked}
- className={isLocked || result.isLocked ?"bg-muted" :"bg-background"}
+ className={`h-11 ${isLocked || result.isLocked ? "bg-muted" : "bg-background"}`}
  />
  </div>
  <div className="space-y-1">
@@ -1602,7 +1600,7 @@ export default function StudentProfilePage() {
  <Input
  value={percentage || 'N/A'}
  disabled
- className="bg-muted font-medium"
+ className="bg-muted font-medium h-11"
  />
  </div>
  <div className="space-y-1">
@@ -1618,7 +1616,7 @@ export default function StudentProfilePage() {
  setSemesterResults(newRes);
  }}
  disabled={isLocked || result.isLocked}
- className={isLocked || result.isLocked ?"bg-muted" :"bg-background"}
+ className={`h-11 ${isLocked || result.isLocked ? "bg-muted" : "bg-background"}`}
  />
  </div>
  <div className="space-y-1">
@@ -1633,7 +1631,7 @@ export default function StudentProfilePage() {
  setSemesterResults(newRes);
  }}
  disabled={isLocked || result.isLocked}
- className={isLocked || result.isLocked ?"bg-muted" :"bg-background"}
+ className={`h-11 ${isLocked || result.isLocked ? "bg-muted" : "bg-background"}`}
  />
  </div>
  <div className="space-y-1">
@@ -1648,7 +1646,7 @@ export default function StudentProfilePage() {
  setSemesterResults(newRes);
  }}
  disabled={isLocked || result.isLocked}
- className={isLocked || result.isLocked ?"bg-muted" :"bg-background"}
+ className={`h-11 ${isLocked || result.isLocked ? "bg-muted" : "bg-background"}`}
  />
  </div>
  </div>

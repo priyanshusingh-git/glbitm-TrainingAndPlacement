@@ -4,27 +4,33 @@ import { useAuth } from"@/contexts/auth-context";
 import { StudentOverview } from"@/modules/students/components/student-overview"
 import { TrainingSection } from"@/modules/students/components/training-section"
 import { TestsSection } from"@/modules/students/components/tests-section"
-import { useEffect, useState } from"react";
-import { useRouter } from"next/navigation";
-import { Loader2 } from"lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from"@/components/ui/avatar";
-import { getImageUrl } from"@/lib/utils";
-
-import { dashboardBanner, pipelineData, upcomingDrives, statCards } from "@/data/dashboard";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Loader2, Search, Bell, Briefcase, Trophy, CheckCircle, BookOpen, Building2 } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getImageUrl } from "@/lib/utils";
+import { api } from "@/lib/api";
 import { PlacementPipeline } from "./placement-pipeline";
-import { Search, Bell, Briefcase, Trophy, CheckCircle, BookOpen, Building2 } from "lucide-react";
-import { StatCounter } from "@/components/ui/StatCounter";
 import { cn } from "@/lib/utils";
 
 export default function StudentDashboard() {
   const router = useRouter();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [dashboardData, setDashboardData] = useState<any>(null);
 
   useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => setLoading(false), 500);
-    return () => clearTimeout(timer);
+    const fetchData = async () => {
+      try {
+        const data = await api.get("/dashboard/student");
+        setDashboardData(data);
+      } catch (error) {
+        console.error("Failed to fetch dashboard:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
   if (loading) {
@@ -36,7 +42,7 @@ export default function StudentDashboard() {
   }
 
   return (
-    <div className="flex flex-col gap-8 pb-12 animate-fade-up">
+    <div className="flex flex-col gap-8 pb-12 animate-in fade-in duration-300">
       {/* Top Bar for Desktop */}
       <div className="hidden md:flex items-center justify-between">
         <div className="flex flex-col">
@@ -71,22 +77,29 @@ export default function StudentDashboard() {
           <div className="flex flex-col gap-2">
             <span className="eyebrow-dark">
               <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500 mr-2 shadow-[0_0_8px_rgba(245,158,11,0.6)]" />
-              {dashboardBanner.status}
+              Placement Season Active
             </span>
             <h1 className="font-display text-4xl font-bold md:text-5xl text-white">
-              {dashboardBanner.greeting}, <span className="italic text-amber-500">{user?.name?.split(' ')[0] || "Rahul"}!</span>
+              {(() => {
+                const hour = new Date().getHours();
+                if (hour < 12) return "Good morning";
+                if (hour < 17) return "Good afternoon";
+                return "Good evening";
+              })()}, <span className="italic text-amber-500">{user?.name?.split(' ')[0] || "Student"}!</span>
             </h1>
             <p className="text-lg text-white/70 max-w-xl">
-              {dashboardBanner.message}
+              {dashboardData?.overview?.message || "Welcome to your placement dashboard."}
             </p>
           </div>
 
           <div className="flex flex-wrap gap-4">
-            {dashboardBanner.metrics.map((metric) => (
+            {[
+              { label: "CGPA", value: dashboardData?.overview?.cgpa ?? "—" },
+              { label: "Attendance", value: dashboardData?.overview?.attendancePercentage ? `${dashboardData.overview.attendancePercentage}%` : "—" },
+              { label: "Applied", value: dashboardData?.placements?.length ?? 0 },
+            ].map((metric) => (
               <div key={metric.label} className="stat-bubble bg-white/5 border-white/10">
-                <span className="font-display text-2xl font-bold text-amber-500">
-                  <StatCounter value={parseFloat(metric.value)} suffix={metric.value.includes('%') ? '%' : ''} decimals={metric.value.includes('.') ? 1 : 0} />
-                </span>
+                <span className="font-display text-2xl font-bold text-amber-500">{metric.value}</span>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-white/40">{metric.label}</span>
               </div>
             ))}
@@ -95,30 +108,49 @@ export default function StudentDashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {statCards.map((card) => (
-          <StatCard 
-            key={card.id}
-            icon={getIcon(card.tag, card.badgeColor)}
-            label={card.label} 
-            value={card.value} 
-            badge={card.badge} 
-            badgeColor={card.badgeColor}
-          />
-        ))}
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard
+          icon={<Trophy className="h-6 w-6 text-amber-500" />}
+          label="Training Level"
+          value={dashboardData?.overview?.trainingLevel || "—"}
+          badge="Progress"
+          badgeColor="amber"
+        />
+        <StatCard
+          icon={<Briefcase className="h-6 w-6 text-amber-500" />}
+          label="Drives Applied"
+          value={dashboardData?.overview?.eligibleDrives ?? "—"}
+          badge="Active"
+          badgeColor="amber"
+        />
+        <StatCard
+          icon={<CheckCircle className="h-6 w-6 text-muted-foreground" />}
+          label="Avg Test Score"
+          value={dashboardData?.overview?.avgTestScore ? `${dashboardData.overview.avgTestScore}%` : "—"}
+          badge="Score"
+          badgeColor="muted"
+        />
+        <StatCard
+          icon={<BookOpen className="h-6 w-6 text-muted-foreground" />}
+          label="Problems Solved"
+          value={dashboardData?.overview?.problemsSolved ?? "—"}
+          badge="Coding"
+          badgeColor="muted"
+        />
       </div>
 
       {/* Pipeline and Upcoming Section */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2">
+          {/* Mock pipeline remains using local data if it's too complex to map, but user didn't specify refactoring pipelineData */}
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-xl font-bold font-display">{`Placement Pipeline`}</h3>
             <button className="text-xs font-bold text-primary hover:underline">View Details</button>
           </div>
           <PlacementPipeline 
-            company={pipelineData.company} 
-            role={pipelineData.role} 
-            stages={pipelineData.stages as any} 
+            company={dashboardData?.currentPipeline?.company || "No active pipeline"} 
+            role={dashboardData?.currentPipeline?.role || ""} 
+            stages={dashboardData?.currentPipeline?.stages || []} 
           />
         </div>
         <div className="flex flex-col gap-4">
@@ -127,9 +159,19 @@ export default function StudentDashboard() {
             <button className="text-xs font-bold text-primary hover:underline">View All</button>
           </div>
           <div className="card-base p-6 flex flex-col gap-4">
-             {upcomingDrives.map((drive) => (
-               <DriveItem key={drive.id} {...drive} />
-             ))}
+            {dashboardData?.placements?.length > 0 ? (
+              dashboardData.placements.slice(0, 3).map((drive: any) => (
+                <DriveItem
+                  key={drive.id}
+                  name={drive.company?.name || "Company"}
+                  role={drive.role}
+                  package={drive.ctc}
+                  date={drive.date ? new Date(drive.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "TBD"}
+                />
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">No upcoming drives at the moment.</p>
+            )}
           </div>
         </div>
       </div>
@@ -154,9 +196,12 @@ function getIcon(tag: string, color: string) {
 
 function StatCard({ icon, label, value, badge, badgeColor }: { icon: React.ReactNode, label: string, value: string, badge: string, badgeColor: string }) {
   const badgeColors: Record<string, string> = {
-    blue: "bg-blue-500/10 text-blue-600",
-    emerald: "bg-emerald-500/10 text-emerald-600",
-    indigo: "bg-indigo-500/10 text-indigo-600",
+    amber: "bg-amber-500/10 text-amber-700",
+    muted: "bg-muted text-muted-foreground",
+    // keep others as fallback mapped to muted
+    blue: "bg-muted text-muted-foreground",
+    emerald: "bg-muted text-muted-foreground",
+    indigo: "bg-muted text-muted-foreground",
   }
 
   return (
@@ -165,7 +210,7 @@ function StatCard({ icon, label, value, badge, badgeColor }: { icon: React.React
         <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted/30">
           {icon}
         </div>
-        <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ring-1 ring-inset", badgeColors[badgeColor] || badgeColors.blue)}>
+        <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ring-1 ring-inset", badgeColors[badgeColor] || badgeColors.muted)}>
           {badge}
         </span>
       </div>
@@ -182,7 +227,7 @@ function DriveItem({ name, role, package: pkg, date }: { name: string, role: str
     <div className="flex items-center justify-between border-b border-border/40 pb-4 last:border-0 last:pb-0">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted/30">
-           <Building2Icon className="h-5 w-5 text-muted-foreground" />
+           <Building2 className="h-5 w-5 text-muted-foreground" />
         </div>
         <div className="flex flex-col">
           <span className="text-sm font-bold">{name}</span>
@@ -196,9 +241,3 @@ function DriveItem({ name, role, package: pkg, date }: { name: string, role: str
     </div>
   )
 }
-
-// Minimal icons within the file for speed, can be replaced with lucide-react if preferred
-function TrophyIcon(props: any) { return <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/><path d="M12 21V7"/><path d="M3 3h18"/></svg> }
-function CheckCircleIcon(props: any) { return <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> }
-function BookOpenIcon(props: any) { return <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a4 4 0 0 0-4-4H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a4 4 0 0 1 4-4h6z"/></svg> }
-function Building2Icon(props: any) { return <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></svg> }

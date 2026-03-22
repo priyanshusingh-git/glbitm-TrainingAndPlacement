@@ -12,7 +12,7 @@ import {
 import { authAdmin } from "@/lib/firebase-admin"
 import { validateCsrfToken } from "@/lib/csrf"
 import { logger } from "@/lib/logger"
-import { generateOtp, hashOtp } from "@/lib/otp"
+import { generateOtp, generateOtpSalt, hashOtp } from "@/lib/otp"
 import { attachRequestContextHeaders } from "@/lib/request-context"
 import { getIpAddress, getUserAgent } from "@/lib/request-context"
 import { createProblemResponse, handleApiError } from "@/lib/problem-details"
@@ -152,10 +152,12 @@ export async function POST(req: NextRequest) {
     }
 
     const otp = generateOtp()
+    const salt = generateOtpSalt()
     await redis.set(
       `otp:${user.email}`,
       {
-        hash: hashOtp(otp),
+        hash: hashOtp(otp, salt),
+        salt,
         attempts: 0,
         uid: user.id,
         email: user.email,

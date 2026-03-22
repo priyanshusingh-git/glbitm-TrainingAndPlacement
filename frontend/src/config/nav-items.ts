@@ -15,6 +15,7 @@ import {
  Activity,
  Code,
  Trophy,
+ UserCheck,
 } from"lucide-react"
 
 export const studentNavItems = [
@@ -51,9 +52,10 @@ export const adminNavItems = [
  { label:"Bootcamps", href:"/admin/bootcamps", icon: Award },
  { label:"Tests", href:"/admin/tests", icon: FileText },
 
- { type:"header", label:"Corporate Relations" },
- { label:"Companies", href:"/admin/companies", icon: Building2 },
- { label:"Placements", href:"/admin/placements", icon: Briefcase },
+  { type: "header", label: "Corporate Relations" },
+  { label: "Companies", href: "/admin/companies", icon: Building2 },
+  { label: "Placements", href: "/admin/placements", icon: Briefcase },
+  { label: "Recruiters", href: "/admin/recruiters", icon: UserCheck },
 
  { type:"header", label:"System Administration" },
  { label:"Activity Log", href:"/admin/activity", icon: Activity },

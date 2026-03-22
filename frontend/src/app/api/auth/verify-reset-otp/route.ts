@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
 
   const record = await redis.get<{
     hash: string
+    salt: string
     attempts: number
     uid: string
     email: string
@@ -77,7 +78,7 @@ export async function POST(req: NextRequest) {
     })
   }
 
-  if (record.hash !== hashOtp(otp)) {
+  if (record.hash !== hashOtp(otp, record.salt)) {
     const nextAttempts = Number(record.attempts) + 1
     if (nextAttempts >= 3) {
       await redis.del(`otp:${email}`)
@@ -124,8 +125,16 @@ export async function POST(req: NextRequest) {
     userAgent,
   })
 
-  return attachRequestContextHeaders(
+  const response = attachRequestContextHeaders(
     req,
-    NextResponse.json({ message: "Verification successful", resetToken })
+    NextResponse.json({ message: "Verification successful" })
   )
+  response.cookies.set("__reset_token", resetToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/api/auth/reset-password",
+    maxAge: 15 * 60,
+  })
+  return response
 }

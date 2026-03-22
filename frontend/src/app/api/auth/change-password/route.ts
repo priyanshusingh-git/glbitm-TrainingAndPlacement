@@ -70,13 +70,9 @@ export async function POST(req: NextRequest) {
         })
       }
     } catch (error) {
-      logger.warn("HIBP validation unavailable during password change:", error)
-      return createProblemResponse(req, {
-        status: 503,
-        code: "PASSWORD_VALIDATION_UNAVAILABLE",
-        title: "Service temporarily unavailable",
-        detail: "Password validation is temporarily unavailable. Try again shortly.",
-      })
+      // HIBP unavailable — log and continue. Do not block the user.
+      logger.warn("HIBP check unavailable, proceeding without breach check:", error)
+      // Do NOT return 503 — fall through to complete the password change
     }
 
     const { authAdmin } = await import("@/lib/firebase-admin")

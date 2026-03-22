@@ -21,35 +21,19 @@ export const getStudents = async () => {
 };
 
 export const getStudentById = async (id: string) => {
- let student = await prisma.studentProfile.findUnique({
- where: { id },
- include: {
- user: { select: { email: true, role: true, name: true } },
- batch: true,
- trainingGroup: true,
- semesterResults: true,
- projects: true,
- certifications: true,
- attendances: true
- }
- });
-
- if (!student) {
- student = await prisma.studentProfile.findUnique({
- where: { userId: id },
- include: {
- user: { select: { email: true, role: true, name: true } },
- batch: true,
- trainingGroup: true,
- semesterResults: true,
- projects: true,
- certifications: true,
- attendances: true
- }
- });
- }
-
- return student;
+  // Always query by userId (Firebase UID) — removes the double-query fallback
+  return prisma.studentProfile.findUnique({
+    where: { userId: id },
+    include: {
+      user: { select: { email: true, role: true, name: true } },
+      batch: true,
+      trainingGroup: true,
+      semesterResults: true,
+      projects: true,
+      certifications: true,
+      attendances: true
+    }
+  });
 };
 
 export const createStudent = async (data: { email: string; admissionId: string; name?: string }) => {
@@ -179,91 +163,99 @@ export const updateStudent = async (id: string, body: any, performedById: string
  const userAgent = context?.userAgent;
 
  if (typeof isProfileLocked === 'boolean' && isProfileLocked !== profile.isProfileLocked) {
- await logAudit({
- action: isProfileLocked ? 'LOCK' : 'UNLOCK',
- entityType: 'STUDENT',
- entityId: userId,
- performedById,
- details: { previousStatus: profile.isProfileLocked, currentStatus: isProfileLocked },
- ipAddress,
- userAgent
- });
+  await logAudit({
+    action: isProfileLocked ? 'LOCK' : 'UNLOCK',
+    entityType: 'STUDENT',
+    entityId: userId,
+    performedById,
+    details: { previousStatus: profile.isProfileLocked, currentStatus: isProfileLocked },
+    ipAddress,
+    userAgent
+  });
 
- await prisma.notification.create({
- data: {
- userId,
- title: isProfileLocked ?"Profile Locked 🔒" :"Profile Unlocked 🔓",
- message: isProfileLocked
- ?"Your profile has been locked by admin. You can no longer make changes."
- :"Your profile has been unlocked by admin. You can now make changes.",
- type: isProfileLocked ? 'WARNING' : 'SUCCESS'
- }
- });
+  await prisma.notification.create({
+    data: {
+      userId,
+      title: isProfileLocked ? "Profile Locked 🔒" : "Profile Unlocked 🔓",
+      message: isProfileLocked
+        ? "Your profile has been locked by admin. You can no longer make changes."
+        : "Your profile has been unlocked by admin. You can now make changes.",
+      type: isProfileLocked ? 'WARNING' : 'SUCCESS'
+    }
+  });
 
- await broadcastMessage({
- channel: `profile-updates-${userId}`,
- event: isProfileLocked ? 'profile:locked' : 'profile:unlocked',
- payload: { userId }
- });
+  try {
+    await broadcastMessage({
+      channel: `profile-updates-${userId}`,
+      event: isProfileLocked ? 'profile:locked' : 'profile:unlocked',
+      payload: { userId }
+    });
+  } catch (broadcastError) {
+    logger.warn('Realtime broadcast failed — profile lock/unlock update skipped:', broadcastError);
+  }
  } else {
- await logAudit({
- action: 'UPDATE',
- entityType: 'STUDENT',
- entityId: userId,
- performedById,
- details: { updatedFields: Object.keys(profileData) },
- ipAddress,
- userAgent
- });
+  await logAudit({
+    action: 'UPDATE',
+    entityType: 'STUDENT',
+    entityId: userId,
+    performedById,
+    details: { updatedFields: Object.keys(profileData) },
+    ipAddress,
+    userAgent
+  });
 
- const updateFields = Object.keys(profileData).filter(k => k !== 'isProfileLocked');
- if (updateFields.length > 0) {
- await prisma.notification.create({
- data: {
- userId,
- title:"Profile Updated 📝",
- message:"An admin has updated details in your profile.",
- type: 'INFO'
- }
- });
+  const updateFields = Object.keys(profileData).filter(k => k !== 'isProfileLocked');
+  if (updateFields.length > 0) {
+    await prisma.notification.create({
+      data: {
+        userId,
+        title: "Profile Updated 📝",
+        message: "An admin has updated details in your profile.",
+        type: 'INFO'
+      }
+    });
 
- await broadcastMessage({
- channel: `profile-updates-${userId}`,
- event: 'profile:updated',
- payload: { userId }
- });
- }
+    try {
+      await broadcastMessage({
+        channel: `profile-updates-${userId}`,
+        event: 'profile:updated',
+        payload: { userId }
+      });
+    } catch (broadcastError) {
+      logger.warn('Realtime broadcast failed — profile update notification skipped:', broadcastError);
+    }
+  }
  }
  }
 
  // Semester Results
  if (semesterResults && Array.isArray(semesterResults)) {
- for (const sem of semesterResults) {
- await prisma.semesterResult.upsert({
- where: {
- studentId_semester: {
- studentId: profileId,
- semester: sem.semester
- }
- },
- update: {
- sgpa: sem.sgpa,
- backlogs: sem.backlogs || 0,
- credits: sem.credits,
- totalMarks: sem.totalMarks,
- obtainedMarks: sem.obtainedMarks
- },
- create: {
- student: { connect: { id: profileId } },
- semester: sem.semester,
- sgpa: sem.sgpa,
- backlogs: sem.backlogs || 0,
- credits: sem.credits,
- totalMarks: sem.totalMarks,
- obtainedMarks: sem.obtainedMarks
- }
- });
- }
+  for (const sem of semesterResults) {
+    await prisma.semesterResult.upsert({
+      where: {
+        studentId_semester: {
+          studentId: profileId,
+          semester: sem.semester
+        }
+      },
+      update: {
+        sgpa: sem.sgpa,
+        backlogs: sem.backlogs || 0,
+        credits: sem.credits,
+        totalMarks: sem.totalMarks,
+        obtainedMarks: sem.obtainedMarks
+      },
+      create: {
+        student: { connect: { id: profileId } },
+        semester: sem.semester,
+        sgpa: sem.sgpa,
+        backlogs: sem.backlogs || 0,
+        credits: sem.credits,
+        totalMarks: sem.totalMarks,
+        obtainedMarks: sem.obtainedMarks
+      }
+    });
+  }
  }
 
  return getStudentById(profileId);
