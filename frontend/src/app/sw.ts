@@ -1,9 +1,8 @@
 import { defaultCache } from '@serwist/next/worker'
+// @ts-expect-error - missing type definition in serwist
 import { installSerwist } from 'serwist'
 
-declare const self: ServiceWorkerGlobalScope & {
-  __SW_MANIFEST: (string | { url: string; revision: string })[]
-}
+declare const self: any;
 
 installSerwist({
   precacheEntries: self.__SW_MANIFEST,
@@ -55,7 +54,7 @@ installSerwist({
   },
 })
 
-self.addEventListener('push', (event) => {
+self.addEventListener('push', (event: any) => {
   const data = event.data?.json()
   if (!data) return
   event.waitUntil(
@@ -68,7 +67,7 @@ self.addEventListener('push', (event) => {
   )
 })
 
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener('notificationclick', (event: any) => {
   event.notification.close()
-  event.waitUntil(clients.openWindow(event.notification.data?.url || '/student'))
+  event.waitUntil((self as any).clients.openWindow(event.notification.data?.url || '/student'))
 })

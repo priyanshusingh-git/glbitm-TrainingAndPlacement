@@ -39,14 +39,14 @@ export async function GET(
  return NextResponse.json({ error: 'Session not found' }, { status: 404 });
  }
 
- if (session.sessionGroups.length === 0) {
+ if ((session as any).sessionGroups.length === 0) {
  return NextResponse.json({ error: 'No groups assigned to this session' }, { status: 400 });
  }
 
  // 2. Flatten and dedupe students across all linked groups
  const studentsMap = new Map<string, any>();
- for (const group of session.sessionGroups) {
- for (const student of group.students) {
+ for (const group of (session as any).sessionGroups) {
+ for (const student of (group as any).students) {
  if (!studentsMap.has(student.id)) {
  studentsMap.set(student.id, student);
  }
