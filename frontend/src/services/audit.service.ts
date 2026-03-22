@@ -2,7 +2,7 @@ import prisma from '@/lib/db';
 import { logger } from '@/lib/logger';
 
 export type AuditAction = 'CREATE' | 'UPDATE' | 'DELETE' | 'LOCK' | 'UNLOCK' | 'EXPORT' | 'IMPORT';
-export type EntityType = 'STUDENT' | 'COMPANY' | 'PLACEMENT_DRIVE' | 'TRAINER' | 'USER' | 'BOOTCAMP' | 'TEST';
+export type EntityType = 'STUDENT' | 'COMPANY' | 'PLACEMENT_DRIVE' | 'TRAINER' | 'RECRUITER' | 'USER' | 'BOOTCAMP' | 'TEST';
 
 interface LogAuditParams {
  action: AuditAction;

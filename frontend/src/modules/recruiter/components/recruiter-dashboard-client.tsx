@@ -25,10 +25,10 @@ interface DashboardData {
     status: string
   } | null
   stats: {
-    totalDrives: parseInt
-    ongoingDrives: parseInt
-    completedDrives: parseInt
-    totalShortlisted: parseInt
+    totalDrives: number
+    ongoingDrives: number
+    completedDrives: number
+    totalShortlisted: number
   }
   activeDrives: Array<{
     id: string
@@ -42,11 +42,11 @@ interface DashboardData {
   shortlistedCandidates: Array<{
     id: string
     status: string
-    updatedAt: string
+    appliedAt: string
     student: {
       user: { name: string; email: string }
       branch: string
-      enrollmentNo: string
+      rollNo: string
     }
     drive: { role: string }
   }>
@@ -249,7 +249,7 @@ export default function RecruiterDashboardClient() {
                         <div>
                           <p className="text-sm font-semibold">{app.student.user.name}</p>
                           <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-                            {app.student.branch} • {app.student.enrollmentNo}
+                            {app.student.branch} • {app.student.rollNo}
                           </p>
                         </div>
                       </div>
