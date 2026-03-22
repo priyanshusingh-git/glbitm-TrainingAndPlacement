@@ -82,7 +82,7 @@ export default function PlacementsPage() {
  const appliedDrives = filteredDrives.filter(d => d.applications && d.applications.length > 0)
 
  return (
- <div className="space-y-6">
+ <div className="space-y-6 animate-in fade-in duration-300">
  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
  <div>
  <h1 className="text-2xl font-bold tracking-tight">Placement Drives</h1>
@@ -116,7 +116,7 @@ export default function PlacementsPage() {
  </div>
 
  <Tabs defaultValue="all" className="w-full">
- <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 mb-6">
+ <TabsList className="overflow-x-auto hide-scrollbar w-full justify-start rounded-none border-b bg-transparent p-0 mb-6">
  <TabsTrigger value="all" className="relative rounded-none border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
  All Drives
  </TabsTrigger>
@@ -155,7 +155,7 @@ function JobCard({ drive, onApply, applying }: { drive: DriveWithStatus, onApply
  const applicationStatus = isApplied ? drive.applications![0].status : null;
 
  return (
- <Card className={`flex flex-col`}>
+ <Card className={`flex flex-col active:scale-[0.98] transition-transform`}>
  <CardHeader>
  <div className="flex justify-between items-start mb-2">
  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-brown-800/10">
@@ -206,7 +206,7 @@ function JobCard({ drive, onApply, applying }: { drive: DriveWithStatus, onApply
  </div>
 
  {!isApplied && (
- <Button size="sm" onClick={onApply} disabled={applying}>
+ <Button className="min-h-[44px]" onClick={onApply} disabled={applying}>
  {applying && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
  Apply Now
  </Button>

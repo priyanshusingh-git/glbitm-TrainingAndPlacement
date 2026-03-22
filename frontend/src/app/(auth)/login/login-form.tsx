@@ -15,6 +15,7 @@ import { PasswordInput } from"@/components/ui/password-input";
 import { Spinner } from"@/components/ui/spinner";
 import { useToast } from"@/components/ui/use-toast";
 import { AuthShell } from"@/components/layout/auth-shell";
+import { cn } from"@/lib/utils";
 
 function Feedback({ message, variant ="error" }: { message: string; variant?:"error" |"success" }) {
  return (
@@ -37,6 +38,7 @@ export function LoginForm() {
  const { user, login, updateUser } = useAuth();
  const { toast } = useToast();
 
+ const [selectedRole, setSelectedRole] = useState<"STUDENT" | "ADMIN" | "TRAINER" | "RECRUITER">("STUDENT");
  const [email, setEmail] = useState("");
  const [password, setPassword] = useState("");
  const [error, setError] = useState<string | null>(null);
@@ -83,13 +85,13 @@ export function LoginForm() {
  const response = await api.post("/auth/login", {
  email,
  password,
- role:"STUDENT",
+ role: selectedRole,
  rememberMe: false,
  username:"",
  }, { skipRedirect: true });
  login(response.user);
  } catch (err: any) {
- setError(getAuthErrorMessage(err, { flow:"login", role:"STUDENT" }));
+ setError(getAuthErrorMessage(err, { flow:"login", role: selectedRole }));
  setLoading(false);
  }
  };
@@ -186,6 +188,38 @@ export function LoginForm() {
  >
  <form onSubmit={handleSubmit} className="space-y-5">
  {error && <Feedback message={error} />}
+
+ {/* Role Selector */}
+ <div className="space-y-2">
+   <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+     Sign in as
+   </Label>
+   <div className="grid grid-cols-2 gap-2">
+     {(["STUDENT", "ADMIN", "TRAINER", "RECRUITER"] as const).map((role) => {
+       const labels: Record<string, string> = {
+         STUDENT: "Student",
+         ADMIN: "T&P Admin",
+         TRAINER: "Trainer",
+         RECRUITER: "Recruiter",
+       }
+       return (
+         <button
+           key={role}
+           type="button"
+           onClick={() => setSelectedRole(role)}
+           className={cn(
+             "rounded-lg border px-3 py-2.5 text-xs font-semibold transition-all min-h-[44px]",
+             selectedRole === role
+               ? "border-brown-800 bg-brown-900 text-white shadow-sm"
+               : "border-border bg-background text-muted-foreground hover:border-brown-800/40 hover:text-foreground"
+           )}
+         >
+           {labels[role]}
+         </button>
+       )
+     })}
+   </div>
+ </div>
 
  <div className="space-y-2">
  <Label htmlFor="email">Email address</Label>

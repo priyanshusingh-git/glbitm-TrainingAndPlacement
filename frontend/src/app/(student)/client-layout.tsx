@@ -6,6 +6,8 @@ import { useAuth } from"@/contexts/auth-context"
 import { RouteGuard } from"@/modules/auth/components/route-guard"
 import { Toaster } from"@/components/ui/toaster"
 import { getImageUrl } from"@/lib/utils"
+import { StudentBottomNav } from"@/components/layout/dashboard/bottom-nav"
+import { PWAInstallBanner } from"@/components/shared/PWAInstallBanner"
 
 export default function StudentClientLayout({
  children,
@@ -28,6 +30,8 @@ export default function StudentClientLayout({
  <DashboardLayout role="student" user={adaptedUser} defaultCollapsed={defaultCollapsed}>
  {children}
  </DashboardLayout>
+ <StudentBottomNav />
+ <PWAInstallBanner />
  <Toaster />
  </RouteGuard>
  )

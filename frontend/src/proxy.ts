@@ -14,7 +14,7 @@ function getIpAddress(request: NextRequest) {
 function applySecurityHeaders(response: NextResponse) {
   response.headers.set("X-Frame-Options", "SAMEORIGIN")
   response.headers.set("X-Content-Type-Options", "nosniff")
-  response.headers.set("Referrer-Policy", "strict-origin")
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin")
   response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
   response.headers.set("X-DNS-Prefetch-Control", "on")
 
@@ -33,12 +33,10 @@ function getNonce() {
 }
 
 function buildContentSecurityPolicy(nonce: string) {
-  // Relaxed CSP to allow inline scripts and styles which are currently being blocked in production (Next.js 16 Edge Runtime)
-  // and causing the login page to hang on a loading spinner.
   return [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://hcaptcha.com https://*.hcaptcha.com https://va.vercel-scripts.com`,
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://hcaptcha.com https://*.hcaptcha.com https://va.vercel-scripts.com`,
+    `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`,
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com",
     "connect-src 'self' https://*.firebase.com https://*.googleapis.com https://*.upstash.io https://api.pwnedpasswords.com https://hcaptcha.com https://*.hcaptcha.com https://vitals.vercel-insights.com",
@@ -65,10 +63,6 @@ function finalizeResponse(response: NextResponse, nonce: string, requestId: stri
   return response
 }
 
-/**
- * Next.js 16 renamed middleware.ts to proxy.ts.
- * The entry function should be exported as 'proxy'.
- */
 export async function proxy(request: NextRequest) {
   const url = request.nextUrl.clone()
   const path = url.pathname
@@ -91,12 +85,10 @@ export async function proxy(request: NextRequest) {
         return finalizeResponse(response, nonce, requestId)
       }
     }
-  } catch {
-    return finalizeResponse(
-      NextResponse.json({ error: "Too Many Requests" }, { status: 429 }),
-      nonce,
-      requestId
-    )
+  } catch (error) {
+    // Rate limiter unavailable — allow request through, log for monitoring
+    console.error("[middleware] Rate limiter unavailable:", error)
+    // Do NOT return 429 — fall through to continue processing
   }
 
   const protectedRoutes = [

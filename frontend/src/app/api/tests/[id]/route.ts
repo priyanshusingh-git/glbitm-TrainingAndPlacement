@@ -36,12 +36,12 @@ export async function GET(
 
  // Security: Remove isCorrect from options for students
  if (authResult.role === 'STUDENT') {
- (test as any).questions = test.questions.map(tq => ({
+ (test as any).questions = (test as any).questions.map((tq: any) => ({
  ...tq,
  question: {
  ...tq.question,
  explanation: null, // Hide explanation during test
- options: tq.question.options.map(opt => ({
+ options: tq.question.options.map((opt: any) => ({
  id: opt.id,
  text: opt.text
  // isCorrect is omitted

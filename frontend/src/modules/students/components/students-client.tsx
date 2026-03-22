@@ -779,7 +779,7 @@ export default function StudentsClient() {
  <LoadingTable rows={8} cols={6} />
  ) : (
  <>
- <div className="premium-muted overflow-hidden rounded-xl border border-border/60 shadow-sm">
+ <div className="premium-muted overflow-hidden overflow-x-auto rounded-xl border border-border/60 shadow-sm">
  <Table>
  <TableHeader>
  <TableRow className="bg-transparent hover:bg-transparent">

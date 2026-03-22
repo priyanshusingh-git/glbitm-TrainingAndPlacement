@@ -132,7 +132,7 @@ export default function StudentTestsPage() {
  </div>
 
  <Button
- className={`w-full mt-4 h-10 font-bold transition-all ${isOngoing
+ className={`w-full mt-4 min-h-[44px] font-bold transition-all ${isOngoing
  ?"bg-brown-800 shadow-lg shadow-primary/20 hover:scale-[1.02]"
  :"bg-muted text-muted-foreground hover:bg-muted"
  }`}

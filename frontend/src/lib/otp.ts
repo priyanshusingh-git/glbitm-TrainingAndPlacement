@@ -11,10 +11,22 @@ export function generateOtp(length = 6) {
   return otp
 }
 
-export function hashOtp(otp: string) {
+/**
+ * Generate a random per-OTP salt to prevent rainbow table attacks.
+ * Store the salt alongside the hash in Redis.
+ */
+export function generateOtpSalt(): string {
+  return crypto.randomBytes(16).toString("hex")
+}
+
+/**
+ * Hash an OTP with a per-OTP salt and the global secret.
+ * The salt prevents precomputation of all 1,000,000 possible 6-digit OTP hashes.
+ */
+export function hashOtp(otp: string, salt: string): string {
   return crypto
     .createHash("sha256")
-    .update(`${otp}${process.env.OTP_HASH_SECRET}`)
+    .update(`${otp}${salt}${process.env.OTP_HASH_SECRET}`)
     .digest("hex")
 }
 

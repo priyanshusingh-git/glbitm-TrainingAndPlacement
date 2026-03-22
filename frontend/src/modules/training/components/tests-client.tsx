@@ -245,7 +245,7 @@ export default function AdminTestsPage() {
  />
 
  {/* Stats Grid */}
- <div className="grid gap-4 md:grid-cols-4">
+ <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
  <Card className="bg-brown-800/5 border-brown-800/10 transition-all hover:bg-brown-800/10 backdrop-blur-sm">
  <CardContent className="p-4 flex items-center gap-4">
  <div className="p-2 bg-brown-800/20 rounded-lg">

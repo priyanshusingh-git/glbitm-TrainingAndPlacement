@@ -24,7 +24,7 @@ export default function Process() {
           </p>
         </div>
 
-        <AnimatedSection className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <AnimatedSection className="grid gap-4 grid-cols-2 lg:grid-cols-3">
           {processSteps.map((step) => (
             <div
               key={step.n}
@@ -37,7 +37,7 @@ export default function Process() {
               <h3 className="font-display text-[20px] font-bold leading-[1.12] tracking-[-0.02em] text-brown-900">
                 {step.t}
               </h3>
-              <p className="mt-2 text-[12.5px] leading-[1.72] text-muted-foreground">{step.d}</p>
+              <p className="mt-2 hidden md:block text-[12.5px] leading-[1.72] text-muted-foreground">{step.d}</p>
             </div>
           ))}
         </AnimatedSection>

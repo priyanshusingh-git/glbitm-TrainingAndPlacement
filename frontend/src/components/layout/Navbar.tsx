@@ -44,6 +44,15 @@ export default function Navbar() {
     }
   }, [isOpen])
 
+  // B.2.6: Close mobile nav on Escape key (accessibility)
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) setIsOpen(false)
+    }
+    document.addEventListener('keydown', handleEscape)
+    return () => document.removeEventListener('keydown', handleEscape)
+  }, [isOpen])
+
   return (
     <>
       <nav

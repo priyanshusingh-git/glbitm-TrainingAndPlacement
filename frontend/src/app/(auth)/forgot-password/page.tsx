@@ -103,7 +103,7 @@ export default function ForgotPasswordPage() {
   const [message, setMessage] = useState<{ tone: "error" | "success" | "info"; text: string } | null>(null)
   const [resendCooldown, setResendCooldown] = useState(0)
   const [resendCount, setResendCount] = useState(0)
-  const [resetToken, setResetToken] = useState("")
+
 
   const otpValue = useMemo(() => otpDigits.join(""), [otpDigits])
 
@@ -135,7 +135,6 @@ export default function ForgotPasswordPage() {
   const requestOtp = async () => {
     await api.post("/auth/request-password-reset", { email })
     setStep(2)
-    setResetToken("")
     setMessage({
       tone: "info",
       text: `A 6-digit verification code has been sent to ${email}. It expires in 10 minutes.`,
@@ -229,7 +228,6 @@ export default function ForgotPasswordPage() {
 
     try {
       const response = await api.post("/auth/verify-reset-otp", { email, otp: otpValue })
-      setResetToken(response.resetToken)
       setStep(3)
       setMessage(null)
     } catch (error: any) {
@@ -262,7 +260,6 @@ export default function ForgotPasswordPage() {
 
     try {
       await api.post("/auth/reset-password", {
-        resetToken,
         newPassword,
       })
 

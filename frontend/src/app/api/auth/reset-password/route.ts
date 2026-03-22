@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json().catch(() => null)
-    const resetToken = body?.resetToken
+    const resetToken = req.cookies.get("__reset_token")?.value
     const newPassword = body?.newPassword
     const csrfToken = body?.csrfToken ?? req.headers.get("x-csrf-token")
 
@@ -61,13 +61,9 @@ export async function POST(req: NextRequest) {
         })
       }
     } catch (error) {
-      logger.warn("HIBP validation unavailable during password reset:", error)
-      return createProblemResponse(req, {
-        status: 503,
-        code: "PASSWORD_VALIDATION_UNAVAILABLE",
-        title: "Service temporarily unavailable",
-        detail: "Password validation is temporarily unavailable. Try again shortly.",
-      })
+      // HIBP unavailable — log and continue. Do not block the user.
+      logger.warn("HIBP check unavailable, proceeding without breach check:", error)
+      // Do NOT return 503 — fall through to complete the password reset
     }
 
     const tokenPayload = await verifyPasswordResetToken(resetToken).catch(() => null)
@@ -149,10 +145,13 @@ export async function POST(req: NextRequest) {
       }),
     ])
 
-    return attachRequestContextHeaders(
+    const response = attachRequestContextHeaders(
       req,
       NextResponse.json({ message: "Password reset successfully" })
     )
+    // Clear the reset token cookie after use
+    response.cookies.set("__reset_token", "", { maxAge: 0, path: "/api/auth/reset-password" })
+    return response
   } catch (error) {
     return handleApiError(req, error, {
       event: "auth.password_reset.failed",

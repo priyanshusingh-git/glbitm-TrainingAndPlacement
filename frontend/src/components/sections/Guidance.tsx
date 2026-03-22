@@ -24,7 +24,7 @@ export default function Guidance() {
           </p>
         </div>
 
-        <AnimatedSection className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <AnimatedSection className="grid gap-4 grid-cols-2 lg:grid-cols-3">
           {guidanceFeatures.map((feature) => (
             <article
               key={feature.title}
@@ -32,7 +32,7 @@ export default function Guidance() {
             >
               <div className="mb-3 text-2xl">{feature.icon}</div>
               <h3 className="font-display text-[22px] font-bold tracking-[-0.02em] text-brown-900">{feature.title}</h3>
-              <p className="mt-2 text-[12.5px] leading-[1.72] text-muted-foreground">{feature.description}</p>
+              <p className="mt-2 hidden md:block text-[12.5px] leading-[1.72] text-muted-foreground">{feature.description}</p>
               {feature.cta && (
                 <a
                   href={feature.cta.href}
