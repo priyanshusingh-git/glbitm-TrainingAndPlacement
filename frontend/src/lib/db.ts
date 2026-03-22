@@ -10,7 +10,23 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClientSingleton | undefined
 }
 
-const prisma = globalForPrisma.prisma ?? prismaClientSingleton()
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
+// Use a Proxy for lazy initialization to prevent build-time PrismaClientInitializationError
+// during Next.js static analysis/page data collection.
+const prisma = new Proxy({} as PrismaClientSingleton, {
+  get(target, prop, receiver) {
+    // Skip proxy for internal symbols or if we're just checking for existence
+    if (typeof prop === 'symbol' || prop === 'toJSON' || prop === 'then') {
+      return Reflect.get(target, prop, receiver);
+    }
+    
+    // Initialize the real client if it hasn't been yet
+    if (!globalForPrisma.prisma) {
+      globalForPrisma.prisma = prismaClientSingleton();
+    }
+    
+    const value = Reflect.get(globalForPrisma.prisma, prop);
+    return typeof value === 'function' ? value.bind(globalForPrisma.prisma) : value;
+  }
+});
 
 export default prisma
