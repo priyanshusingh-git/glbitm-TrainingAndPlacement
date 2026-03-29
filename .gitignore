@@ -1,15 +1,29 @@
-node_modules
+# Dependencies
+node_modules/
+
+# Environment
 .env
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+.vercel/
+
+# System files
 .DS_Store
-dist
-.next
-out
-coverage
-.vercel
+.DS_Store?
+._*
+Thumbs.db
 
-# AI Context
+# Logs
+*.log
+npm-debug.log*
+
+# AI / Documentation (local only)
 .ai_context/
-
-# Audit Documentation (local only)
 AUDIT_CHANGELOG.md
 CODEBASE_KNOWLEDGE.md

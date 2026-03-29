@@ -1,0 +1,11 @@
+# Next.js specific
+/.next/
+/out/
+/build
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# App-specific environment
+.env*
