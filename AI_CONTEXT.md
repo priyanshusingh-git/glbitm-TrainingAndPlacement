@@ -10,7 +10,7 @@
 
 - **Project**: GL Bajaj Institute Training & Placement + Career Development Centre Portal
 - **Internal Name**: Scorlo
-- **Stack**: Next.js 16 · Tailwind CSS v4 · shadcn/ui · Framer Motion · Prisma · Firebase Auth
+- **Stack**: Next.js 16 · Tailwind CSS v4 · shadcn/ui · Framer Motion · Prisma · Context-based Auth
 - **Dashboards**: Student · T&P Admin · CDC Trainer · Recruiter
 - **Design Language**: "Prestige Institutional" — warm, authoritative, premium
 
@@ -273,9 +273,10 @@ Never use arbitrary z-index values. Use the defined scale:
 
 | Variable | Purpose |
 |:---------|:--------|
-| `NEXT_PUBLIC_HCAPTCHA_SITE_KEY` | hCaptcha bot protection on login |
 | `NEXT_PUBLIC_API_URL` | Backend API base URL |
 | `DATABASE_URL` | Prisma database connection string |
+| `JWT_SECRET` | Secret for native session signing |
+| `EMAIL_USER` / `EMAIL_PASS` | SMTP credentials for notifications |
 
 ---
 
