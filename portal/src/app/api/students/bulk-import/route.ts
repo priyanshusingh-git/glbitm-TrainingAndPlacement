@@ -130,9 +130,9 @@ export async function POST(req: NextRequest) {
 
     // 4. Compute Password Hashes & Generate IDs efficiently
     const BCRYPT_SALT_ROUNDS = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10);
-    const usersToInsert = [];
-    const profilesToInsert = [];
-    const emailsToInsert = [];
+    const usersToInsert: any[] = [];
+    const profilesToInsert: any[] = [];
+    const emailsToInsert: any[] = [];
 
     // Promise.all to compute hashes concurrently
     await Promise.all(validRows.map(async (row) => {
