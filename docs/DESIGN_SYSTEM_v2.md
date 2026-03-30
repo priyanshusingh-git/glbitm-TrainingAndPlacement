@@ -135,5 +135,23 @@ All `shadcn/ui` components are copied into `src/components/ui`.
 - **Guideline**: Do not treat them as locked libraries. Modify their HTML/CSS freely to match the GL Bajaj premium aesthetic.
 
 ---
-**Document Status**: PRODUCTION READY (v2.0)
-**Last Update**: 2026-03-29
+
+## 8. Anti-Patterns: SaaS Design Drift
+
+A recurring issue in development is the instinctive application of generic "SaaS Industry" templates. Our aesthetic is **Prestige Institutional**, which means we must actively reject certain modern tropes:
+
+### 8.1 Reject Bubbly UI (Radius Discipline)
+Modern tech apps use `rounded-2xl` or `rounded-full` everywhere. We do not.
+- **Rule**: Max radius for components is `rounded-md` (14px). Inner widgets and icon boxes must be `rounded-sm` (6px). Only massive panels earn `rounded-lg` (22px).
+
+### 8.2 Reject Generic Depth (Shadow Discipline)
+Standard Tailwind shadows (`shadow-md`) are neutral black/grey, which makes the warm brown portal look "muddy" or dirty.
+- **Rule**: All shadows must map to the custom variables in `globals.css` (e.g., `--shadow-md`) which are tinted with `#512912` at 10-15% opacity to retain warmth. 
+
+### 8.3 Reject Loose Pacing
+Do not use arbitrary gaps like `space-y-10` (40px) just because it "looks okay". 
+- **Rule**: Strictly adhere to the 9-step baseline grid. The standard section divider is **always** `gap-8` (32px).
+
+---
+**Document Status**: PRODUCTION READY (v2.1)
+**Last Update**: 2026-03-30

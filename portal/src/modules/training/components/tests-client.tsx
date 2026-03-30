@@ -54,8 +54,9 @@ import { Test } from"@/types/training";
 import { format, isAfter, isBefore, addMinutes } from"date-fns";
 import { useToast } from"@/components/ui/use-toast";
 import { API_URL } from"@/lib/api";
-import { QuestionBank } from"@/modules/training/components/question-bank";
+// import { QuestionBank } from"@/modules/training/components/question-bank";
 import { TestWizard } from"@/modules/training/components/test-wizard";
+import { TestResultImport } from"@/modules/training/components/test-result-import";
 
 export default function AdminTestsPage() {
  const [tests, setTests] = useState<Test[]>([]);
@@ -70,6 +71,7 @@ export default function AdminTestsPage() {
  // Form State
  const [editingTest, setEditingTest] = useState<Test | null>(null);
  const [deletingTest, setDeletingTest] = useState<Test | null>(null);
+ const [importingTest, setImportingTest] = useState<Test | null>(null);
  const [groups, setGroups] = useState<{ id: string, name: string }[]>([]);
  const [formData, setFormData] = useState({
  title:"",
@@ -248,7 +250,7 @@ export default function AdminTestsPage() {
  <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
  <Card className="bg-brown-800/5 border-brown-800/10 transition-all hover:bg-brown-800/10 backdrop-blur-sm">
  <CardContent className="p-4 flex items-center gap-4">
- <div className="p-2 bg-brown-800/20 rounded-lg">
+ <div className="p-2 bg-brown-800/20 rounded-md">
  <BarChart3 className="h-5 w-5 text-brown-800" />
  </div>
  <div>
@@ -259,7 +261,7 @@ export default function AdminTestsPage() {
  </Card>
  <Card className="bg-amber-500/5 border-amber-500/10 transition-all hover:bg-amber-500/10 backdrop-blur-sm">
  <CardContent className="p-4 flex items-center gap-4">
- <div className="p-2 bg-amber-500/20 rounded-lg">
+ <div className="p-2 bg-amber-500/20 rounded-md">
  <Calendar className="h-5 w-5 text-amber-500" />
  </div>
  <div>
@@ -268,10 +270,10 @@ export default function AdminTestsPage() {
  </div>
  </CardContent>
  </Card>
- <Card className="bg-indigo-500/5 border-indigo-500/10 transition-all hover:bg-indigo-500/10 backdrop-blur-sm">
+ <Card className="bg-amber-500/5 border-amber-500/10 transition-all hover:bg-amber-500/10 backdrop-blur-sm">
  <CardContent className="p-4 flex items-center gap-4">
- <div className="p-2 bg-indigo-500/20 rounded-lg">
- <PlayCircle className="h-5 w-5 text-indigo-500" />
+ <div className="p-2 bg-amber-500/20 rounded-md">
+ <PlayCircle className="h-5 w-5 text-amber-500" />
  </div>
  <div>
  <p className="text-xs font-medium text-muted-foreground uppercase">Active Now</p>
@@ -281,7 +283,7 @@ export default function AdminTestsPage() {
  </Card>
  <Card className="bg-emerald-500/5 border-emerald-500/10 transition-all hover:bg-emerald-500/10 backdrop-blur-sm">
  <CardContent className="p-4 flex items-center gap-4">
- <div className="p-2 bg-emerald-500/20 rounded-lg">
+ <div className="p-2 bg-emerald-500/20 rounded-md">
  <CheckCircle2 className="h-5 w-5 text-emerald-500" />
  </div>
  <div>
@@ -293,13 +295,12 @@ export default function AdminTestsPage() {
  </div>
 
  <Tabs defaultValue="all" className="space-y-4">
- <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between bg-muted/30 p-2 rounded-xl border">
+ <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between bg-muted/30 p-2 rounded-md border">
  <TabsList className="bg-transparent h-9 p-0">
  <TabsTrigger value="all" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">All Tests</TabsTrigger>
  <TabsTrigger value="scheduled" className="data-[state=active]:bg-background">Scheduled</TabsTrigger>
- <TabsTrigger value="active" className="data-[state=active]:bg-background text-indigo-500">Active</TabsTrigger>
+ <TabsTrigger value="active" className="data-[state=active]:bg-background text-amber-500">Active</TabsTrigger>
  <TabsTrigger value="completed" className="data-[state=active]:bg-background">Completed</TabsTrigger>
- <TabsTrigger value="bank" className="data-[state=active]:bg-background border-l ml-1 pl-3">Question Bank</TabsTrigger>
  </TabsList>
 
  <div className="flex items-center gap-2">
@@ -333,7 +334,7 @@ export default function AdminTestsPage() {
  {loading ? (
  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
  {[1, 2, 3].map(i => (
- <div key={i} className="h-[200px] bg-muted/50 animate-pulse rounded-xl border border-dashed" />
+ <div key={i} className="h-[200px] bg-muted/50 animate-pulse rounded-md border border-dashed" />
  ))}
  </div>
  ) : (
@@ -367,6 +368,7 @@ export default function AdminTestsPage() {
  status={getTestStatus(test)}
  onEdit={() => openEditDialog(test)}
  onDelete={() => setDeletingTest(test)}
+ onImport={() => setImportingTest(test)}
  />
  ))
  )}
@@ -374,10 +376,6 @@ export default function AdminTestsPage() {
  )}
  </TabsContent>
  ))}
-
- <TabsContent value="bank" className="mt-6">
- <QuestionBank />
- </TabsContent>
  </Tabs>
 
  <TestWizard
@@ -386,6 +384,16 @@ export default function AdminTestsPage() {
  onSuccess={() => { loadTests(); setIsWizardOpen(false); }}
  initialData={editingTest}
  />
+
+ {importingTest && (
+ <TestResultImport
+ isOpen={!!importingTest}
+ testId={importingTest.id}
+ testTitle={importingTest.title}
+ onClose={() => setImportingTest(null)}
+ onSuccess={() => loadTests()}
+ />
+ )}
 
  {/* Delete Alert */}
  <AlertDialog open={!!deletingTest} onOpenChange={(val) => !val && setDeletingTest(null)}>
@@ -408,10 +416,10 @@ export default function AdminTestsPage() {
  );
 }
 
-function TestCard({ test, status, onEdit, onDelete }: { test: Test, status: string, onEdit: () => void, onDelete: () => void }) {
+function TestCard({ test, status, onEdit, onDelete, onImport }: { test: Test, status: string, onEdit: () => void, onDelete: () => void, onImport: () => void }) {
  const statusConfig = {
  Scheduled: { class:"bg-amber-100 text-amber-700 border-amber-200", icon: Clock },
- Ongoing: { class:"bg-indigo-100 text-indigo-700 border-indigo-200 animate-pulse", icon: PlayCircle },
+ Ongoing: { class:"bg-amber-100 text-amber-700 border-amber-200 animate-pulse", icon: PlayCircle },
  Completed: { class:"bg-emerald-100 text-emerald-700 border-emerald-200", icon: CheckCircle2 }
  };
 
@@ -420,7 +428,7 @@ function TestCard({ test, status, onEdit, onDelete }: { test: Test, status: stri
 
  return (
  <Card className="group relative overflow-hidden transition-all hover:shadow-xl border-brown-800/5">
- <div className={`absolute top-0 right-0 h-16 w-16 -mr-8 -mt-8 rounded-full ${status === 'Ongoing' ? 'bg-indigo-500/10' : 'bg-brown-800/5'} transition-transform`} />
+ <div className={`absolute top-0 right-0 h-16 w-16 -mr-8 -mt-8 rounded-full ${status === 'Ongoing' ? 'bg-amber-500/10' : 'bg-brown-800/5'} transition-transform`} />
 
  <CardHeader className="pb-3 border-b border-muted/50 bg-muted/10">
  <div className="flex justify-between items-start mb-2">
@@ -478,7 +486,7 @@ function TestCard({ test, status, onEdit, onDelete }: { test: Test, status: stri
  href={test.testUrl}
  target="_blank"
  rel="noopener noreferrer"
- className="flex items-center justify-center gap-2 w-full py-2 bg-indigo-500/10 text-indigo-600 rounded-lg text-xs font-bold hover:bg-indigo-500/20 transition-all border border-indigo-200/50"
+ className="flex items-center justify-center gap-2 w-full py-2 bg-amber-500/10 text-amber-600 rounded-md text-xs font-bold hover:bg-amber-500/20 transition-all border border-amber-200/50"
  >
  <FileText className="h-3 w-3" />
  {test.platform || 'Open Test Link'}
@@ -495,8 +503,8 @@ function TestCard({ test, status, onEdit, onDelete }: { test: Test, status: stri
  <Trash2 className="h-4 w-4" />
  </Button>
  </div>
- <Button size="sm" variant="outline" className="h-8 gap-1 text-[11px] font-bold group-hover:bg-brown-800 group-hover:text-brown-800-foreground transition-all">
- View Results <ChevronRight className="h-3.3 w-3" />
+ <Button size="sm" onClick={onImport} className="h-8 gap-1 text-[11px] font-bold bg-brown-800 hover:bg-brown-900 text-white transition-all shadow-sm">
+ <FileText className="h-3 w-3" /> Import Results
  </Button>
  </div>
  </CardContent>

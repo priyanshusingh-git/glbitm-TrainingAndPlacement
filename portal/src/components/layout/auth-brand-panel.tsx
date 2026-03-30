@@ -35,7 +35,7 @@ export function AuthBrandPanel({
       {/* Header / Logo */}
       <div className="relative z-10 animate-fade-in stagger-1">
         <Link href="/" className="group inline-flex items-center gap-4 no-underline">
-          <div className="relative h-12 w-[60px] overflow-hidden rounded-xl border border-white/10 bg-white/5 shadow-2xl transition-transform duration-500 group-hover:scale-105">
+          <div className="relative h-12 w-[60px] overflow-hidden rounded-md border border-white/10 bg-white/5 shadow-2xl transition-transform duration-500 group-hover:scale-105">
             <Image
               src="/glbitm-logo.png"
               alt="GL Bajaj logo"

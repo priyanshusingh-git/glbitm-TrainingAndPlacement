@@ -96,9 +96,9 @@ export default function ChangePasswordPage() {
         title={<>Strengthen your <span className="text-amber-500 italic">access</span></>}
         description="To keep your professional records and placement data secure, we require a password update before you proceed."
         bottom={
-          <div className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+          <div className="space-y-4 rounded-md border border-white/10 bg-white/5 p-6 backdrop-blur-md">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/20 text-amber-500">
+              <div className="flex h-10 w-10 items-center justify-center rounded-md bg-amber-500/20 text-amber-500">
                 <CheckCircle2 className="h-5 w-5" />
               </div>
               <div>
@@ -180,7 +180,7 @@ export default function ChangePasswordPage() {
                 type="submit"
                 size="lg"
                 className={cn(
-                  "group relative w-full h-[54px] rounded-xl overflow-hidden font-bold transition-all duration-400 active:scale-[0.98]",
+                  "group relative w-full h-[54px] rounded-md overflow-hidden font-bold transition-all duration-400 active:scale-[0.98]",
                   success
                     ? "bg-emerald-600 text-white"
                     : isFormValid
@@ -201,7 +201,7 @@ export default function ChangePasswordPage() {
                 )}
               </Button>
 
-              <Button variant="outline" type="button" className="w-full h-[50px] rounded-xl border-brown-100 text-brown-600 hover:bg-brown-50 transition-colors font-medium" onClick={logout}>
+              <Button variant="outline" type="button" className="w-full h-[50px] rounded-md border-brown-100 text-brown-600 hover:bg-brown-50 transition-colors font-medium" onClick={logout}>
                 Cancel & Logout
               </Button>
             </div>

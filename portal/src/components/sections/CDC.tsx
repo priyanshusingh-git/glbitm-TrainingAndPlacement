@@ -26,7 +26,7 @@ export default function CDC() {
           {cdcFeatures.map((feature) => (
             <div
               key={feature.title}
-              className="rounded-2xl border border-white/7 bg-white/5 px-5 py-5 transition hover:-translate-y-0.5 hover:border-amber-500/26 hover:bg-white/9"
+              className="rounded-md border border-white/7 bg-white/5 px-5 py-5 transition hover:-translate-y-0.5 hover:border-amber-500/26 hover:bg-white/9"
             >
               <div className="mb-3 text-[22px]">{feature.icon}</div>
               <h3 className="font-display text-[22px] font-bold leading-[1.1] tracking-[-0.02em] text-white">

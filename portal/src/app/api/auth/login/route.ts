@@ -125,15 +125,25 @@ export async function POST(req: NextRequest) {
     return response;
   }
 
-  const captchaRequired = await isCaptchaRequired(ip);
-  if (captchaRequired) {
-    if (!hcaptchaToken) {
-      return createProblemResponse(req, { status: 400, code: "CAPTCHA_REQUIRED", title: "Captcha required", detail: "Please complete the captcha challenge." });
+    const captchaRequired = await isCaptchaRequired(ip);
+    if (captchaRequired && process.env.HCAPTCHA_SECRET_KEY) {
+      if (!hcaptchaToken) {
+        return createProblemResponse(req, { 
+          status: 401, 
+          code: "CAPTCHA_REQUIRED", 
+          title: "CAPTCHA required", 
+          detail: "Please complete the security challenge to continue." 
+        });
+      }
+      if (!(await verifyHCaptchaToken({ token: hcaptchaToken, ip }))) {
+        return createProblemResponse(req, { 
+          status: 401, 
+          code: "CAPTCHA_REQUIRED", 
+          title: "CAPTCHA required", 
+          detail: "CAPTCHA verification failed. Please try again." 
+        });
+      }
     }
-    if (!(await verifyHCaptchaToken({ token: hcaptchaToken, ip }))) {
-      return createProblemResponse(req, { status: 400, code: "CAPTCHA_REQUIRED", title: "Captcha required", detail: "Captcha verification failed. Please try again." });
-    }
-  }
 
   try {
     // -------------------------------------------------------------------------------- //
@@ -156,15 +166,38 @@ export async function POST(req: NextRequest) {
     });
 
     // Check generic Auth Failure
-    if (!user || !user.password) {
+    if (!user || (!user.password && !user.mustChangePassword)) {
       const failure = await recordLoginFailure({ ip, email, fingerprint });
       await logAuthEvent({ action: "LOGIN_FAILED", ip, email, userAgent, fingerprint, metadata: { reason: "user_not_found_or_no_password" } });
       await applyProgressiveDelay(failure.emailFailureCount);
       return createProblemResponse(req, { status: 401, code: "AUTH_FAILED", title: "Authentication failed", detail: "Invalid email or password.", extensions: { captchaRequired: failure.captchaRequired } });
     }
 
+    // Special Case: Induction Pending (New Student)
+    // If they have mustChangePassword=true, they should be guided to their induction link
+    // unless they happen to know the temporary password (unlikely).
+    if (user.mustChangePassword && (!user.password || user.password === "FIREBASE_AUTH")) {
+      return createProblemResponse(req, { 
+        status: 401, 
+        code: "INDUCTION_PENDING", 
+        title: "Setup Required", 
+        detail: "It looks like you haven't finished your account setup. Please check your email for your induction link." 
+      });
+    }
+
     // Mathematically compare password logic (replaces Firebase API)
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = user.password ? await bcrypt.compare(password, user.password) : false;
+    
+    // If it's a new student (mustChangePassword) and they fail the password check, 
+    // we clearly identify them as needing induction help.
+    if (!passwordMatch && user.mustChangePassword) {
+      return createProblemResponse(req, { 
+        status: 401, 
+        code: "INDUCTION_PENDING", 
+        title: "Setup Required", 
+        detail: "It looks like you haven't finished your account setup. Please check your email for your induction link." 
+      });
+    }
     
     // For local dev convenience if they imported legacy users lacking hash via FIREBASE_AUTH placeholder
     if (!passwordMatch && user.password !== "FIREBASE_AUTH") {

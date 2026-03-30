@@ -112,7 +112,7 @@ export function ApplicantsView({ driveId, driveRole, companyName, isOpen, onClos
  </div>
  </DialogHeader>
 
- <div className="flex items-center gap-2 mb-4 bg-muted/30 p-2 rounded-lg mt-4">
+ <div className="flex items-center gap-2 mb-4 bg-muted/30 p-2 rounded-md mt-4">
  <Search className="w-4 h-4 text-muted-foreground ml-2" />
  <Input
  placeholder="Search by student name or email..."

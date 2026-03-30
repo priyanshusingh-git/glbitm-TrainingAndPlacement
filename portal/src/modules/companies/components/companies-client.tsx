@@ -215,7 +215,7 @@ export default function CompaniesPage() {
               </SelectContent>
             </Select>
           </div>
-          <div className="rounded-lg border border-border/60 bg-muted/30 p-4 text-sm text-muted-foreground space-y-1">
+          <div className="rounded-md border border-border/60 bg-muted/30 p-4 text-sm text-muted-foreground space-y-1">
             <p className="font-medium text-foreground">Summary</p>
             <p><span className="font-medium">Name:</span> {formData.name || '—'}</p>
             <p><span className="font-medium">Industry:</span> {formData.industry || '—'}</p>
@@ -240,6 +240,12 @@ export default function CompaniesPage() {
  </Button>
  </DialogTrigger>
  <DialogContent>
+ <DialogHeader className="p-6 pb-0">
+ <DialogTitle className="text-xl font-bold">Add New Company</DialogTitle>
+ <DialogDescription className="text-sm text-muted-foreground">
+ Enter company details and registration info to create a new profile.
+ </DialogDescription>
+ </DialogHeader>
  <FormWizard
  steps={addCompanySteps}
  onComplete={handleSubmit}
@@ -264,7 +270,7 @@ export default function CompaniesPage() {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brown-800/10">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-brown-800/10">
                       <Building2 className="h-5 w-5 text-brown-800" />
                     </div>
                     <div>

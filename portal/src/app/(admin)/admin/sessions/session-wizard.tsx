@@ -237,7 +237,7 @@ export function SessionWizard({ isOpen, onClose, onSuccess, groups }: SessionWiz
  </div>
  <div className="space-y-4">
  <Label className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Session Architecture</Label>
- <div className="grid grid-cols-2 gap-2 bg-muted/50 p-1.5 rounded-xl border-2">
+ <div className="grid grid-cols-2 gap-2 bg-muted/50 p-1.5 rounded-md border-2">
  <Button
  variant={formData.sessionType ==="single" ?"default" :"ghost"}
  className={cn("h-10 font-bold text-sm rounded-lg", formData.sessionType ==="single" &&"shadow-md")}
@@ -270,7 +270,7 @@ export function SessionWizard({ isOpen, onClose, onSuccess, groups }: SessionWiz
  </div>
  )}
 
- <div className="p-6 rounded-2xl bg-brown-800/5 border-2 border-brown-800/10 flex items-start gap-4">
+ <div className="p-6 rounded-md bg-brown-800/5 border-2 border-brown-800/10 flex items-start gap-4">
  <Info className="h-6 w-6 text-brown-800 shrink-0 mt-0.5" />
  <div className="space-y-1">
  <p className="font-bold text-sm text-brown-800">Strategic Initialization</p>
@@ -312,7 +312,7 @@ export function SessionWizard({ isOpen, onClose, onSuccess, groups }: SessionWiz
  <Button variant="link" className="h-auto p-0 text-xs font-bold text-brown-800" onClick={() => setFormData({ ...formData, groupIds: filteredGroups.map(g => g.id) })}> Select All Shown </Button>
  </div>
 
- <ScrollArea className="flex-1 rounded-2xl border-2 bg-muted/10 p-4">
+ <ScrollArea className="flex-1 rounded-md border-2 bg-muted/10 p-4">
  <div className="grid grid-cols-2 gap-3">
  {filteredGroups.map(g => {
  const isSelected = formData.groupIds.includes(g.id)
@@ -326,7 +326,7 @@ export function SessionWizard({ isOpen, onClose, onSuccess, groups }: SessionWiz
  }))
  }}
  className={cn(
-"flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer group",
+"flex items-center gap-3 p-4 rounded-md border-2 transition-all cursor-pointer group",
  isSelected ?"bg-brown-800/5 border-brown-800 shadow-sm" :"bg-background hover:border-brown-800/30"
  )}
  >
@@ -366,7 +366,7 @@ export function SessionWizard({ isOpen, onClose, onSuccess, groups }: SessionWiz
  </div>
  </div>
 
- <div className="p-8 rounded-3xl bg-muted/40 border-2 space-y-8">
+ <div className="p-8 rounded-md bg-muted/40 border-2 space-y-8">
  <div className="flex items-center justify-between">
  <div className="space-y-1">
  <h4 className="text-base font-bold tracking-tight text-brown-800">Repetition Engine</h4>
@@ -385,7 +385,7 @@ export function SessionWizard({ isOpen, onClose, onSuccess, groups }: SessionWiz
  key={day.value}
  onClick={() => toggleDay(day.value)}
  className={cn(
-"flex-1 flex flex-col items-center gap-3 p-4 rounded-2xl border-2 cursor-pointer transition-all",
+"flex-1 flex flex-col items-center gap-3 p-4 rounded-md border-2 cursor-pointer transition-all",
  isSelected ?"bg-brown-800 border-brown-800 shadow-lg -translate-y-1" :"bg-card border-border hover:border-brown-800/40"
  )}
  >
@@ -420,7 +420,7 @@ export function SessionWizard({ isOpen, onClose, onSuccess, groups }: SessionWiz
 
  {step === 4 && (
  <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
- <div className="bg-emerald-500/10 border-2 border-emerald-500/20 rounded-2xl p-6 flex items-start gap-4">
+ <div className="bg-emerald-500/10 border-2 border-emerald-500/20 rounded-md p-6 flex items-start gap-4">
  <CheckCircle2 className="h-6 w-6 text-emerald-500 shrink-0" />
  <div className="space-y-1">
  <p className="font-bold text-sm text-emerald-600 uppercase">Operational Summary Ready</p>
@@ -430,12 +430,12 @@ export function SessionWizard({ isOpen, onClose, onSuccess, groups }: SessionWiz
 
  <div className="space-y-4">
  <Label className="text-xs font-bold uppercase text-muted-foreground tracking-widest">Personnel Calibration (Optional)</Label>
- <ScrollArea className="h-[30vh] rounded-2xl border-2 bg-muted/5 p-4">
+ <ScrollArea className="h-[30vh] rounded-md border-2 bg-muted/5 p-4">
  <div className="space-y-3">
  {formData.groupIds.map(id => {
  const group = groups.find(g => g.id === id)
  return (
- <div key={id} className="flex items-center justify-between p-4 bg-background rounded-xl border-2">
+ <div key={id} className="flex items-center justify-between p-4 bg-background rounded-md border-2">
  <div className="flex items-center gap-3">
  <div className="h-8 w-8 rounded-lg bg-brown-800/10 flex items-center justify-center font-bold text-xs text-brown-800">{group?.name.slice(0, 2)}</div>
  <span className="font-bold text-sm">{group?.name} <span className="italic text-brown-800">({group?.branch})</span></span>
@@ -464,8 +464,8 @@ export function SessionWizard({ isOpen, onClose, onSuccess, groups }: SessionWiz
  </ScrollArea>
  </div>
 
- <div className="p-6 rounded-2xl bg-muted/30 border-2 flex items-center gap-6">
- <div className="h-12 w-12 rounded-xl bg-brown-800 flex items-center justify-center text-white shadow-lg">
+ <div className="p-6 rounded-md bg-muted/30 border-2 flex items-center gap-6">
+ <div className="h-12 w-12 rounded-md bg-brown-800 flex items-center justify-center text-white shadow-lg">
  <BookOpen className="h-6 w-6" />
  </div>
  <div className="space-y-1 flex-1">

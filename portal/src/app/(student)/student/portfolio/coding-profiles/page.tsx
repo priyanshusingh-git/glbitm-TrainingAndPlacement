@@ -241,7 +241,7 @@ export default function CodingProfilesPage() {
  <CardTitle className="text-lg sm:text-xl truncate">{profile.platform}</CardTitle>
  <CardDescription className="truncate">@{profile.username}</CardDescription>
  </div>
- <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brown-800/10">
+ <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-brown-800/10">
  <Code className="h-5 w-5 text-brown-800" />
  </div>
  </div>

@@ -15,7 +15,7 @@ export function PlacementSection({ placements }: PlacementSectionProps) {
  <Card className="overflow-hidden">
  <CardHeader className="flex flex-row items-center justify-between border-b border-border/60 bg-muted/10">
  <CardTitle className="flex items-center gap-2 text-lg font-semibold tracking-tight">
- <div className="rounded-xl border border-border/60 bg-brown-800/10 p-2 shadow-sm">
+ <div className="rounded-md border border-border/60 bg-brown-800/10 p-2 shadow-sm">
  <Briefcase className="h-5 w-5 text-brown-800" />
  </div>
  Active Opportunities
@@ -35,7 +35,7 @@ export function PlacementSection({ placements }: PlacementSectionProps) {
  ) : opportunities.map((opp) => (
  <div
  key={opp.id}
- className="premium-muted group/opp relative space-y-4 overflow-hidden rounded-2xl border border-border/60 p-5 transition-all duration-200 hover:border-brown-800/20 hover:bg-card-hover hover:shadow-md"
+ className="premium-muted group/opp relative space-y-4 overflow-hidden rounded-md border border-border/60 p-5 transition-all duration-200 hover:border-brown-800/20 hover:bg-card-hover hover:shadow-md"
  >
  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover/opp:opacity-20 transition-opacity">
  <Building2 className="h-12 w-12 text-brown-800" />

@@ -147,7 +147,7 @@ export default function ProjectsPage() {
  ))}
 
  {/* Add New Placeholder */}
- <button className="group relative flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed p-8 text-center hover:bg-muted/50 transition-colors">
+ <button className="group relative flex flex-col items-center justify-center gap-4 rounded-md border-2 border-dashed p-8 text-center hover:bg-muted/50 transition-colors">
  <div className="rounded-full bg-muted group-hover:bg-background p-4 transition-colors">
  <Plus className="h-6 w-6 text-muted-foreground" />
  </div>

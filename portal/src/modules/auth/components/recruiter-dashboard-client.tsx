@@ -48,7 +48,7 @@ export default function TrainerDashboardPage() {
 
  if (error) {
  return (
- <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center">
+ <div className="rounded-md border border-destructive/20 bg-destructive/5 p-6 text-center">
  <p className="text-sm text-destructive">Failed to load trainer dashboard: {error}</p>
  <Button className="mt-4" variant="outline" onClick={() => window.location.reload()}>
  Retry
@@ -71,7 +71,7 @@ export default function TrainerDashboardPage() {
   <Card className="dashboard-card">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Assigned Groups</CardTitle>
-      <div className="rounded-lg bg-primary/10 p-2">
+      <div className="rounded-md bg-primary/10 p-2">
         <Users className="h-4 w-4 text-primary" />
       </div>
     </CardHeader>
@@ -83,7 +83,7 @@ export default function TrainerDashboardPage() {
   <Card className="dashboard-card">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium">Upcoming Sessions</CardTitle>
-      <div className="rounded-lg bg-amber-500/10 p-2">
+      <div className="rounded-md bg-amber-500/10 p-2">
         <Calendar className="h-4 w-4 text-amber-600" />
       </div>
     </CardHeader>
@@ -109,7 +109,7 @@ export default function TrainerDashboardPage() {
           {data.upcomingSessions.map((session: any) => {
             const group = getSessionGroup(session)
             return (
-              <div key={session.id} className="premium-muted flex items-start space-x-4 rounded-xl border border-border/50 p-4 transition-all duration-300 hover:bg-card-hover hover:border-primary/30">
+              <div key={session.id} className="premium-muted flex items-start space-x-4 rounded-md border border-border/50 p-4 transition-all duration-300 hover:bg-card-hover hover:border-primary/30">
                 <div className="flex-1 space-y-2">
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-bold text-foreground leading-none">{session.title}</p>
@@ -147,7 +147,7 @@ export default function TrainerDashboardPage() {
       ) : (
         <div className="space-y-4">
           {data.assignments.map((assignment: any) => (
-            <div key={assignment.id} className="premium-muted flex items-center justify-between rounded-xl border border-border/50 p-4 transition-all duration-300 hover:bg-card-hover hover:border-primary/30">
+            <div key={assignment.id} className="premium-muted flex items-center justify-between rounded-md border border-border/50 p-4 transition-all duration-300 hover:bg-card-hover hover:border-primary/30">
               <div>
                 <p className="font-bold text-sm text-foreground">{assignment.group.name}</p>
                 <div className="flex items-center gap-2 mt-1">

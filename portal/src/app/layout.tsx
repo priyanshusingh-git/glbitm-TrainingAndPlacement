@@ -59,8 +59,8 @@ export default function RootLayout({
  children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={cn(fraunces.variable, inter.variable, firaCode.variable, "scroll-smooth")}>
-      <body className="font-body antialiased text-foreground selection:bg-amber-500/20">
+    <html lang="en" suppressHydrationWarning className={cn(fraunces.variable, inter.variable, firaCode.variable, "scroll-smooth")}>
+      <body suppressHydrationWarning className="font-body antialiased text-foreground selection:bg-amber-500/20">
         <AuthProvider>
           <NotificationProvider>
             {children}

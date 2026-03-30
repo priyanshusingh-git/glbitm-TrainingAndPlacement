@@ -37,7 +37,7 @@ export default function Policy() {
           {policyGroups.map((group) => (
             <article
               key={group.title}
-              className="rounded-2xl border border-border bg-white p-6 shadow-[0_2px_12px_rgba(81,41,18,0.07)]"
+              className="rounded-md border border-border bg-white p-6 shadow-[0_2px_12px_rgba(81,41,18,0.07)]"
             >
               <h3 className="font-display text-[21px] font-bold tracking-[-0.02em] text-brown-900">
                 {group.icon} {group.title}

@@ -28,7 +28,7 @@ export default function TrustStrip() {
           {teamMembers.map((member) => (
             <article
               key={member.name}
-              className="flex items-start gap-3 rounded-2xl border border-border bg-white px-4 py-5 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:border-brown-400/40 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)]"
+              className="flex items-start gap-3 rounded-md border border-border bg-white px-4 py-5 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:border-brown-400/40 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)]"
             >
               <div className="grid h-11 w-11 shrink-0 place-items-center rounded-[10px] bg-gradient-to-br from-brown-800 to-amber-700 font-display text-base font-bold text-white">
                 {member.initial}
@@ -51,7 +51,7 @@ export default function TrustStrip() {
           ))}
 
           <article
-            className="flex items-start gap-3 rounded-2xl border border-transparent bg-gradient-to-br from-brown-900 to-brown-800 px-4 py-5 text-white shadow-[0_6px_32px_rgba(81,41,18,0.16)]"
+            className="flex items-start gap-3 rounded-md border border-transparent bg-gradient-to-br from-brown-900 to-brown-800 px-4 py-5 text-white shadow-[0_6px_32px_rgba(81,41,18,0.16)]"
           >
             <div className="grid h-11 w-11 shrink-0 place-items-center rounded-[10px] bg-amber-500/20 text-lg">📍</div>
             <div>

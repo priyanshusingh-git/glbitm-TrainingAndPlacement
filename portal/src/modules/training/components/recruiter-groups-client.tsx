@@ -35,7 +35,7 @@ export default function TrainerGroupsPage() {
  if (loading) return <div className="flex h-[50vh] items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>
  if (error) {
  return (
- <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center">
+ <div className="rounded-md border border-destructive/20 bg-destructive/5 p-6 text-center">
  <p className="text-sm text-destructive">Failed to load groups: {error}</p>
  <Button className="mt-4" variant="outline" onClick={() => window.location.reload()}>
  Retry
@@ -67,7 +67,7 @@ export default function TrainerGroupsPage() {
           <CardHeader className="pb-3 border-b border-border/50 bg-muted/10">
             <div className="flex justify-between items-start mb-2">
               <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-bold uppercase tracking-widest">{assignment.type}</Badge>
-              <div className="rounded-lg bg-muted/50 p-1.5">
+              <div className="rounded-md bg-muted/50 p-1.5">
                 <Users className="h-4 w-4 text-muted-foreground" />
               </div>
             </div>
@@ -75,7 +75,7 @@ export default function TrainerGroupsPage() {
             <CardDescription className="text-xs font-medium uppercase tracking-wider text-muted-foreground/60">{assignment.group.branch} • Year {assignment.group.year}</CardDescription>
           </CardHeader>
           <CardContent className="p-5">
-            <div className="flex items-center justify-between p-3 rounded-xl bg-muted/30 border border-border/40">
+            <div className="flex items-center justify-between p-3 rounded-md bg-muted/30 border border-border/40">
               <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/50">Students Enrolled</span>
               <span className="text-lg font-bold text-foreground">{assignment.group._count.students}</span>
             </div>

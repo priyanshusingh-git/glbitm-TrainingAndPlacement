@@ -10,7 +10,7 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, action, className }: PageHeaderProps) {
   return (
-    <div className={cn("flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8", className)}>
+    <div data-slot="page-header" className={cn("flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8", className)}>
       <div className="space-y-1.5">
         <h1 className="text-3xl font-bold tracking-tight text-foreground">{title}</h1>
         {description && (
@@ -37,7 +37,7 @@ interface SectionHeaderProps {
 
 export function SectionHeader({ title, description, icon, className }: SectionHeaderProps) {
   return (
-    <div className={cn("flex flex-col gap-2 mb-6", className)}>
+    <div data-slot="section-header" className={cn("flex flex-col gap-2 mb-6", className)}>
       <div className="flex items-center gap-2.5">
         {icon && (
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-brown-800/10 text-brown-800 border border-brown-800/20">

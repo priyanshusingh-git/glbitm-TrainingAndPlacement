@@ -90,7 +90,7 @@ export default function AdminUpdatesPage() {
  {filteredNotifications.map((notification) => (
  <div
  key={notification.id}
- className={`flex items-start gap-4 rounded-lg border p-4 transition-colors ${!notification.isRead ? 'bg-accent/10 border-accent/20' : 'bg-card'
+ className={`flex items-start gap-4 rounded-md border p-4 transition-colors ${!notification.isRead ? 'bg-accent/10 border-accent/20' : 'bg-card'
  }`}
  >
  <div className="mt-1 shrink-0">

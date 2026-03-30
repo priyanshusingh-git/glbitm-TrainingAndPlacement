@@ -1,11 +1,67 @@
+// Admin Dashboard
+export const adminQuickActions = [
+  { label: "New Student", iconName: "UserPlus", colorClass: "text-brown-800", bgClass: "bg-brown-800/10" },
+  { label: "Add Company", iconName: "Building2", colorClass: "text-amber-500", bgClass: "bg-amber-500/10" },
+  { label: "Import Data", iconName: "FileSpreadsheet", colorClass: "text-amber-600", bgClass: "bg-amber-500/10" },
+  { label: "Send Notice", iconName: "Send", colorClass: "text-brown-900", bgClass: "bg-brown-900/10" },
+];
+
+export const adminOverviewConfig = [
+  {
+    key: "totalStudents",
+    title: "Total Students",
+    label: "Registered Batch",
+    toneClass: "tone-brown",
+    hoverClass: "hover:border-brown-800/30",
+    iconName: "Users",
+    gradient: "rgba(81, 41, 18, 0.12)" // brown-800
+  },
+  {
+    key: "placedStudents",
+    title: "Placed Students",
+    label: "Successful Offers",
+    toneClass: "tone-success",
+    hoverClass: "hover:border-emerald-600/30",
+    iconName: "UserCheck",
+    gradient: "rgba(5, 150, 105, 0.12)" // emerald-600 (approved in rule 5 for success)
+  },
+  {
+    key: "avgScore",
+    title: "Average Score",
+    label: "Assessment Mean",
+    toneClass: "tone-amber",
+    hoverClass: "hover:border-amber-500/30",
+    iconName: "TrendingUp",
+    gradient: "rgba(232, 160, 32, 0.12)" // amber-500
+  },
+  {
+    key: "activeCompanies",
+    title: "Active Companies",
+    label: "Recruiting Partners",
+    toneClass: "tone-brown-light",
+    hoverClass: "hover:border-brown-900/30",
+    iconName: "Building2",
+    gradient: "rgba(58, 28, 11, 0.12)" // brown-900
+  }
+];
+
+// Student Dashboard
+export const getStudentGreeting = (name?: string) => {
+  const hour = new Date().getHours();
+  let timeOfDay = "Good evening";
+  if (hour < 12) timeOfDay = "Good morning";
+  else if (hour < 17) timeOfDay = "Good afternoon";
+  
+  return { timeOfDay, name: name?.split(' ')[0] || "Student" };
+};
+
 export const dashboardBanner = {
-  greeting: "Good morning",
   status: "Placement Season Active",
-  message: "You have 2 new shortlists and 3 upcoming CDC sessions this week.",
+  message: "Welcome to your personal placement portal. Track your progress below.",
   metrics: [
-    { label: "CGPA", value: "8.4" },
-    { label: "Attendance", value: "78%" },
-    { label: "Applied", value: "4" }
+    { key: "cgpa", label: "CGPA", fallback: "—" },
+    { key: "attendancePercentage", label: "Attendance", suffix: "%", fallback: "—" },
+    { key: "applied", label: "Applied", fallback: "0" }
   ]
 };
 
@@ -35,35 +91,32 @@ export const upcomingDrives = [
 
 export const statCards = [
   { 
-    id: "cgpa",
-    label: "Overall CGPA", 
-    value: "8.4", 
-    badge: "Current", 
+    id: "trainingLevel",
+    label: "Training Level", 
+    badge: "Progress", 
     badgeColor: "amber",
     tag: "Trophy"
   },
   { 
-    id: "applied",
+    id: "eligibleDrives",
     label: "Drives Applied", 
-    value: "4", 
-    badge: "4 Active", 
-    badgeColor: "blue",
+    badge: "Active", 
+    badgeColor: "amber",
     tag: "Briefcase"
   },
   { 
-    id: "shortlisted",
-    label: "Shortlisted", 
-    value: "2", 
-    badge: "2 New", 
-    badgeColor: "emerald",
-    tag: "CheckCircle"
+    id: "avgTestScore",
+    label: "Avg Test Score", 
+    badge: "Score", 
+    badgeColor: "brown",
+    tag: "CheckCircle",
+    suffix: "%"
   },
   { 
-    id: "training",
-    label: "Training Progress", 
-    value: "78%", 
-    badge: "Top 10%", 
-    badgeColor: "indigo",
+    id: "problemsSolved",
+    label: "Problems Solved", 
+    badge: "Coding", 
+    badgeColor: "brown",
     tag: "BookOpen"
   }
 ];

@@ -45,7 +45,7 @@ export function TestsSection({ tests }: TestsSectionProps) {
  <Card className="overflow-hidden">
  <CardHeader className="flex flex-row items-center justify-between border-b border-border/60 bg-muted/10">
  <CardTitle className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-  <div className="rounded-xl border border-border/60 bg-primary/10 p-2 shadow-sm">
+  <div className="rounded-md border border-border/60 bg-primary/10 p-2 shadow-sm">
     <FileText className="h-5 w-5 text-primary" />
   </div>
  Tests & Analytics
@@ -55,7 +55,7 @@ export function TestsSection({ tests }: TestsSectionProps) {
   </Button>
  </CardHeader>
  <CardContent className="p-6 space-y-8">
- <div className="premium-muted rounded-xl border border-border/60 p-4">
+ <div className="premium-muted rounded-md border border-border/60 p-4">
  <div className="mb-6 flex items-center justify-between">
  <div className="space-y-1">
  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/70">Skill Progression</p>
@@ -100,11 +100,11 @@ export function TestsSection({ tests }: TestsSectionProps) {
  <h4 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">Latest Reports</h4>
  <div className="space-y-3">
  {recentTests.length === 0 ? (
- <p className="text-sm text-muted-foreground italic text-center py-4 bg-muted/20 rounded-lg">No recent evaluations available.</p>
+ <p className="text-sm text-muted-foreground italic text-center py-4 bg-muted/20 rounded-md">No recent evaluations available.</p>
  ) : recentTests.map((test) => (
  <div
  key={test.id}
- className="premium-muted flex items-center justify-between rounded-xl border border-border/50 p-4 transition-all duration-300 hover:bg-card-hover"
+ className="premium-muted flex items-center justify-between rounded-md border border-border/50 p-4 transition-all duration-300 hover:bg-card-hover"
  >
  <div className="space-y-1">
  <p className="font-bold text-sm text-foreground">{test.name}</p>
@@ -138,7 +138,7 @@ export function TestsSection({ tests }: TestsSectionProps) {
  <div className="space-y-4">
  <h4 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">Upcoming Evaluation</h4>
  {upcomingTests.length > 0 ? (
-  <div className="premium-tint group/upcoming relative flex flex-col items-center justify-center overflow-hidden rounded-xl border border-primary/15 p-6 text-center">
+  <div className="premium-tint group/upcoming relative flex flex-col items-center justify-center overflow-hidden rounded-md border border-primary/15 p-6 text-center">
     <div className="absolute top-0 right-0 p-2">
       <Clock className="h-12 w-12 text-primary/5 group-hover/upcoming:scale-125 transition-transform duration-700" />
     </div>
@@ -151,7 +151,7 @@ export function TestsSection({ tests }: TestsSectionProps) {
  </Button>
  </div>
  ) : (
- <div className="h-full flex flex-col items-center justify-center p-8 border-2 border-dashed border-border/40 rounded-xl space-y-2">
+ <div className="h-full flex flex-col items-center justify-center p-8 border-2 border-dashed border-border/40 rounded-md space-y-2">
  <FileText className="h-8 w-8 text-muted-foreground/30" />
  <p className="text-xs font-bold text-muted-foreground/50 uppercase tracking-widest text-center">No tests scheduled</p>
  </div>

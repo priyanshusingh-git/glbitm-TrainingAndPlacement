@@ -12,7 +12,7 @@ export function UploadingOverlay({ isUploading }: UploadingOverlayProps) {
 
  return (
  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
- <div className="bg-background animate-in fade-in zoom-in-95 rounded-xl border p-8 shadow-2xl mx-4 flex w-full max-w-sm flex-col items-center gap-4">
+ <div className="bg-background animate-in fade-in zoom-in-95 rounded-md border p-8 shadow-2xl mx-4 flex w-full max-w-sm flex-col items-center gap-4">
  <div className="relative">
  <div className="absolute inset-0 rounded-full border-b-2 border-brown-800 animate-spin" />
  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brown-800/10">

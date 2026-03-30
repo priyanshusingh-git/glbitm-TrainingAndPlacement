@@ -44,7 +44,6 @@ import { cn } from"@/lib/utils"
 import { api } from"@/lib/api"
 import { useToast } from"@/components/ui/use-toast"
 import { useAuth } from"@/contexts/auth-context"
-// import { supabase } from"@/lib/supabase" // Supabase removed
 import { PageHeader } from"@/components/layout/page-header"
 import {
  AlertDialog,
@@ -553,7 +552,7 @@ export default function AdminTrainingPage() {
  </SelectContent>
  </Select>
  <div className="h-8 w-px bg-border/40 mx-1" />
- <Button onClick={() => setCreateGroupOpen(true)} className="h-10 px-6 rounded-xl shadow-sm font-semibold text-sm">
+ <Button onClick={() => setCreateGroupOpen(true)} className="h-10 px-6 rounded-md shadow-sm font-semibold text-sm">
  <Plus className="mr-2 h-4 w-4" /> New Group
  </Button>
  </div>
@@ -574,7 +573,7 @@ export default function AdminTrainingPage() {
  <div className={cn("absolute top-0 right-0 w-32 h-32 -mr-16 -mt-16 rounded-full opacity-[0.03] group-hover:opacity-[0.08] transition-opacity bg-gradient-to-br", item.color)} />
  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
  <span className="text-sm font-semibold text-muted-foreground/70">{item.label}</span>
- <div className={cn("p-2 rounded-lg bg-gradient-to-br opacity-80", item.color)}>
+ <div className={cn("p-2 rounded-md bg-gradient-to-br opacity-80", item.color)}>
  <item.icon className="h-3.5 w-3.5 text-white" />
  </div>
  </CardHeader>
@@ -599,7 +598,7 @@ export default function AdminTrainingPage() {
  </CardHeader>
  <CardContent>
  <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
- <div className="p-4 rounded-full bg-brown-800/5 border border-brown-800/10">
+ <div className="p-4 rounded-md bg-brown-800/5 border border-brown-800/10">
             <Clock className="h-8 w-8 text-primary/40" />
  </div>
  <div className="space-y-1">
@@ -635,7 +634,7 @@ export default function AdminTrainingPage() {
  {loading ? (
  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
  {Array.from({ length: 6 }).map((_, i) => (
- <div key={i} className="h-[280px] rounded-3xl border border-border/60 bg-card animate-pulse" />
+ <div key={i} className="h-[280px] rounded-md border border-border/60 bg-card animate-pulse" />
  ))}
  </div>
  ) : (
@@ -681,7 +680,7 @@ export default function AdminTrainingPage() {
  size="icon"
  disabled={index === 0}
  onClick={() => handleReorderMasters(index, 'up')}
- className="h-8 w-8 rounded-lg"
+ className="h-8 w-8 rounded-md"
  >
  <ChevronUp className="h-4 w-4 text-muted-foreground" />
  </Button>
@@ -690,24 +689,24 @@ export default function AdminTrainingPage() {
  size="icon"
  disabled={index === groupMasters.length - 1}
  onClick={() => handleReorderMasters(index, 'down')}
- className="h-8 w-8 rounded-lg"
+ className="h-8 w-8 rounded-md"
  >
  <ChevronDown className="h-4 w-4 text-muted-foreground" />
  </Button>
  </div>
 
- <Badge variant="outline" className="rounded-full px-4 py-1 border-brown-800/20 bg-brown-800/5 text-brown-800 text-sm font-semibold">
+ <Badge variant="outline" className="rounded-sm px-4 py-1 border-brown-800/20 bg-brown-800/5 text-brown-800 text-sm font-semibold">
  {masterGroups.length} {masterGroups.length === 1 ? 'Cohort' : 'Cohorts'}
  </Badge>
  </div>
 
  <div className="flex gap-6 overflow-x-auto pb-4 snap-x">
  {masterGroups.map((group) => (
- <Card key={group.id} className="premium-muted group relative flex w-[300px] shrink-0 snap-start flex-col overflow-hidden rounded-xl border border-border/60 hover:border-brown-800/30 hover:bg-card-hover hover:shadow-md md:w-[350px]">
+ <Card key={group.id} className="premium-muted group relative flex w-[300px] shrink-0 snap-start flex-col overflow-hidden rounded-md border border-border/60 hover:border-brown-800/30 hover:bg-card-hover hover:shadow-md md:w-[350px]">
  <div className="absolute top-0 right-0 p-6 z-10">
  <DropdownMenu>
  <DropdownMenuTrigger asChild>
- <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl bg-card/90 opacity-0 transition-opacity hover:bg-brown-800/10 group-hover:opacity-100">
+ <Button variant="ghost" size="icon" className="h-10 w-10 rounded-md bg-card/90 opacity-0 transition-opacity hover:bg-brown-800/10 group-hover:opacity-100">
  <MoreHorizontal className="h-5 w-5" />
  </Button>
  </DropdownMenuTrigger>
@@ -873,14 +872,14 @@ export default function AdminTrainingPage() {
  <div className="space-y-3 pt-6 border-t border-border">
  <span className="text-sm font-semibold text-muted-foreground/50">Instructor Grid</span>
  {group.trainers.length === 0 ? (
- <div className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border/60 bg-card/70 p-4">
+ <div className="flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-border/60 bg-card/70 p-4">
  <UserPlus className="h-4 w-4 text-muted-foreground/40" />
  <p className="text-xs font-bold text-muted-foreground/60">Awaiting Trainers</p>
  </div>
  ) : (
  <div className="grid gap-2">
  {group.trainers.slice(0, 2).map((t: any) => (
- <div key={t.id} className="flex items-center justify-between rounded-xl border border-border/60 bg-card/80 p-3 group/trainer">
+ <div key={t.id} className="flex items-center justify-between rounded-md border border-border/60 bg-card/80 p-3 group/trainer">
  <div className="flex items-center gap-2">
  <span className="h-1 w-1 rounded-full bg-brown-800/40 group-hover/trainer:bg-brown-800 transition-colors" />
  <span className="text-sm font-bold text-foreground/80">{t.type}</span>
@@ -899,7 +898,7 @@ export default function AdminTrainingPage() {
  <div className="bg-gradient-to-t from-card/60 to-transparent p-6 pt-0">
  <Button
  onClick={() => router.push(`/admin/training/groups/${group.id}`)}
- className="group/cta h-10 w-full rounded-xl border border-brown-800/20 bg-brown-800/8 font-semibold text-brown-800 transition-all hover:bg-brown-800 hover:text-brown-800-foreground"
+ className="group/cta h-10 w-full rounded-md border border-brown-800/20 bg-brown-800/8 font-semibold text-brown-800 transition-all hover:bg-brown-800 hover:text-brown-800-foreground"
  >
  Manage Students <ArrowRight className="ml-2 h-3.5 w-3.5 transition-transform group-hover/cta:translate-x-1" />
  </Button>
@@ -912,9 +911,9 @@ export default function AdminTrainingPage() {
 
  {/* Empty State */}
  {groups.filter(g => g.year === year).length === 0 && (
- <div className="py-32 text-center rounded-[3rem] border-2 border-dashed border-border bg-muted backdrop-blur-sm animate-in fade-in duration-700">
+ <div className="py-32 text-center rounded-md border-2 border-dashed border-border bg-muted backdrop-blur-sm animate-in fade-in duration-700">
  {/* ... existing empty state ... */}
- <div className="p-6 rounded-full bg-brown-800/5 border border-brown-800/10 inline-block mb-6">
+ <div className="p-6 rounded-md bg-brown-800/5 border border-brown-800/10 inline-block mb-6">
  <BookOpen className="h-10 w-12 text-brown-800/20" />
  </div>
  <h3 className="text-2xl font-semibold tracking-tight text-foreground/60">Zero Cohorts Detected</h3>
@@ -952,7 +951,7 @@ export default function AdminTrainingPage() {
  <SelectTrigger className="h-10 rounded-md bg-background border-border font-bold"><SelectValue placeholder="Select Year" /></SelectTrigger>
  <SelectContent className="rounded-md border-border shadow-md">
  {getYearOptions().map(year => (
- <SelectItem key={year} value={year} className="rounded-lg py-2.5 font-bold text-sm font-medium">{year}</SelectItem>
+ <SelectItem key={year} value={year} className="rounded-md py-2.5 font-bold text-sm font-medium">{year}</SelectItem>
  ))}
  </SelectContent>
  </Select>
@@ -1133,10 +1132,10 @@ export default function AdminTrainingPage() {
  <Dialog open={editGroupOpen} onOpenChange={setEditGroupOpen}>
  <DialogContent className="sm:max-w-[500px] rounded-md border-border bg-card p-0 overflow-hidden">
  <DialogHeader className="p-8 bg-muted border-b border-border">
- <div className="p-3 w-fit rounded-md bg-indigo-500/10 border border-indigo-500/20 mb-4">
- <Pencil className="h-6 w-6 text-indigo-500" />
+ <div className="p-3 w-fit rounded-md bg-amber-500/10 border border-amber-500/20 mb-4">
+ <Pencil className="h-6 w-6 text-amber-500" />
  </div>
- <DialogTitle className="text-2xl font-semibold">Configure <span className="text-indigo-500 italic">Parameters</span></DialogTitle>
+ <DialogTitle className="text-2xl font-semibold">Configure <span className="text-amber-500 italic">Parameters</span></DialogTitle>
  <DialogDescription className="text-sm font-medium">Modify existing cohort specifications.</DialogDescription>
  </DialogHeader>
  {editingGroup && (
@@ -1180,7 +1179,7 @@ export default function AdminTrainingPage() {
  </div>
  <div className="pt-4 flex gap-3">
  <Button type="button" variant="ghost" onClick={() => setEditGroupOpen(false)} className="flex-1 h-10 rounded-md font-bold text-sm font-medium">Cancel</Button>
- <Button type="submit" className="flex-[2] h-10 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg shadow-indigo-500/20 font-bold text-sm font-medium">Update Registry</Button>
+ <Button type="submit" className="flex-[2] h-10 rounded-md bg-brown-800 hover:bg-brown-900 text-brown-50 shadow-lg shadow-amber-900/15 font-bold text-sm font-medium">Update Registry</Button>
  </div>
  </form>
  )}
@@ -1191,7 +1190,7 @@ export default function AdminTrainingPage() {
  <AlertDialog open={deleteGroupOpen} onOpenChange={setDeleteGroupOpen}>
  <AlertDialogContent className="rounded-md border-border bg-card p-8">
  <AlertDialogHeader className="space-y-6">
- <div className="mx-auto p-4 rounded-3xl bg-destructive/10 border border-destructive/20 w-fit">
+ <div className="mx-auto p-4 rounded-md bg-destructive/10 border border-destructive/20 w-fit">
  <Trash2 className="h-8 w-8 text-destructive animate-bounce" />
  </div>
  <div className="space-y-2 text-center">
@@ -1231,7 +1230,7 @@ export default function AdminTrainingPage() {
  <Textarea
  name="studentIds"
  placeholder="e.g. ADM001, ADM002, ADM003"
- className="min-h-[220px] rounded-3xl bg-background border-border focus:border-brown-800/40 focus:ring-amber-500/10 p-6 font-mono text-xs leading-relaxed transition-all scrollbar-hide"
+ className="min-h-[220px] rounded-md bg-background border-border focus:border-brown-800/40 focus:ring-amber-500/10 p-6 font-mono text-xs leading-relaxed transition-all scrollbar-hide"
  required
  />
  <div className="absolute bottom-4 right-4 text-xs font-bold text-muted-foreground/40 px-2 py-1 rounded bg-muted">
@@ -1386,7 +1385,7 @@ export default function AdminTrainingPage() {
  </Button>
  </div>
 
- <div className="h-8 w-8 rounded-lg bg-brown-800/10 flex items-center justify-center border border-brown-800/20">
+ <div className="h-8 w-8 rounded-md bg-brown-800/10 flex items-center justify-center border border-brown-800/20">
  <span className="text-sm font-semibold text-brown-800">{master.name.substring(0, 2)}</span>
  </div>
  <div className="flex flex-col">
@@ -1401,7 +1400,7 @@ export default function AdminTrainingPage() {
  size="icon"
  type="button"
  disabled={deletingIdentityId === master.id || master.id.startsWith('temp-')}
- className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg opacity-0 group-hover:opacity-100 transition-all disabled:opacity-100"
+ className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md opacity-0 group-hover:opacity-100 transition-all disabled:opacity-100"
  onClick={async (e) => {
  e.stopPropagation();
 
@@ -1471,7 +1470,7 @@ export default function AdminTrainingPage() {
  ))}
  {groupMasters.length === 0 && (
  <div className="py-12 text-center">
- <div className="inline-flex h-10 w-12 items-center justify-center rounded-full bg-muted mb-3">
+ <div className="inline-flex h-10 w-12 items-center justify-center rounded-md bg-muted mb-3">
  <AlertCircle className="h-5 w-5 text-muted-foreground/50" />
  </div>
  <p className="text-xs font-bold text-muted-foreground/50">No Identities Registered</p>

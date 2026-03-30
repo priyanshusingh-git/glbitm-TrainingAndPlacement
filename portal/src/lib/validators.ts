@@ -22,10 +22,10 @@ export const validateStrongPassword = (value: string): string | null => {
  const { requirements } = checkPasswordStrength(value)
 
  if (!requirements.length) return"Password must be at least 8 characters long."
- if (!requirements.uppercase) return"Password must contain at least one uppercase letter."
- if (!requirements.lowercase) return"Password must contain at least one lowercase letter."
- if (!requirements.number) return"Password must contain at least one number."
- if (!requirements.special) return"Password must contain at least one special character."
+ if (!requirements.uppercase) return"Include at least one uppercase letter."
+ if (!requirements.lowercase) return"Include at least one lowercase letter."
+ if (!requirements.number) return"Include at least one number."
+ if (!requirements.special) return"Include at least one special character."
 
  return null
 }

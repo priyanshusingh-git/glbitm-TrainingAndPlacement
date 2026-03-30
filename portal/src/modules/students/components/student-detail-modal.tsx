@@ -25,6 +25,10 @@ export function StudentDetailModal({ student, isOpen, onClose }: StudentDetailMo
  return (
  <Dialog open={isOpen} onOpenChange={onClose}>
  <DialogContent className="document-panel sm:max-w-[600px] overflow-hidden p-0">
+ <DialogHeader className="sr-only">
+ <DialogTitle>{student.name}'s Profile</DialogTitle>
+ <DialogDescription>Student academic and placement details</DialogDescription>
+ </DialogHeader>
  <div className="document-hero relative h-32 rounded-none border-x-0 border-t-0">
  <div className="absolute -bottom-12 left-8 overflow-hidden rounded-full border-4 border-background shadow-xl">
  <Avatar className="h-24 w-24 rounded-none">
@@ -56,7 +60,7 @@ export function StudentDetailModal({ student, isOpen, onClose }: StudentDetailMo
 
  <div className="grid grid-cols-2 gap-4">
  <div className="document-subtle p-4 flex items-center gap-3">
- <div className="tone-primary h-10 w-10 rounded-xl border flex items-center justify-center">
+ <div className="tone-primary h-10 w-10 rounded-md border flex items-center justify-center">
  <Briefcase className="h-5 w-5" />
  </div>
  <div>
@@ -65,7 +69,7 @@ export function StudentDetailModal({ student, isOpen, onClose }: StudentDetailMo
  </div>
  </div>
  <div className="document-subtle p-4 flex items-center gap-3">
- <div className="tone-primary h-10 w-10 rounded-xl border flex items-center justify-center">
+ <div className="tone-primary h-10 w-10 rounded-md border flex items-center justify-center">
  <DollarSign className="h-5 w-5" />
  </div>
  <div>
@@ -74,7 +78,7 @@ export function StudentDetailModal({ student, isOpen, onClose }: StudentDetailMo
  </div>
  </div>
  <div className="document-subtle p-4 flex items-center gap-3">
- <div className="tone-primary h-10 w-10 rounded-xl border flex items-center justify-center">
+ <div className="tone-primary h-10 w-10 rounded-md border flex items-center justify-center">
  <GraduationCap className="h-5 w-5" />
  </div>
  <div>
@@ -83,7 +87,7 @@ export function StudentDetailModal({ student, isOpen, onClose }: StudentDetailMo
  </div>
  </div>
  <div className="document-subtle p-4 flex items-center gap-3">
- <div className="tone-primary h-10 w-10 rounded-xl border flex items-center justify-center">
+ <div className="tone-primary h-10 w-10 rounded-md border flex items-center justify-center">
  <Calendar className="h-5 w-5" />
  </div>
  <div>
@@ -94,7 +98,7 @@ export function StudentDetailModal({ student, isOpen, onClose }: StudentDetailMo
  </div>
 
  {student.quote && (
- <div className="tone-accent relative rounded-2xl border p-6 text-center italic">
+ <div className="tone-accent relative rounded-md border p-6 text-center italic">
  <Quote className="absolute -top-3 -left-3 h-8 w-8 text-accent/30" />
  <p className="text-sm font-medium text-foreground/80">"{student.quote}"</p>
  </div>

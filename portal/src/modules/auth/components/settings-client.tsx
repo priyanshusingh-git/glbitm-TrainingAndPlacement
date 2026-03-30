@@ -298,7 +298,7 @@ export default function SettingsPage() {
  </CardDescription>
  </CardHeader>
  <CardContent className="space-y-6">
- <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/30">
+ <div className="flex items-center justify-between p-4 border rounded-md bg-muted/30">
  <div className="space-y-1">
  <p className="font-medium">Export System Data</p>
  <p className="text-sm text-muted-foreground text-pretty">Download a full backup of students, companies, and training data.</p>
@@ -335,7 +335,7 @@ export default function SettingsPage() {
  </CardDescription>
  </CardHeader>
  <CardContent className="space-y-4">
- <div className="flex items-center justify-between rounded-lg border p-4">
+ <div className="flex items-center justify-between rounded-md border p-4">
  <div className="space-y-0.5">
  <Label className="text-base">Student Registration</Label>
  <p className="text-sm text-muted-foreground">

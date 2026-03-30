@@ -107,6 +107,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
  type={showPassword ?"text" :"password"}
  className={cn("pr-10", className)}
  ref={ref}
+ value={value}
  onChange={handleChange}
  {...props}
  />

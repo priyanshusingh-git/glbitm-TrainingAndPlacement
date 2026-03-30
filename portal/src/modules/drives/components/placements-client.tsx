@@ -280,7 +280,7 @@ export default function AdminPlacementsPage() {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brown-800/10">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-brown-800/10">
                       <Building2 className="h-5 w-5 text-brown-800" />
                     </div>
                     <div>

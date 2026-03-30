@@ -143,7 +143,7 @@ export function Header({ role, user, headerAction }: HeaderProps) {
  };
 
  return (
- <header className="sticky top-0 z-30 border-b border-border/60 bg-background/78 backdrop-blur-xl">
+ <header className="sticky top-0 z-30 border-b border-border/40 bg-background/80 backdrop-blur-xl">
  <div className="page-shell flex h-16 items-center justify-between gap-3">
  <div className="flex flex-1 items-center gap-2 md:gap-4">
  <Button
@@ -241,14 +241,14 @@ export function Header({ role, user, headerAction }: HeaderProps) {
  <Button variant="ghost" size="icon" className="relative">
  <Bell className="h-5 w-5" />
  {unreadCount > 0 && (
- <Badge className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full p-0 text-xs">
- {unreadCount}
+ <Badge className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 p-0 text-[10px] font-bold text-brown-900 shadow-[0_0_0_2px_hsl(var(--background))]">
+ {unreadCount > 9 ? '9+' : unreadCount}
  </Badge>
  )}
  <span className="sr-only">Updates</span>
  </Button>
  </DropdownMenuTrigger>
- <DropdownMenuContent align="end" className="w-80 rounded-xl border-border/70">
+ <DropdownMenuContent align="end" className="w-80 rounded-md border-border/70">
  <div className="flex items-center justify-between border-b px-4 py-3">
  <span className="font-semibold text-sm">Updates</span>
  {unreadCount > 0 && (
@@ -308,7 +308,7 @@ export function Header({ role, user, headerAction }: HeaderProps) {
 
  <DropdownMenu>
  <DropdownMenuTrigger asChild>
- <Button variant="ghost" className="flex items-center gap-2 rounded-xl px-2">
+ <Button variant="ghost" className="flex items-center gap-2 rounded-md px-2">
  <Avatar className="h-8 w-8">
  <AvatarImage src={user.avatar} alt={user.name} className="object-cover" />
  <AvatarFallback className="border border-border bg-card text-xs font-medium text-foreground">
@@ -321,7 +321,7 @@ export function Header({ role, user, headerAction }: HeaderProps) {
  </div>
  </Button>
  </DropdownMenuTrigger>
- <DropdownMenuContent align="end" className="w-56 rounded-xl border-border/70">
+ <DropdownMenuContent align="end" className="w-56 rounded-md border-border/70">
  <DropdownMenuLabel>My Account</DropdownMenuLabel>
  <DropdownMenuSeparator />
  <DropdownMenuItem asChild>
@@ -340,7 +340,7 @@ export function Header({ role, user, headerAction }: HeaderProps) {
  </div>
 
  <Dialog open={changePasswordOpen} onOpenChange={setChangePasswordOpen}>
- <DialogContent className="rounded-2xl border-border/70">
+ <DialogContent className="rounded-md border-border/70">
  <DialogHeader>
  <DialogTitle>Change Password</DialogTitle>
  <DialogDescription>

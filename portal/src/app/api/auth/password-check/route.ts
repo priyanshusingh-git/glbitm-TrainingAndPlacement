@@ -49,8 +49,8 @@ export async function POST(req: NextRequest) {
       NextResponse.json({
         breached,
         message: breached
-          ? "This password has appeared in known data breaches. Choose a different password."
-          : "This password was not found in the Have I Been Pwned database.",
+          ? "This password has appeared in a known data breach. Please choose a different one."
+          : "✓ Secure: This password has not been leaked in known data breaches.",
       })
     )
   } catch (error) {

@@ -50,7 +50,7 @@ export default function TrainerSchedulePage() {
  if (loading) return <div className="flex h-[50vh] items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>
  if (error) {
  return (
- <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-6 text-center">
+ <div className="rounded-md border border-destructive/20 bg-destructive/5 p-6 text-center">
  <p className="text-sm text-destructive">Failed to load schedule: {error}</p>
  <Button className="mt-4" variant="outline" onClick={() => window.location.reload()}>
  Retry

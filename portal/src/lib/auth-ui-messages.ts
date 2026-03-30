@@ -61,6 +61,8 @@ export function getAuthErrorMessage(
             : "Too many sign-in attempts. Please wait a moment and try again."
         case "ACCOUNT_SUSPENDED":
           return error?.detail || "Your account has been temporarily locked. Please contact support."
+        case "INDUCTION_PENDING":
+          return "It looks like you haven't finished your setup. Please check your email for your induction link."
         case "UNAUTHORIZED":
         case "INVALID_SESSION":
           return "Your session has expired. Please sign in again."

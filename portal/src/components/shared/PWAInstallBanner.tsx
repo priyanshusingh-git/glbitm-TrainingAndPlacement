@@ -19,7 +19,7 @@ export function PWAInstallBanner() {
   if (dismissed || (!prompt && !isIOS)) return null
 
   return (
-    <div className="md:hidden fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+8px)] left-4 right-4 z-50 rounded-xl border border-border/60 bg-background/98 p-4 shadow-lg backdrop-blur-xl">
+    <div className="md:hidden fixed bottom-[calc(4rem+env(safe-area-inset-bottom)+8px)] left-4 right-4 z-50 rounded-md border border-border/60 bg-background/98 p-4 shadow-lg backdrop-blur-xl">
       <button onClick={() => setDismissed(true)} className="absolute right-3 top-3 p-1 min-h-[44px] min-w-[44px] flex items-center justify-center">
         <X className="h-4 w-4 text-muted-foreground" />
       </button>

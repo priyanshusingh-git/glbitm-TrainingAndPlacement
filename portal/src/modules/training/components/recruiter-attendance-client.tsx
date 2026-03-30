@@ -144,7 +144,7 @@ export default function AttendancePage() {
  ) : (
  <div className="space-y-2">
  {students.map((student) => (
- <div key={student.id} className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/5 transition-colors">
+ <div key={student.id} className="flex items-center justify-between p-3 rounded-md border bg-card hover:bg-accent/5 transition-colors">
  <div className="flex items-center gap-3">
  <Avatar className="h-8 w-8">
  <AvatarFallback>{student.name?.charAt(0) || 'S'}</AvatarFallback>

@@ -45,7 +45,7 @@ export default function TrainingPage() {
 
  if (!data || !data.enrolled) {
  return (
- <div className="flex bg-muted/20 flex-col items-center justify-center p-8 rounded-lg mt-8 text-center border-2 border-dashed">
+ <div className="flex bg-muted/20 flex-col items-center justify-center p-8 rounded-md mt-8 text-center border-2 border-dashed">
     <div className="bg-primary/10 p-4 rounded-full mb-4">
       <BookOpen className="h-8 w-8 text-primary" />
     </div>
@@ -111,7 +111,7 @@ export default function TrainingPage() {
  <Video className="mr-2 h-4 w-4" /> Join Link
  </Button>
  ) : (
-    <div className="flex items-center gap-2 text-sm font-bold bg-background/50 p-2 rounded-xl border border-border/60 justify-center">
+    <div className="flex items-center gap-2 text-sm font-bold bg-background/50 p-2 rounded-md border border-border/60 justify-center">
       <MapPin className="h-4 w-4 text-primary" />
       {nextSession.location || 'Campus'}
     </div>
@@ -170,9 +170,9 @@ export default function TrainingPage() {
  const isAbsent = isPast && !isPresent;
 
  return (
- <div key={session.id} className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between p-4 rounded-lg border bg-card hover:border-brown-800/50 transition-colors">
+ <div key={session.id} className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between p-4 rounded-md border bg-card hover:border-brown-800/50 transition-colors">
  <div className="flex gap-4">
- <div className="flex flex-col items-center justify-center w-14 h-14 rounded-lg bg-muted text-center shrink-0">
+ <div className="flex flex-col items-center justify-center w-14 h-14 rounded-md bg-muted text-center shrink-0">
  <span className="text-xs font-semibold uppercase text-muted-foreground">{format(new Date(session.date),"MMM")}</span>
  <span className="text-lg font-bold">{format(new Date(session.date),"d")}</span>
  </div>

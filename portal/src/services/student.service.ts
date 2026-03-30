@@ -1,10 +1,12 @@
 import bcrypt from 'bcryptjs';
+import { randomUUID } from 'crypto';
 import prisma from '@/lib/db';
 import { logger } from '@/lib/logger';
 import { generateStrongPassword } from '@/lib/password';
 import { sendWelcomeEmail } from '@/services/email.service';
 import { logAudit } from '@/services/audit.service';
 import { broadcastMessage } from '@/lib/realtime';
+import { publishEmailTask } from '@/services/qstash.service';
 
 /**
  * Server-side service for student-related database operations.
@@ -54,10 +56,11 @@ export const createStudent = async (data: { email: string; admissionId?: string;
    if (existingProfile) throw new Error('Student with this Admission ID already exists');
  }
 
- // 2. Generate Password
- const password = generateStrongPassword(12);
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+  // 2. Generate Password
+  const password = generateStrongPassword(10);
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const magicToken = randomUUID();
+  const magicTokenExpires = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 hours
 
   // 3. Create User & Profile in Database natively (Firebase removed)
   const result = await prisma.$transaction(async (tx: any) => {
@@ -67,7 +70,9 @@ export const createStudent = async (data: { email: string; admissionId?: string;
         password: hashedPassword,
         role: 'STUDENT',
         mustChangePassword: true,
-        name
+        name,
+        magicToken,
+        magicTokenExpires
       }
     });
 
@@ -81,16 +86,25 @@ export const createStudent = async (data: { email: string; admissionId?: string;
     });
 
     // 4. Queue Welcome Email
-    await tx.emailQueue.create({
+    const emailQueue = await tx.emailQueue.create({
       data: {
         to: email,
         subject: "Welcome to Scorlo Training & Placement Portal",
-        payload: JSON.stringify({ name, email, rawPassword: password }),
+        payload: JSON.stringify({ 
+          name, 
+          email, 
+          magicToken 
+        }),
         status: "PENDING"
       }
     });
 
-    return { user, profile };
+    return { user, profile, emailQueueId: emailQueue.id };
+  });
+
+  // Asynchronously dispatch to QStash
+  publishEmailTask(result.emailQueueId).catch(err => {
+    logger.error("Failed to asynchronously publish QStash email task", err);
   });
 
   return { ...result.profile, emailSent: true };

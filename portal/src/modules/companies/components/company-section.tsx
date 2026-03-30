@@ -30,7 +30,7 @@ export function CompanySection({ companies }: CompanySectionProps) {
  <Card className="overflow-hidden border-border/50 bg-card">
  <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 bg-muted/10 pb-4">
   <CardTitle className="flex items-center gap-2 text-lg font-bold tracking-tight">
-    <div className="rounded-xl border border-border/60 bg-primary/10 p-2 shadow-sm">
+    <div className="rounded-md border border-border/60 bg-primary/10 p-2 shadow-sm">
       <Building2 className="h-5 w-5 text-primary" />
     </div>
     Company Management
@@ -47,7 +47,7 @@ export function CompanySection({ companies }: CompanySectionProps) {
  ) : displayCompanies.map((company) => (
   <div
     key={company.id}
-    className="premium-muted space-y-4 rounded-xl border border-border/50 p-5 transition-all duration-300 hover:bg-card-hover hover:border-primary/30 hover:shadow-md"
+    className="premium-muted space-y-4 rounded-md border border-border/50 p-5 transition-all duration-300 hover:bg-card-hover hover:border-primary/30 hover:shadow-md"
   >
  <div className="flex items-start justify-between">
  <div>

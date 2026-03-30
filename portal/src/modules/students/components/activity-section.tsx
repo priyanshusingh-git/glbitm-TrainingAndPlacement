@@ -37,14 +37,14 @@ export function ActivitySection({ activity }: ActivitySectionProps) {
  <Card className="overflow-hidden">
  <CardHeader className="border-b border-border/60 bg-muted/10">
  <CardTitle className="flex items-center gap-2 text-lg font-semibold tracking-tight">
- <div className="rounded-xl border border-border/60 bg-brown-800/10 p-2 shadow-sm">
+ <div className="rounded-md border border-border/60 bg-brown-800/10 p-2 shadow-sm">
  <Code2 className="h-5 w-5 text-brown-800" />
  </div>
  Achievements & Activity
  </CardTitle>
  </CardHeader>
  <CardContent className="p-6 space-y-10">
- <div className="premium-muted group relative overflow-hidden rounded-2xl border border-border/60 p-5">
+ <div className="premium-muted group relative overflow-hidden rounded-md border border-border/60 p-5">
  <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
  <Github className="h-24 w-24 text-brown-800" />
  </div>
@@ -95,12 +95,12 @@ export function ActivitySection({ activity }: ActivitySectionProps) {
  </div>
  <div className="space-y-4">
  {projects.length === 0 ? (
- <div className="py-8 bg-muted/10 rounded-xl border border-dashed border-border/40 flex flex-col items-center justify-center opacity-40">
+ <div className="py-8 bg-muted/10 rounded-md border border-dashed border-border/40 flex flex-col items-center justify-center opacity-40">
  <FolderKanban className="h-6 w-6 mb-2" />
  <p className="text-xs font-bold uppercase tracking-widest">No Projects Found</p>
  </div>
  ) : projects.map((project: any) => (
- <div key={project.id} className="premium-muted group/proj rounded-xl border border-border/50 p-4 transition-all duration-300 hover:bg-card-hover hover:border-brown-800/30">
+ <div key={project.id} className="premium-muted group/proj rounded-md border border-border/50 p-4 transition-all duration-300 hover:bg-card-hover hover:border-brown-800/30">
  <div className="flex items-center justify-between mb-3">
  <p className="font-bold text-sm text-foreground group-hover/proj:text-brown-800 transition-colors">{project.name}</p>
  <div className={cn(
@@ -128,13 +128,13 @@ export function ActivitySection({ activity }: ActivitySectionProps) {
  </h4>
  <div className="space-y-4">
  {certifications.length === 0 ? (
- <div className="py-8 bg-muted/10 rounded-xl border border-dashed border-border/40 flex flex-col items-center justify-center opacity-40">
+ <div className="py-8 bg-muted/10 rounded-md border border-dashed border-border/40 flex flex-col items-center justify-center opacity-40">
  <Award className="h-6 w-6 mb-2" />
  <p className="text-xs font-bold uppercase tracking-widest">No Credentials Added</p>
  </div>
  ) : certifications.map((cert: any) => (
- <div key={cert.id} className="premium-muted group/cert flex gap-4 rounded-xl border border-border/50 p-4 transition-all duration-300 hover:bg-card-hover">
- <div className="h-10 w-10 rounded-lg bg-brown-800/10 border border-brown-800/20 flex items-center justify-center shrink-0 group-hover/cert:scale-110 transition-transform">
+ <div key={cert.id} className="premium-muted group/cert flex gap-4 rounded-md border border-border/50 p-4 transition-all duration-300 hover:bg-card-hover">
+ <div className="h-10 w-10 rounded-md bg-brown-800/10 border border-brown-800/20 flex items-center justify-center shrink-0 group-hover/cert:scale-110 transition-transform">
  <Award className="h-5 w-5 text-brown-800" />
  </div>
  <div className="space-y-1">

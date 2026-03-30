@@ -23,9 +23,18 @@ const MIN_PASSWORD_LENGTH = 8
 
 function Feedback({ message, success = false }: { message: string; success?: boolean }) {
   return (
-    <div className={cn("feedback-message", success ? "feedback-message-success" : "feedback-message-error", "animate-fade-in")}>
-      {success ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /> : <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />}
-      <span>{message}</span>
+    <div className={cn(
+      "flex items-start gap-3 rounded-md border p-4 text-[14px] leading-snug animate-fade-in shadow-sm",
+      success 
+        ? "border-emerald-100 bg-emerald-50/50 text-emerald-800 shadow-emerald-500/5" 
+        : "border-red-100 bg-red-50/50 text-red-800 shadow-red-500/5"
+    )}>
+      {success ? (
+        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+      ) : (
+        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
+      )}
+      <div className="flex-1 font-medium">{message}</div>
     </div>
   )
 }
@@ -56,15 +65,6 @@ function LoginContent() {
   // Form state
   const [rememberMe, setRememberMe] = useState(true)
   const [email, setEmail] = useState("")
-
-  // Pre-fill email from query param on mount
-  useEffect(() => {
-    const emailParam = searchParams.get("email")
-    if (emailParam) {
-      setEmail(emailParam)
-    }
-  }, [searchParams])
-
   const [password, setPassword] = useState("")
   const [username, setUsername] = useState("") // honeypot
   const [fingerprint, setFingerprint] = useState("")
@@ -73,10 +73,20 @@ function LoginContent() {
   const [captchaToken, setCaptchaToken] = useState("")
   const [captchaKey, setCaptchaKey] = useState(0)
 
+  // Pre-fill email from query param on mount
+  useEffect(() => {
+    const emailParam = searchParams.get("email") || searchParams.get("e")
+    if (emailParam) {
+      setEmail(emailParam)
+    }
+  }, [searchParams])
+
   // UI state
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<{ code?: string; message: string } | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [resendLoading, setResendLoading] = useState(false)
+  const [resendMessage, setResendMessage] = useState<{ success: boolean; text: string } | null>(null)
   const [shaking, setShaking] = useState(false)
 
   // Field-level validation (shown on blur and on submit)
@@ -120,7 +130,7 @@ function LoginContent() {
     if (touched.email) {
       setFieldErrors((prev) => ({ ...prev, email: validateEmail(value) }))
     }
-    if (error) setError(null)
+    setError(null)
   }
 
   const handlePasswordChange = (value: string) => {
@@ -128,7 +138,7 @@ function LoginContent() {
     if (touched.password) {
       setFieldErrors((prev) => ({ ...prev, password: validatePassword(value) }))
     }
-    if (error) setError(null)
+    setError(null)
   }
 
   const handleEmailKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -161,8 +171,8 @@ function LoginContent() {
 
   // ── Security bootstrap ────────────────────────────
   useEffect(() => {
-    if (consumeSessionExpiredFlag()) {
-      setError("Your session has expired. Please sign in again.")
+    if (searchParams.get("expired") === "1") {
+      setError({ message: "Your session has expired. Please sign in again." })
     }
 
     let active = true
@@ -202,14 +212,16 @@ function LoginContent() {
       return
     }
 
-    if (captchaRequired && !captchaToken) {
-      setError("Please complete the security challenge before signing in.")
+    if (captchaRequired && hcaptchaSiteKey && !captchaToken) {
+      setError({ message: "Please complete the security challenge before signing in." })
+      triggerShake()
       return
     }
 
     setLoading(true)
     setError(null)
     setSuccess(null)
+    setResendMessage(null)
 
     try {
       const response = await api.post("/auth/login", {
@@ -240,12 +252,35 @@ function LoginContent() {
           setCaptchaRequired(Boolean(nextCsrfState.captchaRequired) || nextCaptchaRequired)
         } catch {}
       }
-      setError(getAuthErrorMessage(err, { flow: "login" }))
+      setError({ code: err.code, message: getAuthErrorMessage(err, { flow: "login" }) })
       setSuccess(null)
       triggerShake()
       emailRef.current?.focus()
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleResendInduction = async () => {
+    if (!email || validateEmail(email)) {
+      setTouched((prev) => ({ ...prev, email: true }))
+      setFieldErrors((prev) => ({ ...prev, email: validateEmail(email) }))
+      return
+    }
+
+    setResendLoading(true)
+    setResendMessage(null)
+
+    try {
+      const response = await api.post("/auth/resend-induction", { email })
+      setResendMessage({ success: true, text: response.message })
+    } catch (err: any) {
+      setResendMessage({ 
+        success: false, 
+        text: getAuthErrorMessage(err, { flow: "forgot-password" }) 
+      })
+    } finally {
+      setResendLoading(false)
     }
   }
 
@@ -256,9 +291,9 @@ function LoginContent() {
       <AuthBrandPanel
         {...authBrandContent}
         bottom={
-          <div className="flex gap-4 p-1.5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-xl">
+          <div className="flex gap-4 p-1.5 rounded-md bg-white/5 border border-white/10 backdrop-blur-xl">
             {authBrandStats.map((stat) => (
-              <div key={stat.label} className="flex-1 py-4 text-center rounded-xl transition-colors hover:bg-white/5">
+              <div key={stat.label} className="flex-1 py-4 text-center rounded-md transition-colors hover:bg-white/5">
                 <div className="font-display text-[26px] font-bold leading-none text-amber-500">{stat.value}</div>
                 <div className="mt-1.5 text-[9px] font-bold uppercase tracking-widest text-white/40">{stat.label}</div>
               </div>
@@ -286,8 +321,26 @@ function LoginContent() {
 
           {/* API Notifications (Self-collapsing) */}
           <div className={cn("overflow-hidden transition-all duration-300", error || success ? "mb-6 opacity-100" : "h-0 mb-0 opacity-0")}>
-            {error && <Feedback message={error} />}
-            {success && <Feedback message={success} success />}
+            {error && error.message && (
+              <div className="space-y-3">
+                <Feedback message={error.message} />
+                {error.code === "INDUCTION_PENDING" && (
+                  <button
+                    type="button"
+                    onClick={handleResendInduction}
+                    disabled={resendLoading}
+                    className="flex w-full items-center justify-center gap-2 rounded-lg border border-red-100 bg-red-50/30 py-2 text-[12px] font-bold text-red-700 transition-colors hover:bg-red-50/50"
+                  >
+                    {resendLoading ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      "Resend Induction Link →"
+                    )}
+                  </button>
+                )}
+              </div>
+            )}
+            {success && success.length > 0 && <Feedback message={success} success />}
           </div>
 
           <form
@@ -389,6 +442,13 @@ function LoginContent() {
               </Link>
             </div>
 
+            {/* ── Resend Feedback ── */}
+            {resendMessage && resendMessage.text && (
+              <div className="mb-6 animate-fade-in shadow-sm rounded-lg">
+                <Feedback message={resendMessage.text} success={resendMessage.success} />
+              </div>
+            )}
+
             {/* ── Captcha ── */}
             {captchaRequired && hcaptchaSiteKey ? (
               <div className="mb-6 flex justify-center animate-fade-in stagger-5">
@@ -408,14 +468,14 @@ function LoginContent() {
               type="submit"
               size="lg"
               className={cn(
-                "group relative w-full h-[54px] rounded-xl overflow-hidden font-bold transition-all duration-400 active:scale-[0.98] animate-fade-up stagger-5",
+                "group relative w-full h-[54px] rounded-md overflow-hidden font-bold transition-all duration-400 active:scale-[0.98] animate-fade-up stagger-5",
                 success
                   ? "bg-emerald-600 text-white"
                   : isFormFilled
                     ? "bg-brown-900 text-brown-50 hover:bg-brown-800 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
                     : "bg-brown-100/50 text-brown-400 border border-brown-200/60 cursor-not-allowed shadow-none"
               )}
-              disabled={loading || !!success || (captchaRequired && !captchaToken)}
+              disabled={loading || !!success || (captchaRequired && !!hcaptchaSiteKey && !captchaToken) || !isFormFilled}
             >
               <div className="relative z-10 flex items-center justify-center gap-2.5">
                 {success ? (

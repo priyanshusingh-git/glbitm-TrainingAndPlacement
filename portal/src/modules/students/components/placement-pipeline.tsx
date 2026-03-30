@@ -28,7 +28,7 @@ export function PlacementPipeline({ company, role, stages }: PlacementPipelinePr
           <h3 className="text-xl font-bold font-display text-brown-900">{company}</h3>
           <p className="text-sm text-muted-foreground">{role}</p>
         </div>
-        <span className="rounded-full bg-blue-500/10 px-3 py-1 text-[10px] font-bold text-blue-600 ring-1 ring-blue-500/20 uppercase tracking-wider">
+        <span className="rounded-full bg-amber-500/10 px-3 py-1 text-[10px] font-bold text-amber-600 ring-1 ring-amber-500/20 uppercase tracking-wider">
           In Progress
         </span>
       </div>

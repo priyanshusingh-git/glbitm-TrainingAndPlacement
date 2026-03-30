@@ -28,7 +28,7 @@ export default function Process() {
           {processSteps.map((step) => (
             <div
               key={step.n}
-              className="group relative overflow-hidden rounded-2xl border border-border bg-white px-5 py-6 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-1 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)]"
+              className="group relative overflow-hidden rounded-md border border-border bg-white px-5 py-6 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-1 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)]"
             >
               <div className="absolute inset-x-0 top-0 h-[3px] bg-gradient-to-r from-brown-800 to-amber-500" />
               <div className="mb-4 grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-brown-800 to-brown-700 font-display text-[17px] font-bold text-white">

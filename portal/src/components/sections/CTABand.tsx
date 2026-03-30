@@ -33,7 +33,7 @@ export default function CTABand() {
                   href={item.href}
                   target={item.href.startsWith("http") ? "_blank" : undefined}
                   rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="flex items-start gap-3 rounded-2xl border border-border bg-white px-4 py-4 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-0.5 hover:border-brown-800/20"
+                  className="flex items-start gap-3 rounded-md border border-border bg-white px-4 py-4 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-0.5 hover:border-brown-800/20"
                 >
                   <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-brown-800 to-brown-700 text-base text-white">
                     {item.icon}

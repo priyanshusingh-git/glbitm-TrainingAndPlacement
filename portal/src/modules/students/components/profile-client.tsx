@@ -1137,7 +1137,7 @@ export default function StudentProfilePage() {
  )}
  </CardHeader>
  <CardContent className="space-y-4 mt-4">
- <div className="bg-muted/30 p-4 rounded-lg border grid gap-4 sm:grid-cols-2">
+ <div className="bg-muted/30 p-4 rounded-md border grid gap-4 sm:grid-cols-2">
  <div className="space-y-2">
  <Label>School Name <span className="text-destructive">*</span></Label>
  <Input
@@ -1232,7 +1232,7 @@ export default function StudentProfilePage() {
  )}
  </CardHeader>
  <CardContent className="space-y-4 mt-4">
- <div className="bg-muted/30 p-4 rounded-lg border grid gap-4 sm:grid-cols-2">
+ <div className="bg-muted/30 p-4 rounded-md border grid gap-4 sm:grid-cols-2">
  <div className="space-y-2">
  <Label>School Name <span className="text-destructive">*</span></Label>
  <Input name="class12School" value={formData.class12School} onChange={handleInputChange} placeholder="School Name" disabled={isLocked || profile?.isClass12Locked} className={`${errors.class12School ?"border-destructive" :""} ${isLocked || profile?.isClass12Locked ?"bg-muted" :"bg-background"}`} />
@@ -1349,7 +1349,7 @@ export default function StudentProfilePage() {
  )}
  </CardHeader>
  <CardContent className="space-y-4 mt-4">
- <div className="bg-muted/30 p-4 rounded-lg border grid gap-4 sm:grid-cols-2">
+ <div className="bg-muted/30 p-4 rounded-md border grid gap-4 sm:grid-cols-2">
  <div className="space-y-2">
  <Label>School Name <span className="text-destructive">*</span></Label>
  <Input name="class12School" value={formData.class12School} onChange={handleInputChange} placeholder="School Name" disabled={isLocked || profile?.isClass12Locked} className={`${errors.class12School ?"border-destructive" :""} ${isLocked || profile?.isClass12Locked ?"bg-muted" :"bg-background"}`} />
@@ -1443,7 +1443,7 @@ export default function StudentProfilePage() {
  )}
  </CardHeader>
  <CardContent className="space-y-4 mt-4">
- <div className="bg-muted/30 p-4 rounded-lg border grid gap-4 sm:grid-cols-2">
+ <div className="bg-muted/30 p-4 rounded-md border grid gap-4 sm:grid-cols-2">
  <div className="space-y-2">
  <Label>Institute Name <span className="text-destructive">*</span></Label>
  <Input name="diplomaInstitute" value={formData.diplomaInstitute} onChange={handleInputChange} placeholder="Institute Name" disabled={isLocked || profile?.isDiplomaLocked} className={`${errors.diplomaInstitute ?"border-destructive" :""} ${isLocked || profile?.isDiplomaLocked ?"bg-muted" :"bg-background"}`} />
@@ -1515,7 +1515,7 @@ export default function StudentProfilePage() {
  const overallPercentage = totalMarks > 0 ? ((totalObtained / totalMarks) * 100).toFixed(2) : '0.00';
 
  return (
- <div className="mb-6 p-4 bg-brown-800/5 border border-brown-800/20 rounded-lg">
+ <div className="mb-6 p-4 bg-brown-800/5 border border-brown-800/20 rounded-md">
  <div className="flex items-center justify-between">
  <span className="text-sm font-medium">Overall Percentage</span>
  <span className="text-2xl font-bold text-brown-800">{overallPercentage}%</span>
@@ -1542,7 +1542,7 @@ export default function StudentProfilePage() {
  : null;
 
  return (
- <div key={result.semester} className="p-4 bg-muted/30 border rounded-lg space-y-4">
+ <div key={result.semester} className="p-4 bg-muted/30 border rounded-md space-y-4">
  <div className="flex items-center justify-between">
  <div className="flex items-center gap-2">
  <div className="font-bold text-lg">Semester {result.semester}</div>
@@ -1687,7 +1687,7 @@ export default function StudentProfilePage() {
  </CardHeader>
  <CardContent className="space-y-8 mt-4">
  {/* Contact Section */}
- <div className="bg-muted/30 p-4 rounded-lg border">
+ <div className="bg-muted/30 p-4 rounded-md border">
  <div className="flex items-center gap-2 mb-4">
  <Phone className="h-4 w-4 text-brown-800" />
  <h4 className="font-semibold text-sm text-brown-800">Contact Information</h4>
@@ -1707,7 +1707,7 @@ export default function StudentProfilePage() {
  </div>
 
  {/* Parents Section */}
- <div className="bg-muted/30 p-4 rounded-lg border">
+ <div className="bg-muted/30 p-4 rounded-md border">
  <div className="flex items-center gap-2 mb-4">
  <User className="h-4 w-4 text-brown-800" />
  <h4 className="font-semibold text-sm text-brown-800">Parents Details</h4>
@@ -1738,7 +1738,7 @@ export default function StudentProfilePage() {
  <MapPin className="h-4 w-4 text-brown-800" />
  <h4 className="font-semibold text-sm text-brown-800">Present Address</h4>
  </div>
- <div className="grid gap-4 sm:grid-cols-2 bg-muted/30 p-4 rounded-lg border">
+ <div className="grid gap-4 sm:grid-cols-2 bg-muted/30 p-4 rounded-md border">
  <div className="space-y-2"><Label>House No. <span className="text-xs text-muted-foreground">(Optional)</span></Label><Input name="presentHouseNo" value={formData.presentHouseNo} onChange={handleInputChange} placeholder="House/Flat No." disabled={isLocked || !isEditingPersonal} className={isLocked || !isEditingPersonal ?"bg-muted" :"bg-background"} /></div>
  <div className="space-y-2"><Label>Block/Sector</Label><Input name="presentBlock" value={formData.presentBlock} onChange={handleInputChange} placeholder="Block/Sector" disabled={isLocked || !isEditingPersonal} className={isLocked || !isEditingPersonal ?"bg-muted" :"bg-background"} /></div>
  <div className="space-y-2"><Label>Locality/Area</Label><Input name="presentLocality" value={formData.presentLocality} onChange={handleInputChange} placeholder="Locality/Area" disabled={isLocked || !isEditingPersonal} className={isLocked || !isEditingPersonal ?"bg-muted" :"bg-background"} /></div>
@@ -1814,7 +1814,7 @@ export default function StudentProfilePage() {
  <Label htmlFor="sameAsPresent" className="text-xs font-medium cursor-pointer">Same as Present</Label>
  </div>
  </div>
- <div className="grid gap-4 sm:grid-cols-2 bg-muted/30 p-4 rounded-lg border">
+ <div className="grid gap-4 sm:grid-cols-2 bg-muted/30 p-4 rounded-md border">
  <div className="space-y-2"><Label>House No. <span className="text-xs text-muted-foreground">(Optional)</span></Label><Input name="permanentHouseNo" value={formData.permanentHouseNo} onChange={handleInputChange} placeholder="House/Flat No." disabled={isLocked || !isEditingPersonal || formData.sameAsPresent} className={isLocked || !isEditingPersonal || formData.sameAsPresent ?"bg-muted" :"bg-background"} /></div>
  <div className="space-y-2"><Label>Block/Sector</Label><Input name="permanentBlock" value={formData.permanentBlock} onChange={handleInputChange} placeholder="Block/Sector" disabled={isLocked || !isEditingPersonal || formData.sameAsPresent} className={isLocked || !isEditingPersonal || formData.sameAsPresent ?"bg-muted" :"bg-background"} /></div>
  <div className="space-y-2"><Label>Locality/Area</Label><Input name="permanentLocality" value={formData.permanentLocality} onChange={handleInputChange} placeholder="Locality/Area" disabled={isLocked || !isEditingPersonal || formData.sameAsPresent} className={isLocked || !isEditingPersonal || formData.sameAsPresent ?"bg-muted" :"bg-background"} /></div>
@@ -1872,8 +1872,8 @@ export default function StudentProfilePage() {
  {/* Profile Image - No Background, Increased Size, No Text */}
  <div className="flex justify-center pb-4">
  <div className="group relative h-40 w-40 transition-transform duration-200 hover:scale-105">
- <div className={cn("h-40 w-40 rounded-lg", !profile?.photoUrl && "profile-photo-pulse")}>
- <Avatar className="h-40 w-40 rounded-lg border-4 border-white shadow-lg cursor-pointer">
+ <div className={cn("h-40 w-40 rounded-md", !profile?.photoUrl && "profile-photo-pulse")}>
+ <Avatar className="h-40 w-40 rounded-md border-4 border-white shadow-lg cursor-pointer">
  <AvatarImage src={fullPhotoUrl} className="object-cover" />
  <AvatarFallback className="text-4xl bg-muted">ST</AvatarFallback>
  </Avatar>
@@ -1917,7 +1917,7 @@ export default function StudentProfilePage() {
  )}
 
  {/* Desktop Hover Hint */}
- <div className="absolute inset-0 bg-black/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex items-center justify-center pointer-events-none border-2 border-brown-800/20">
+ <div className="absolute inset-0 bg-black/5 rounded-md opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex items-center justify-center pointer-events-none border-2 border-brown-800/20">
  </div>
  </>
  )}

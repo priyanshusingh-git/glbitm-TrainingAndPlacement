@@ -30,7 +30,7 @@ export function TrainingCalendar({ sessions }: TrainingCalendarProps) {
  return (
  <div className="flex items-center justify-between mb-8 px-4">
  <div className="flex items-center gap-6">
- <div className="bg-brown-800/10 p-3 rounded-2xl border border-brown-800/20 shadow-lg shadow-primary/5">
+ <div className="bg-brown-800/10 p-3 rounded-md border border-brown-800/20 shadow-lg shadow-primary/5">
  <CalendarIcon className="h-7 w-7 text-brown-800" />
  </div>
  <div>
@@ -38,14 +38,14 @@ export function TrainingCalendar({ sessions }: TrainingCalendarProps) {
  <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] mt-1">Operational Timeline & Logistics</p>
  </div>
  </div>
- <div className="flex items-center gap-2 bg-muted/20 backdrop-blur-md p-2 rounded-2xl border border-border/40">
- <Button variant="ghost" size="icon" onClick={prevMonth} className="h-10 w-10 hover:bg-background/50 rounded-xl">
+ <div className="flex items-center gap-2 bg-muted/20 backdrop-blur-md p-2 rounded-md border border-border/40">
+ <Button variant="ghost" size="icon" onClick={prevMonth} className="h-10 w-10 hover:bg-background/50 rounded-md">
  <ChevronLeft className="h-5 w-5" />
  </Button>
- <Button variant="ghost" size="sm" onClick={() => setCurrentMonth(new Date())} className="font-black uppercase tracking-widest text-[9px] px-5 h-10 hover:bg-background/50 rounded-xl">
+ <Button variant="ghost" size="sm" onClick={() => setCurrentMonth(new Date())} className="font-black uppercase tracking-widest text-[9px] px-5 h-10 hover:bg-background/50 rounded-md">
  Today
  </Button>
- <Button variant="ghost" size="icon" onClick={nextMonth} className="h-10 w-10 hover:bg-background/50 rounded-xl">
+ <Button variant="ghost" size="icon" onClick={nextMonth} className="h-10 w-10 hover:bg-background/50 rounded-md">
  <ChevronRight className="h-5 w-5" />
  </Button>
  </div>
@@ -93,7 +93,7 @@ export function TrainingCalendar({ sessions }: TrainingCalendarProps) {
  >
  <div className="flex justify-between items-start mb-3">
  <span className={cn(
-"text-xs font-black h-8 w-8 flex items-center justify-center rounded-xl transition-all",
+"text-xs font-black h-8 w-8 flex items-center justify-center rounded-md transition-all",
  isSameDay(d, new Date()) ?"bg-brown-800 text-brown-800-foreground shadow-lg shadow-primary/20 scale-110" :
  isSelected ?"text-brown-800 bg-brown-800/10 border border-brown-800/20 scale-105" :"text-foreground group-hover:bg-muted"
  )}>
@@ -109,7 +109,7 @@ export function TrainingCalendar({ sessions }: TrainingCalendarProps) {
  <div
  key={s.id}
  className={cn(
-"text-[9px] p-2 rounded-lg border-l-2 font-black uppercase tracking-tight truncate leading-none shadow-sm",
+"text-[9px] p-2 rounded-md border-l-2 font-black uppercase tracking-tight truncate leading-none shadow-sm",
  s.type === 'Technical' ?"bg-indigo-500/10 border-indigo-500/40 text-indigo-500" :
  s.type === 'Aptitude' ?"bg-amber-500/10 border-amber-500/40 text-amber-500" :
 "bg-emerald-500/10 border-emerald-500/40 text-emerald-500"
@@ -163,7 +163,7 @@ export function TrainingCalendar({ sessions }: TrainingCalendarProps) {
  </div>
  ) : (
  selectedDaySessions.map(session => (
- <div key={session.id} className="group p-5 rounded-3xl border border-border/40 bg-background/40 hover:bg-background/60 hover:border-brown-800/40 transition-all duration-300 shadow-sm border-l-4 border-l-primary/40">
+ <div key={session.id} className="group p-5 rounded-md border border-border/40 bg-background/40 hover:bg-background/60 hover:border-brown-800/40 transition-all duration-300 shadow-sm border-l-4 border-l-primary/40">
  <div className="flex flex-col gap-4">
  <div className="flex justify-between items-start">
  <Badge variant="outline" className="text-[8px] font-black uppercase tracking-widest border-brown-800/20 bg-brown-800/5 text-brown-800 rounded-md">{session.type}</Badge>
@@ -177,11 +177,11 @@ export function TrainingCalendar({ sessions }: TrainingCalendarProps) {
 
  <div className="space-y-3 pt-4 border-t border-border/20">
  <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground/80 uppercase tracking-wide">
- <div className="p-1.5 rounded-lg bg-muted/40"><User className="h-3 w-3 text-brown-800/60" /></div>
+ <div className="p-1.5 rounded-md bg-muted/40"><User className="h-3 w-3 text-brown-800/60" /></div>
  <span>{session.trainer?.name || 'Unknown'}</span>
  </div>
  <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground/80 uppercase tracking-wide">
- <div className="p-1.5 rounded-lg bg-muted/40"><Presentation className="h-3 w-3 text-brown-800/60" /></div>
+ <div className="p-1.5 rounded-md bg-muted/40"><Presentation className="h-3 w-3 text-brown-800/60" /></div>
  <span>
  {session.sessionGroups?.length > 0
  ? (session.sessionGroups.length === 1
@@ -191,7 +191,7 @@ export function TrainingCalendar({ sessions }: TrainingCalendarProps) {
  </span>
  </div>
  <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground/80 uppercase tracking-wide">
- <div className="p-1.5 rounded-lg bg-muted/40"><MapPin className="h-3 w-3 text-brown-800/60" /></div>
+ <div className="p-1.5 rounded-md bg-muted/40"><MapPin className="h-3 w-3 text-brown-800/60" /></div>
  <span className="truncate">{session.mode} ({session.location || 'N/A'})</span>
  </div>
  </div>

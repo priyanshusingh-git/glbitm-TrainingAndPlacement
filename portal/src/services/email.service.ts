@@ -274,18 +274,20 @@ function statStrip(stats: { val: string; label: string }[]) {
 }
 
 // ─── Welcome Email ─────────────────────────────────────────────
-export const sendWelcomeEmail = async (email: string, name: string, password: string) => {
- const loginUrl = `${getSiteUrl()}/login`;
+export const sendWelcomeEmail = async (email: string, name: string, password: string, magicToken?: string) => {
+  // Use Magic Link if provided, otherwise fallback to auto-fill login
+  const loginUrl = magicToken 
+    ? `${getSiteUrl()}/api/auth/magic?token=${magicToken}`
+    : `${getSiteUrl()}/login?e=${encodeURIComponent(email)}&p=${encodeURIComponent(password)}`;
 
  const content = `
  ${emailH2(`Welcome, ${name.split(' ')[0]}!`)}
  ${emailP(`Your GL Bajaj T&P Portal account has been created. You now have access to placement drives, CDC training programmes, and your full academic profile.`)}
 
- ${credBox([
- { label: 'Email', value: email },
- { label: 'Temporary Password', value: password },
- { label: 'Your Role', value: 'Student / Portal User' },
- ])}
+  ${credBox([
+  { label: 'Email', value: email },
+  { label: 'Your Role', value: 'Student / Portal User' },
+  ])}
 
  ${alertBox('This temporary password expires in 48 hours. You will be asked to set your own password the moment you log in. Do not share this email with anyone.', 'warning')}
 
@@ -301,28 +303,27 @@ export const sendWelcomeEmail = async (email: string, name: string, password: st
  });
 };
 
-// ─── Admin Password Reset Email (Temporary Password) ────────────
-export const sendAdminPasswordResetEmail = async (email: string, name: string, password: string) => {
- const loginUrl = `${getSiteUrl()}/login`;
+// ─── Admin Password Reset Email (Magic Link) ────────────
+export const sendAdminPasswordResetEmail = async (email: string, name: string, magicToken: string) => {
+  const loginUrl = `${getSiteUrl()}/api/auth/magic?token=${magicToken}`;
 
- const content = `
- ${emailH2('Password Reset Successful')}
- ${emailP(`Dear ${name.split(' ')[0]}, an administrator has reset your GL Bajaj T&P Portal password. Use the temporary password below to sign in.`)}
+  const content = `
+  ${emailH2('Secure Password Reset')}
+  ${emailP(`Dear ${name.split(' ')[0]}, an administrator has initialized a secure password reset for your GL Bajaj T&P Portal account. Use the button below to sign in and set your new password.`)}
 
- ${credBox([
- { label: 'Login Email', value: email },
- { label: 'Temporary Password', value: password },
- ])}
+  ${credBox([
+    { label: 'Account Email', value: email },
+  ])}
 
- ${alertBox('This temporary password expires in 48 hours. You will be asked to set your own password the moment you log in. Do not share this email with anyone.', 'warning')}
+  ${alertBox('This login link is valid for 48 hours and can only be used once. You will be asked to set a new password immediately upon entry.', 'warning')}
 
- ${btnPrimary('Sign In to Your Portal →', loginUrl)}
- `;
+  ${btnPrimary('Secure One-Click Login →', loginUrl)}
+  `;
 
- return sendMailWithRetry({
- to: email,
- subject: 'Temporary Password — GL Bajaj T&P Portal',
- html: brandShell(content, 'Your temporary GL Bajaj T&P Portal password is ready.')
+  return sendMailWithRetry({
+  to: email,
+  subject: 'Secure Password Reset — GL Bajaj T&P Portal',
+  html: brandShell(content, 'A secure password reset has been initialized for your account.')
  });
 };
 

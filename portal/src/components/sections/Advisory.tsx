@@ -28,7 +28,7 @@ export default function Advisory() {
           {advisoryMembers.map((member) => (
             <article
               key={member.name}
-              className="rounded-2xl border border-border bg-white px-4 py-5 text-center shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)]"
+              className="rounded-md border border-border bg-white px-4 py-5 text-center shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-0.5 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)]"
             >
               <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-brown-800 to-brown-700 font-display text-base font-bold text-white">
                 {member.initial}

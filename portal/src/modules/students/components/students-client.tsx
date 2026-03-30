@@ -666,7 +666,7 @@ export default function StudentsClient() {
                                   <TabsContent value="bulk">
                                     {importResults ? (
                                       <div className="space-y-4 pt-4">
-                                        <div className="rounded-lg bg-muted p-4 space-y-3 border">
+                                        <div className="rounded-md bg-muted p-4 space-y-3 border">
                                           <div className="flex gap-4 items-center justify-between">
                                             <div className="space-y-1">
                                               <p className="text-sm font-medium leading-none">Successful Imports</p>
@@ -777,7 +777,7 @@ export default function StudentsClient() {
  <LoadingTable rows={8} cols={6} />
  ) : (
  <>
- <div className="premium-muted overflow-hidden overflow-x-auto rounded-xl border border-border/60 shadow-sm">
+ <div className="premium-muted overflow-hidden overflow-x-auto rounded-md border border-border/60 shadow-sm">
  <Table>
  <TableHeader>
  <TableRow className="bg-transparent hover:bg-transparent">
@@ -951,7 +951,7 @@ export default function StudentsClient() {
  )}
  {/* Edit Student Dialog (The Big One) */}
  <Dialog open={editOpen} onOpenChange={setEditOpen}>
- <DialogContent className="max-w-[calc(100vw-2rem)] md:max-w-4xl max-h-[95vh] overflow-hidden p-0 rounded-2xl border-none shadow-2xl">
+ <DialogContent className="max-w-[calc(100vw-2rem)] md:max-w-4xl max-h-[95vh] overflow-hidden p-0 rounded-md border-none shadow-2xl">
  <DialogHeader>
  <DialogTitle className="text-2xl font-bold px-6 pt-6 tracking-tight">Edit Student Details</DialogTitle>
  <DialogDescription className="text-sm text-muted-foreground px-6 pb-2">
@@ -990,7 +990,7 @@ export default function StudentsClient() {
  setEditFormData({ ...editFormData, name: e.target.value });
  validateField("name", e.target.value);
  }}
- className={`h-10 rounded-xl border-input ${errors.name ? 'border-rose-500' : ''}`}
+ className={`h-10 rounded-md border-input ${errors.name ? 'border-rose-500' : ''}`}
  />
  {errors.name && <p className="text-[10px] font-bold text-rose-500">{errors.name}</p>}
  </div>
@@ -999,7 +999,7 @@ export default function StudentsClient() {
  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Official Email <span className="text-rose-500">*</span></Label>
  <Input
  value={editFormData.email}
- className="h-10 rounded-xl bg-muted/30"
+ className="h-10 rounded-md bg-muted/30"
  disabled
  />
  </div>
@@ -1013,7 +1013,7 @@ export default function StudentsClient() {
  setEditFormData({ ...editFormData, admissionId: val });
  validateField("admissionId", val);
  }}
- className={`h-10 rounded-xl border-input ${errors.admissionId ? 'border-rose-500' : ''}`}
+ className={`h-10 rounded-md border-input ${errors.admissionId ? 'border-rose-500' : ''}`}
  />
  {errors.admissionId && <p className="text-[10px] font-bold text-rose-500">{errors.admissionId}</p>}
  </div>
@@ -1027,7 +1027,7 @@ export default function StudentsClient() {
  validateField("rollNo", e.target.value);
  }}
  placeholder="13-digit Roll Number"
- className={`h-10 rounded-xl border-input ${errors.rollNo ? 'border-rose-500' : ''}`}
+ className={`h-10 rounded-md border-input ${errors.rollNo ? 'border-rose-500' : ''}`}
  />
  {errors.rollNo && <p className="text-[10px] font-bold text-rose-500">{errors.rollNo}</p>}
  </div>
@@ -1038,7 +1038,7 @@ export default function StudentsClient() {
  value={editFormData.studentType}
  onValueChange={v => setEditFormData({ ...editFormData, studentType: v })}
  >
- <SelectTrigger className="h-10 rounded-xl border-input">
+ <SelectTrigger className="h-10 rounded-md border-input">
  <SelectValue placeholder="Select type" />
  </SelectTrigger>
  <SelectContent>
@@ -1054,7 +1054,7 @@ export default function StudentsClient() {
  value={editFormData.branch}
  onValueChange={v => setEditFormData({ ...editFormData, branch: v })}
  >
- <SelectTrigger className="h-10 rounded-xl border-input">
+ <SelectTrigger className="h-10 rounded-md border-input">
  <SelectValue placeholder="Select Branch" />
  </SelectTrigger>
  <SelectContent>
@@ -1069,7 +1069,7 @@ export default function StudentsClient() {
  value={editFormData.year}
  onValueChange={v => setEditFormData({ ...editFormData, year: v })}
  >
- <SelectTrigger className="h-10 rounded-xl border-input">
+ <SelectTrigger className="h-10 rounded-md border-input">
  <SelectValue placeholder="Select Year" />
  </SelectTrigger>
  <SelectContent>
@@ -1084,7 +1084,7 @@ export default function StudentsClient() {
  value={editFormData.currentSemester}
  onValueChange={v => setEditFormData({ ...editFormData, currentSemester: v })}
  >
- <SelectTrigger className="h-10 rounded-xl border-input">
+ <SelectTrigger className="h-10 rounded-md border-input">
  <SelectValue placeholder="Select Semester" />
  </SelectTrigger>
  <SelectContent>
@@ -1094,7 +1094,7 @@ export default function StudentsClient() {
  </div>
  </div>
  <div className="flex justify-end pt-4">
- <Button type="submit" disabled={editLoading} className="rounded-xl px-8 font-bold uppercase tracking-tight text-xs shadow-lg shadow-primary/20">
+ <Button type="submit" disabled={editLoading} className="rounded-md px-8 font-bold uppercase tracking-tight text-xs shadow-lg shadow-primary/20">
  {editLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
  Save Basic Changes
  </Button>
@@ -1110,7 +1110,7 @@ export default function StudentsClient() {
  type="email"
  value={editFormData.personalEmail}
  onChange={e => setEditFormData({ ...editFormData, personalEmail: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="e.g. name@gmail.com"
  />
  </div>
@@ -1119,7 +1119,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.mobileNo}
  onChange={e => setEditFormData({ ...editFormData, mobileNo: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="10-digit mobile number"
  />
  </div>
@@ -1134,13 +1134,13 @@ export default function StudentsClient() {
  <Input
  value={editFormData.presentHouseNo}
  onChange={e => setEditFormData({ ...editFormData, presentHouseNo: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="House No"
  />
  <Input
  value={editFormData.presentLocality}
  onChange={e => setEditFormData({ ...editFormData, presentLocality: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="Locality"
  />
  </div>
@@ -1150,7 +1150,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.presentCity}
  onChange={e => setEditFormData({ ...editFormData, presentCity: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="City"
  />
  </div>
@@ -1159,7 +1159,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.presentDistrict}
  onChange={e => setEditFormData({ ...editFormData, presentDistrict: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="District"
  />
  </div>
@@ -1168,7 +1168,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.presentState}
  onChange={e => setEditFormData({ ...editFormData, presentState: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="State"
  />
  </div>
@@ -1177,7 +1177,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.presentPincode}
  onChange={e => setEditFormData({ ...editFormData, presentPincode: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="6-digit Pincode"
  />
  </div>
@@ -1193,13 +1193,13 @@ export default function StudentsClient() {
  <Input
  value={editFormData.permanentHouseNo}
  onChange={e => setEditFormData({ ...editFormData, permanentHouseNo: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="House No"
  />
  <Input
  value={editFormData.permanentLocality}
  onChange={e => setEditFormData({ ...editFormData, permanentLocality: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="Locality"
  />
  </div>
@@ -1209,7 +1209,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.permanentCity}
  onChange={e => setEditFormData({ ...editFormData, permanentCity: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="City"
  />
  </div>
@@ -1218,7 +1218,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.permanentDistrict}
  onChange={e => setEditFormData({ ...editFormData, permanentDistrict: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="District"
  />
  </div>
@@ -1227,7 +1227,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.permanentState}
  onChange={e => setEditFormData({ ...editFormData, permanentState: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="State"
  />
  </div>
@@ -1236,14 +1236,14 @@ export default function StudentsClient() {
  <Input
  value={editFormData.permanentPincode}
  onChange={e => setEditFormData({ ...editFormData, permanentPincode: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="6-digit Pincode"
  />
  </div>
  </div>
  </div>
  <div className="flex justify-end pt-4">
- <Button type="submit" disabled={editLoading} className="rounded-xl px-8 font-bold uppercase tracking-tight text-xs shadow-lg shadow-primary/20">
+ <Button type="submit" disabled={editLoading} className="rounded-md px-8 font-bold uppercase tracking-tight text-xs shadow-lg shadow-primary/20">
  {editLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
  Save Contact Changes
  </Button>
@@ -1260,7 +1260,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.fatherName}
  onChange={e => setEditFormData({ ...editFormData, fatherName: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="Full Name"
  />
  </div>
@@ -1269,7 +1269,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.fatherMobile}
  onChange={e => setEditFormData({ ...editFormData, fatherMobile: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="10-digit number"
  />
  </div>
@@ -1278,7 +1278,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.fatherOccupation}
  onChange={e => setEditFormData({ ...editFormData, fatherOccupation: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="e.g. Service, Business, Farmer"
  />
  </div>
@@ -1293,7 +1293,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.motherName}
  onChange={e => setEditFormData({ ...editFormData, motherName: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="Full Name"
  />
  </div>
@@ -1302,7 +1302,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.motherMobile}
  onChange={e => setEditFormData({ ...editFormData, motherMobile: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="10-digit number"
  />
  </div>
@@ -1311,7 +1311,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.motherOccupation}
  onChange={e => setEditFormData({ ...editFormData, motherOccupation: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  placeholder="e.g. Housewife, Teacher, Doctor"
  />
  </div>
@@ -1319,7 +1319,7 @@ export default function StudentsClient() {
  </div>
  </div>
  <div className="flex justify-end pt-4">
- <Button type="submit" disabled={editLoading} className="rounded-xl px-8 font-bold uppercase tracking-tight text-xs shadow-lg shadow-primary/20">
+ <Button type="submit" disabled={editLoading} className="rounded-md px-8 font-bold uppercase tracking-tight text-xs shadow-lg shadow-primary/20">
  {editLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
  Save Family Changes
  </Button>
@@ -1336,7 +1336,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.class10School}
  onChange={e => setEditFormData({ ...editFormData, class10School: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1346,7 +1346,7 @@ export default function StudentsClient() {
  type="number" step="0.01"
  value={editFormData.class10Percentage}
  onChange={e => setEditFormData({ ...editFormData, class10Percentage: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  <div className="space-y-1.5">
@@ -1354,7 +1354,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.class10Year}
  onChange={e => setEditFormData({ ...editFormData, class10Year: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  </div>
@@ -1364,7 +1364,7 @@ export default function StudentsClient() {
  placeholder="e.g. CBSE, ICSE, UP Board"
  value={editFormData.class10Board}
  onChange={e => setEditFormData({ ...editFormData, class10Board: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  </div>
@@ -1385,7 +1385,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.diplomaInstitute}
  onChange={e => setEditFormData({ ...editFormData, diplomaInstitute: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1395,7 +1395,7 @@ export default function StudentsClient() {
  type="number" step="0.01"
  value={editFormData.diplomaPercentage}
  onChange={e => setEditFormData({ ...editFormData, diplomaPercentage: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  <div className="space-y-1.5">
@@ -1403,7 +1403,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.diplomaYear}
  onChange={e => setEditFormData({ ...editFormData, diplomaYear: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  </div>
@@ -1415,7 +1415,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.class12School}
  onChange={e => setEditFormData({ ...editFormData, class12School: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1425,7 +1425,7 @@ export default function StudentsClient() {
  type="number" step="0.01"
  value={editFormData.class12Percentage}
  onChange={e => setEditFormData({ ...editFormData, class12Percentage: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  <div className="space-y-1.5">
@@ -1433,7 +1433,7 @@ export default function StudentsClient() {
  <Input
  value={editFormData.class12Year}
  onChange={e => setEditFormData({ ...editFormData, class12Year: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  </div>
@@ -1444,7 +1444,7 @@ export default function StudentsClient() {
  placeholder="e.g. CBSE, ICSE"
  value={editFormData.class12Board}
  onChange={e => setEditFormData({ ...editFormData, class12Board: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  <div className="space-y-1.5">
@@ -1453,7 +1453,7 @@ export default function StudentsClient() {
  placeholder="e.g. BTE"
  value={editFormData.diplomaBoard}
  onChange={e => setEditFormData({ ...editFormData, diplomaBoard: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  </div>
@@ -1463,7 +1463,7 @@ export default function StudentsClient() {
  type="number" step="0.01"
  value={editFormData.class12PcmPercentage}
  onChange={e => setEditFormData({ ...editFormData, class12PcmPercentage: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  <div className="space-y-1.5">
@@ -1472,14 +1472,14 @@ export default function StudentsClient() {
  type="number" step="0.01"
  value={editFormData.class12MathPercentage}
  onChange={e => setEditFormData({ ...editFormData, class12MathPercentage: e.target.value })}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  </div>
  )}
  </div>
  <div className="flex justify-end pt-4">
- <Button type="submit" disabled={editLoading} className="rounded-xl px-8 font-bold uppercase tracking-tight text-xs shadow-lg shadow-primary/20">
+ <Button type="submit" disabled={editLoading} className="rounded-md px-8 font-bold uppercase tracking-tight text-xs shadow-lg shadow-primary/20">
  {editLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
  Save Education Changes
  </Button>
@@ -1487,7 +1487,7 @@ export default function StudentsClient() {
  </TabsContent>
 
  <TabsContent value="semesters" className="space-y-4 pt-2">
- <div className="p-4 rounded-xl border border-brown-800/20 bg-brown-800/5 mb-6">
+ <div className="p-4 rounded-md border border-brown-800/20 bg-brown-800/5 mb-6">
  <div className="flex items-center justify-between">
  <div>
  <Label className="text-[10px] font-bold uppercase tracking-[0.2em] text-brown-800">Cumulative Performance</Label>
@@ -1499,7 +1499,7 @@ export default function StudentsClient() {
  type="number" step="0.01" placeholder="0.00"
  value={editFormData.cgpa}
  onChange={e => setEditFormData({ ...editFormData, cgpa: e.target.value })}
- className="h-11 w-28 text-center text-lg font-black border-brown-800/30 rounded-xl bg-background shadow-inner"
+ className="h-11 w-28 text-center text-lg font-black border-brown-800/30 rounded-md bg-background shadow-inner"
  />
  </div>
  </div>
@@ -1507,7 +1507,7 @@ export default function StudentsClient() {
 
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
  {editSemesterResults.map((sem, idx) => (
- <div key={sem.semester} className="p-4 rounded-xl border border-input space-y-4 bg-muted/10">
+ <div key={sem.semester} className="p-4 rounded-md border border-input space-y-4 bg-muted/10">
  <div className="flex items-center justify-between">
  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Semester {sem.semester} <span className="text-rose-500">*</span></Label>
  <div className="space-y-1.5">
@@ -1519,7 +1519,7 @@ export default function StudentsClient() {
  newResults[idx].sgpa = e.target.value;
  setEditSemesterResults(newResults);
  }}
- className="h-10 w-24 text-sm text-center font-bold rounded-xl border-input"
+ className="h-10 w-24 text-sm text-center font-bold rounded-md border-input"
  />
  </div>
  </div>
@@ -1534,7 +1534,7 @@ export default function StudentsClient() {
  newResults[idx].obtainedMarks = e.target.value;
  setEditSemesterResults(newResults);
  }}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  <div className="space-y-1.5">
@@ -1547,7 +1547,7 @@ export default function StudentsClient() {
  newResults[idx].totalMarks = e.target.value;
  setEditSemesterResults(newResults);
  }}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  </div>
@@ -1562,7 +1562,7 @@ export default function StudentsClient() {
  newResults[idx].backlogs = e.target.value;
  setEditSemesterResults(newResults);
  }}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  <div className="space-y-1.5">
@@ -1575,7 +1575,7 @@ export default function StudentsClient() {
  newResults[idx].credits = e.target.value;
  setEditSemesterResults(newResults);
  }}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  </div>
@@ -1583,7 +1583,7 @@ export default function StudentsClient() {
  ))}
  </div>
  <div className="flex justify-end pt-4">
- <Button type="submit" disabled={editLoading} className="rounded-xl px-8 font-bold uppercase tracking-tight text-xs shadow-lg shadow-primary/20">
+ <Button type="submit" disabled={editLoading} className="rounded-md px-8 font-bold uppercase tracking-tight text-xs shadow-lg shadow-primary/20">
  {editLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
  Save Semester Changes
  </Button>
@@ -1597,14 +1597,14 @@ export default function StudentsClient() {
  type="button"
  variant="outline"
  onClick={() => setEditOpen(false)}
- className="rounded-xl h-10 px-6 font-bold uppercase tracking-tight text-xs"
+ className="rounded-md h-10 px-6 font-bold uppercase tracking-tight text-xs"
  >
  Cancel
  </Button>
  <Button
  type="submit"
  disabled={editLoading}
- className="min-w-[140px] rounded-xl h-10 font-bold uppercase tracking-tight text-xs shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+ className="min-w-[140px] rounded-md h-10 font-bold uppercase tracking-tight text-xs shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
  >
  {editLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
  {editLoading ?"Updating..." :"Save Changes"}
@@ -1632,7 +1632,7 @@ export default function StudentsClient() {
 
  return (
  <div className="space-y-6 pt-4">
- <div className="flex items-center justify-between p-4 bg-muted/40 rounded-xl border border-brown-800/10">
+ <div className="flex items-center justify-between p-4 bg-muted/40 rounded-md border border-brown-800/10">
  <div className="flex items-center gap-3">
  <div className={`p-2 rounded-full ${student.isProfileLocked ? 'bg-rose-500/10 text-rose-600' : 'bg-emerald-500/10 text-emerald-600'}`}>
  {student.isProfileLocked ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
@@ -1661,7 +1661,7 @@ export default function StudentsClient() {
  { id: 'class12', label: 'Class 12th', locked: student.isClass12Locked },
  { id: 'diploma', label: 'Diploma', locked: student.isDiplomaLocked }
  ].map(section => (
- <div key={section.id} className="flex items-center justify-between p-3 rounded-lg border border-border/50 hover:bg-muted/30 transition-colors">
+ <div key={section.id} className="flex items-center justify-between p-3 rounded-md border border-border/50 hover:bg-muted/30 transition-colors">
  <div className="flex items-center gap-3">
  <div className={`h-1.5 w-1.5 rounded-full ${section.locked ? 'bg-rose-500' : 'bg-emerald-500'}`} />
  <span className="text-xs font-bold">{section.label}</span>
@@ -1741,7 +1741,7 @@ export default function StudentsClient() {
 
  {/* Portfolio View Dialog */}
  < Dialog open={portfolioOpen} onOpenChange={setPortfolioOpen} >
- <DialogContent className="max-w-[calc(100vw-2rem)] md:max-w-4xl max-h-[90vh] overflow-hidden p-0 rounded-2xl border-none shadow-2xl">
+ <DialogContent className="max-w-[calc(100vw-2rem)] md:max-w-4xl max-h-[90vh] overflow-hidden p-0 rounded-md border-none shadow-2xl">
  <DialogHeader>
  <DialogTitle>Student Portfolio</DialogTitle>
  <DialogDescription>View academic and professional achievements.</DialogDescription>

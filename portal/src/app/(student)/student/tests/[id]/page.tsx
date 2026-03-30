@@ -181,7 +181,7 @@ export default function TestPage() {
  onClick={() => setCurrentQuestionIdx(idx)}
  className={`h-10 w-10 rounded-lg flex items-center justify-center text-xs font-bold transition-all border-2 
  ${currentQuestionIdx === idx ? 'border-brown-800 bg-brown-800 text-brown-800-foreground shadow-lg scale-110 z-10' :
- answers[q.id] ? 'border-emerald-500 bg-emerald-50 text-emerald-600' :
+ answers[q.id] ? 'border-amber-500 bg-amber-50 text-amber-600' :
  'border-muted bg-background text-muted-foreground hover:border-muted-foreground/30'}
  `}
  >
@@ -220,7 +220,7 @@ export default function TestPage() {
  {currentQuestion.options.map((opt: any) => (
  <div
  key={opt.id}
- className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer hover:bg-muted/50 
+ className={`flex items-center gap-3 p-4 rounded-md border-2 transition-all cursor-pointer hover:bg-muted/50 
  ${answers[currentQuestion.id]?.[0] === opt.id ? 'border-brown-800 bg-brown-800/5 shadow-sm' : 'border-transparent bg-background shadow-xs'}
  `}
  onClick={() => handleAnswerChange(currentQuestion.id, [opt.id])}
@@ -239,7 +239,7 @@ export default function TestPage() {
  return (
  <div
  key={opt.id}
- className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all cursor-pointer hover:bg-muted/50 
+ className={`flex items-center gap-3 p-4 rounded-md border-2 transition-all cursor-pointer hover:bg-muted/50 
  ${isSelected ? 'border-brown-800 bg-brown-800/5 shadow-sm' : 'border-transparent bg-background shadow-xs'}
  `}
  onClick={() => {
@@ -266,7 +266,7 @@ export default function TestPage() {
  variant="outline"
  disabled={currentQuestionIdx === 0}
  onClick={() => setCurrentQuestionIdx(prev => prev - 1)}
- className="h-11 px-6 rounded-xl hover:bg-background"
+ className="h-11 px-6 rounded-md hover:bg-background"
  >
  <ChevronLeft className="mr-2 h-4 w-4" /> Previous Question
  </Button>
@@ -274,14 +274,14 @@ export default function TestPage() {
  {currentQuestionIdx < questions.length - 1 ? (
  <Button
  onClick={() => setCurrentQuestionIdx(prev => prev + 1)}
- className="h-11 px-6 rounded-xl shadow-md"
+ className="h-11 px-6 rounded-md shadow-md"
  >
  Next Question <ChevronRight className="ml-2 h-4 w-4" />
  </Button>
  ) : (
  <Button
  onClick={() => setIsConfirmOpen(true)}
- className="h-11 px-8 rounded-xl bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-200"
+ className="h-11 px-8 rounded-md bg-emerald-600 hover:bg-emerald-700 shadow-md shadow-emerald-200"
  >
  Submit Final Answers <Save className="ml-2 h-4 w-4" />
  </Button>

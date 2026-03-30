@@ -28,7 +28,7 @@ export default function Guidance() {
           {guidanceFeatures.map((feature) => (
             <article
               key={feature.title}
-              className="rounded-2xl border border-border bg-white px-5 py-6 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-1 hover:border-brown-400/35 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)]"
+              className="rounded-md border border-border bg-white px-5 py-6 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-1 hover:border-brown-400/35 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)]"
             >
               <div className="mb-3 text-2xl">{feature.icon}</div>
               <h3 className="font-display text-[22px] font-bold tracking-[-0.02em] text-brown-900">{feature.title}</h3>

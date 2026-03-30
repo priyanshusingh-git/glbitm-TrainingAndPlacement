@@ -20,6 +20,8 @@ model User {
   isSuspended        Boolean             @default(false)
   suspendedReason    String?
   suspendedAt        DateTime?
+  magicToken         String?             @unique
+  magicTokenExpires  DateTime?
   auditLogs          AuditLog[]
   authAuditLogs      AuthAuditLog[]
   createdBootcamps   Bootcamp[]          @relation("BootcampCreator")

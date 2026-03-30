@@ -29,7 +29,7 @@ export default function ForYou() {
             {trainingModules.map((module) => (
               <div
                 key={module.title}
-                className="flex items-start gap-3 rounded-2xl border border-border bg-white px-4 py-4 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:translate-x-1 hover:border-brown-800/30"
+                className="flex items-start gap-3 rounded-md border border-border bg-white px-4 py-4 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:translate-x-1 hover:border-brown-800/30"
               >
                 <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-gradient-to-br from-brown-800 to-brown-700 text-base">
                   {module.icon}

@@ -6,6 +6,7 @@ import { generateStrongPassword } from '@/lib/password';
 import { logger } from '@/lib/logger';
 import bcrypt from 'bcryptjs';
 import { randomUUID } from 'crypto';
+import { publishBulkEmailTasks } from '@/services/qstash.service';
 
 export async function POST(req: NextRequest) {
   const authResult = await authorize(req, ['ADMIN']);
@@ -140,6 +141,8 @@ export async function POST(req: NextRequest) {
         const salt = await bcrypt.genSalt(BCRYPT_SALT_ROUNDS);
         const hashedPassword = await bcrypt.hash(rawPassword, salt);
         const userId = randomUUID();
+        const magicToken = randomUUID();
+        const magicTokenExpires = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 hours
 
         usersToInsert.push({
             id: userId,
@@ -147,7 +150,9 @@ export async function POST(req: NextRequest) {
             password: hashedPassword,
             role: 'STUDENT',
             mustChangePassword: true,
-            name: 'Student'
+            name: 'Student',
+            magicToken,
+            magicTokenExpires
         });
 
         profilesToInsert.push({
@@ -158,9 +163,14 @@ export async function POST(req: NextRequest) {
         });
 
         emailsToInsert.push({
+            id: randomUUID(),
             to: row.email,
             subject: "Welcome to Scorlo Training & Placement Portal",
-            payload: JSON.stringify({ name: 'Student', email: row.email, rawPassword }),
+            payload: JSON.stringify({ 
+                name: 'Student', 
+                email: row.email, 
+                magicToken 
+            }),
             status: "PENDING"
         });
     }));
@@ -173,6 +183,14 @@ export async function POST(req: NextRequest) {
     });
 
     results.success = usersToInsert.length;
+
+    // 6. Asynchronously trigger QStash processing for bulk import
+    const emailQueueIds = emailsToInsert.map(e => e.id);
+    if (emailQueueIds.length > 0) {
+      publishBulkEmailTasks(emailQueueIds).catch(err => {
+        logger.error("Failed to asynchronously batch publish QStash email tasks during bulk import", err);
+      });
+    }
 
     return NextResponse.json({ message: 'Import processing complete', results });
 

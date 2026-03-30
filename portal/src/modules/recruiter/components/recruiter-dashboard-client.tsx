@@ -80,9 +80,9 @@ export default function RecruiterDashboardClient() {
   if (loading) {
     return (
       <div className="space-y-6 animate-in fade-in duration-300">
-        <div className="h-20 w-1/3 bg-muted/20 animate-pulse rounded-lg" />
+        <div className="h-20 w-1/3 bg-muted/20 animate-pulse rounded-md" />
         <LoadingGrid items={4} />
-        <div className="h-64 bg-muted/20 animate-pulse rounded-xl mt-6" />
+        <div className="h-64 bg-muted/20 animate-pulse rounded-md mt-6" />
       </div>
     )
   }
@@ -93,7 +93,7 @@ export default function RecruiterDashboardClient() {
         <PageHeader title="Recruiter Dashboard" description="Welcome to the recruitment portal." />
         <Card className="border-border/60">
           <CardContent className="flex flex-col items-center justify-center p-12 text-center">
-            <div className="rounded-full bg-amber-500/10 p-4 mb-4">
+            <div className="rounded-md bg-amber-500/10 p-4 mb-4">
               <SearchX className="h-8 w-8 text-amber-600" />
             </div>
             <h2 className="text-xl font-bold mb-2">No Company Linked</h2>
@@ -109,16 +109,10 @@ export default function RecruiterDashboardClient() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <PageHeader 
-          title={`Company Dashboard`} 
-          description={`Welcome back to your recruitment workspace for ${data.company.name}.`} 
-        />
-        <Badge variant="outline" className="w-fit text-xs font-medium py-1 px-3 border-brown-800/30 bg-brown-800/5 text-brown-800 flex items-center gap-1.5">
-          <Building2 className="h-3.5 w-3.5" />
-          {data.company.name}
-        </Badge>
-      </div>
+      <PageHeader 
+        title={`Company Dashboard`} 
+        description={`Welcome back to your recruitment workspace for ${data.company.name}.`} 
+      />
 
       {/* Stats row */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -186,7 +180,7 @@ export default function RecruiterDashboardClient() {
                           "text-[10px] font-bold uppercase tracking-wider",
                           drive.status === 'ongoing'
                             ? "border-amber-500/30 bg-amber-500/10 text-amber-700"
-                            : "border-blue-500/30 bg-blue-500/10 text-blue-700"
+                            : "border-brown-800/30 bg-brown-800/10 text-brown-800"
                         )}
                       >
                         {drive.status}
@@ -239,7 +233,7 @@ export default function RecruiterDashboardClient() {
               ) : (
                 <div className="space-y-4">
                   {data.shortlistedCandidates.map(app => (
-                    <div key={app.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-lg border border-border/40 hover:bg-muted/10 transition-colors">
+                    <div key={app.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-md border border-border/40 hover:bg-muted/10 transition-colors">
                       <div className="flex items-center gap-3">
                         <Avatar className="h-10 w-10 border border-border/60">
                           <AvatarFallback className="bg-brown-800/10 text-brown-800 text-xs font-bold">
@@ -260,7 +254,7 @@ export default function RecruiterDashboardClient() {
                             "text-[10px] font-bold tracking-wider",
                             app.status === 'PLACED' ? "border-success bg-success/10 text-success" :
                             app.status === 'OFFERED' ? "border-amber-500 bg-amber-500/10 text-amber-700" :
-                            "border-blue-500 bg-blue-500/10 text-blue-700"
+                            "border-brown-800 bg-brown-800/10 text-brown-800"
                           )}
                         >
                           {app.status}

@@ -237,7 +237,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  <h2 className="text-2xl font-black uppercase tracking-tight">Group not found</h2>
  <p className="text-muted-foreground mt-1">The requested training group does not exist or has been removed.</p>
  </div>
- <Button onClick={() => router.back()} variant="outline" className="rounded-xl px-8 font-bold uppercase tracking-widest text-[10px]">
+ <Button onClick={() => router.back()} variant="outline" className="rounded-md px-8 font-bold uppercase tracking-widest text-[10px]">
  <ArrowLeft className="mr-2 h-4 w-4" /> Go Back
  </Button>
  </div>
@@ -373,7 +373,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  </CardHeader>
  <CardContent className="pt-6">
  {group.trainers.length === 0 ? (
- <div className="rounded-3xl border-2 border-dashed border-border bg-muted/30 py-12 text-center">
+ <div className="rounded-md border-2 border-dashed border-border bg-muted/30 py-12 text-center">
  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground/50">No Trainers Assigned</p>
  <Button variant="link" size="sm" className="mt-2 text-brown-800 font-bold text-[10px] uppercase tracking-widest">Assign Now</Button>
  </div>
@@ -382,7 +382,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  {group.trainers.slice(0, 4).map((t: any) => (
  <div key={t.id} className="document-subtle group/mentor flex items-center justify-between p-4 hover:border-brown-800/20">
  <div className="flex items-center gap-4">
- <div className="tone-primary flex h-10 w-10 items-center justify-center rounded-xl border font-semibold group-hover/mentor:scale-110 transition-transform">
+ <div className="tone-primary flex h-10 w-10 items-center justify-center rounded-md border font-semibold group-hover/mentor:scale-110 transition-transform">
  {(t.trainer.name ||"T")[0]}
  </div>
  <div>
@@ -419,7 +419,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-brown-800 transition-colors" />
  <Input
  placeholder="Search..."
- className="pl-11 h-12 rounded-2xl border-border bg-muted/50 focus:bg-background transition-all font-medium"
+ className="pl-11 h-12 rounded-md border-border bg-muted/50 focus:bg-background transition-all font-medium"
  value={studentSearch}
  onChange={(e) => setStudentSearch(e.target.value)}
  />
@@ -474,18 +474,18 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  <TableCell className="py-5 px-8 text-right">
  <DropdownMenu>
  <DropdownMenuTrigger asChild>
- <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl opacity-0 group-hover/row:opacity-100 focus:opacity-100 transition-all hover:bg-brown-800/10">
+ <Button variant="ghost" size="icon" className="h-10 w-10 rounded-md opacity-0 group-hover/row:opacity-100 focus:opacity-100 transition-all hover:bg-brown-800/10">
  <MoreHorizontal className="h-4.5 w-4.5" />
  </Button>
  </DropdownMenuTrigger>
- <DropdownMenuContent align="end" className="w-56 rounded-2xl border-border p-2 shadow-2xl">
+ <DropdownMenuContent align="end" className="w-56 rounded-md border-border p-2 shadow-2xl">
  <DropdownMenuLabel className="px-2 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Operations</DropdownMenuLabel>
- <DropdownMenuItem onClick={() => router.push(`/admin/students/${student.id}/profile`)} className="rounded-xl py-3 focus:bg-brown-800/10">
+ <DropdownMenuItem onClick={() => router.push(`/admin/students/${student.id}/profile`)} className="rounded-md py-3 focus:bg-brown-800/10">
  <Users className="mr-2 h-4 w-4 text-brown-800" /> <span className="font-bold text-xs uppercase tracking-wider">View Profile</span>
  </DropdownMenuItem>
  <DropdownMenuSeparator className="bg-border/40" />
  <DropdownMenuItem
- className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-xl py-3"
+ className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-md py-3"
  onClick={() => handleRemoveStudent(student.id, student.admissionId)}
  >
  <Trash2 className="mr-2 h-4 w-4" /> <span className="font-bold text-xs uppercase tracking-wider">Remove from Group</span>
@@ -514,7 +514,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  <Button
  onClick={() => setCreateSessionOpen(true)}
  size="sm"
- className="h-10 px-6 rounded-xl font-semibold text-sm shadow-sm"
+ className="h-10 px-6 rounded-md font-semibold text-sm shadow-sm"
  >
  <Plus className="mr-2 h-4 w-4" /> New Session
  </Button>
@@ -523,7 +523,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  <CardContent className="pt-8 px-8">
  <div className="space-y-8">
  {sessions.length === 0 ? (
- <div className="flex flex-col items-center justify-center py-24 space-y-4 bg-muted/5 rounded-xl border-2 border-dashed border-border text-center">
+ <div className="flex flex-col items-center justify-center py-24 space-y-4 bg-muted/5 rounded-md border-2 border-dashed border-border text-center">
  <div className="p-4 rounded-full bg-brown-800/10">
  <BookOpen className="h-12 w-12 text-brown-800/30" />
  </div>
@@ -535,11 +535,11 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  ) : (
  <div className="grid gap-6">
  {sessions.map((session) => (
- <div key={session.id} className="document-subtle group relative rounded-xl p-6 hover:bg-card hover:shadow-xl hover:shadow-primary/5">
+ <div key={session.id} className="document-subtle group relative rounded-md p-6 hover:bg-card hover:shadow-xl hover:shadow-primary/5">
  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
  <div className="flex items-start gap-4">
  <div className={cn(
-"p-4 rounded-2xl shadow-inner transition-all transform",
+"p-4 rounded-md shadow-inner transition-all transform",
  session.status === 'completed' ?"tone-success border" :
  session.status === 'scheduled' ?"tone-primary border" :"tone-neutral border"
  )}>
@@ -569,7 +569,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  <Button
  variant="outline"
  size="sm"
- className="h-10 rounded-xl border-border px-5 text-sm font-semibold transition-all hover:bg-brown-800 hover:text-brown-800-foreground"
+ className="h-10 rounded-md border-border px-5 text-sm font-semibold transition-all hover:bg-brown-800 hover:text-brown-800-foreground"
  onClick={() => {
  setSelectedSession(session);
  setAttendanceOpen(true);
@@ -579,17 +579,17 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  </Button>
  <DropdownMenu>
  <DropdownMenuTrigger asChild>
- <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-brown-800/10 transition-all opacity-0 group-hover:opacity-100">
+ <Button variant="ghost" size="icon" className="h-10 w-10 rounded-md hover:bg-brown-800/10 transition-all opacity-0 group-hover:opacity-100">
  <MoreHorizontal className="h-4.5 w-4.5" />
  </Button>
  </DropdownMenuTrigger>
- <DropdownMenuContent align="end" className="w-56 rounded-2xl border-border p-2 shadow-2xl">
- <DropdownMenuItem className="rounded-xl py-3 focus:bg-brown-800/10">
+ <DropdownMenuContent align="end" className="w-56 rounded-md border-border p-2 shadow-2xl">
+ <DropdownMenuItem className="rounded-md py-3 focus:bg-brown-800/10">
  <Pencil className="mr-2 h-4 w-4" /> <span className="font-bold text-xs uppercase tracking-wider">Edit Session</span>
  </DropdownMenuItem>
  <DropdownMenuSeparator className="bg-border/40" />
  <DropdownMenuItem
- className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-xl py-3"
+ className="text-destructive focus:bg-destructive/10 focus:text-destructive rounded-md py-3"
  onClick={() => handleDeleteSession(session.id)}
  >
  <Trash2 className="mr-2 h-4 w-4" /> <span className="font-bold text-xs uppercase tracking-wider">Delete Session</span>
@@ -619,7 +619,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  <Button
  onClick={() => setAssignTrainerOpen(true)}
  size="sm"
- className="h-10 px-6 rounded-xl font-semibold text-sm shadow-sm"
+ className="h-10 px-6 rounded-md font-semibold text-sm shadow-sm"
  >
  <UserPlus className="mr-2 h-4 w-4" /> Assign Trainer
  </Button>
@@ -627,7 +627,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  <CardContent className="pt-0 px-8 pb-8">
  <div className="grid gap-6 md:grid-cols-2">
  {group.trainers.length === 0 ? (
- <div className="col-span-2 flex flex-col items-center justify-center py-24 space-y-4 bg-muted/5 rounded-xl border-2 border-dashed border-border text-center">
+ <div className="col-span-2 flex flex-col items-center justify-center py-24 space-y-4 bg-muted/5 rounded-md border-2 border-dashed border-border text-center">
  <div className="p-4 rounded-full bg-brown-800/10">
  <UserPlus className="h-12 w-12 text-brown-800/30" />
  </div>
@@ -635,12 +635,12 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  </div>
  ) : (
  group.trainers.map((t: any) => (
- <Card key={t.id} className="document-subtle group/mcard relative overflow-hidden rounded-xl transition-all duration-500 hover:shadow-xl hover:shadow-primary/10">
+ <Card key={t.id} className="document-subtle group/mcard relative overflow-hidden rounded-md transition-all duration-500 hover:shadow-xl hover:shadow-primary/10">
  <div className="absolute top-0 right-0 w-32 h-32 -mr-16 -mt-16 rounded-full bg-brown-800/10 opacity-0 group-hover/mcard:opacity-100 transition-opacity duration-700" />
  <CardContent className="p-6">
  <div className="flex items-start justify-between">
  <div className="flex items-center gap-5">
- <div className="tone-primary flex h-16 w-16 items-center justify-center rounded-2xl border text-3xl font-semibold shadow-xl shadow-primary/10 transition-all group-hover/mcard:scale-105">
+ <div className="tone-primary flex h-16 w-16 items-center justify-center rounded-md border text-3xl font-semibold shadow-xl shadow-primary/10 transition-all group-hover/mcard:scale-105">
  {(t.trainer.name ||"T")[0]}
  </div>
  <div className="space-y-1">
@@ -653,14 +653,14 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  </div>
  </div>
  <div className="mt-8 flex justify-end gap-3 pt-6 border-t border-border/20">
- <Button variant="ghost" className="h-10 px-6 rounded-xl font-semibold text-xs hover:bg-brown-800/10 text-muted-foreground hover:text-brown-800 transition-all">
+ <Button variant="ghost" className="h-10 px-6 rounded-md font-semibold text-xs hover:bg-brown-800/10 text-muted-foreground hover:text-brown-800 transition-all">
  View Details
  </Button>
  <Button
  variant="outline"
  size="sm"
  onClick={() => handleRemoveTrainer(t.id)}
- className="h-10 px-6 rounded-xl text-destructive hover:bg-destructive shadow-sm hover:text-white border-destructive/20 font-semibold text-xs transition-all"
+ className="h-10 px-6 rounded-md text-destructive hover:bg-destructive shadow-sm hover:text-white border-destructive/20 font-semibold text-xs transition-all"
  >
  Remove Trainer
  </Button>
@@ -684,9 +684,9 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
 
  {/* Assign Students Modal */}
  <Dialog open={assignStudentOpen} onOpenChange={setAssignStudentOpen}>
- <DialogContent className="sm:max-w-[550px] rounded-xl border-border bg-card/95 p-0 overflow-hidden">
+ <DialogContent className="sm:max-w-[550px] rounded-md border-border bg-card/95 p-0 overflow-hidden">
  <DialogHeader className="p-8 bg-muted/50 border-b border-border">
- <div className="p-3 w-fit rounded-2xl bg-brown-800/10 border border-brown-800/20 mb-4">
+ <div className="p-3 w-fit rounded-md bg-brown-800/10 border border-brown-800/20 mb-4">
  <Users className="h-6 w-6 text-brown-800" />
  </div>
  <DialogTitle className="text-2xl font-semibold uppercase tracking-[0.18em]">Select <span className="text-brown-800 italic">Students</span></DialogTitle>
@@ -782,7 +782,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  </div>
  </div>
 
- <Command className="rounded-2xl border border-border bg-background/50 overflow-hidden">
+ <Command className="rounded-md border border-border bg-background/50 overflow-hidden">
  <CommandInput
  placeholder={group?.branch ==="ALL" ?"Search by name or Admission ID..." : `Search ${group?.branch} students...`}
  value={studentSelectorSearch}
@@ -817,7 +817,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  }}
  disabled={isAlreadyInGroup}
  className={cn(
-"flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all mb-1",
+"flex items-center justify-between p-3 rounded-md cursor-pointer transition-all mb-1",
  isSelected ?"bg-brown-800/10 text-brown-800" :"hover:bg-muted/50",
  isAlreadyInGroup &&"opacity-50 cursor-not-allowed grayscale"
  )}
@@ -855,13 +855,13 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  Clear All
  </Button>
  </div>
- <div className="flex flex-wrap gap-2 p-4 rounded-2xl bg-muted/50 border border-border min-h-[60px]">
+ <div className="flex flex-wrap gap-2 p-4 rounded-md bg-muted/50 border border-border min-h-[60px]">
  {selectedStudentIds.map(id => {
  const student = allStudents.find(s => s.admissionId === id);
  return (
  <Badge
  key={id}
- className="flex items-center gap-2 rounded-xl bg-brown-800 py-1.5 pl-3 pr-1 text-[9px] font-semibold uppercase tracking-widest text-brown-800-foreground shadow-sm"
+ className="flex items-center gap-2 rounded-md bg-brown-800 py-1.5 pl-3 pr-1 text-[9px] font-semibold uppercase tracking-widest text-brown-800-foreground shadow-sm"
  >
  {student?.name || id}
  <button
@@ -877,7 +877,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  </div>
  )}
 
- <div className="tone-warning flex gap-3 rounded-2xl border p-4">
+ <div className="tone-warning flex gap-3 rounded-md border p-4">
  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
  <p className="text-[10px] font-semibold uppercase tracking-wider leading-relaxed">
  Target students will be decoupled from their current cohorts and synchronized with this group instantly.
@@ -885,8 +885,8 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  </div>
  </div>
  <div className="pt-2 flex gap-3">
- <Button type="button" variant="ghost" onClick={() => setAssignStudentOpen(false)} className="flex-1 h-12 rounded-xl font-bold uppercase tracking-widest text-[10px]">Cancel</Button>
- <Button type="submit" disabled={isSubmitting || selectedStudentIds.length === 0} className="flex-[2] h-12 rounded-xl shadow-sm font-bold uppercase tracking-widest text-[10px]">
+ <Button type="button" variant="ghost" onClick={() => setAssignStudentOpen(false)} className="flex-1 h-12 rounded-md font-bold uppercase tracking-widest text-[10px]">Cancel</Button>
+ <Button type="submit" disabled={isSubmitting || selectedStudentIds.length === 0} className="flex-[2] h-12 rounded-md shadow-sm font-bold uppercase tracking-widest text-[10px]">
  {isSubmitting ?"Processing..." : `Assign ${selectedStudentIds.length} Students`}
  </Button>
  </div>
@@ -903,7 +903,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  setTrainerSelectorSearch("");
  }
  }}>
- <DialogContent className="sm:max-w-[480px] rounded-xl border-border bg-card/95 p-0 overflow-hidden shadow-2xl">
+ <DialogContent className="sm:max-w-[480px] rounded-md border-border bg-card/95 p-0 overflow-hidden shadow-2xl">
  <DialogHeader className="p-8 bg-violet-500/5 border-b border-border">
  <div className="p-4 w-fit rounded-[1.25rem] bg-violet-500/10 border border-violet-500/20 mb-6 transition-transform duration-500">
  <UserPlus className="h-7 w-7 text-violet-500" />
@@ -953,7 +953,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  setSelectedTrainerId(null); // Reset trainer when type changes
  }}
  className={cn(
-"h-12 rounded-xl border font-semibold text-sm transition-all duration-300",
+"h-12 rounded-md border font-semibold text-sm transition-all duration-300",
  selectedTrainerType === type
  ?"bg-violet-600 border-violet-600 text-white shadow-lg shadow-violet-500/20 scale-[1.02]"
  :"bg-background/50 border-border text-muted-foreground hover:border-violet-500/30 hover:bg-violet-500/5"
@@ -969,7 +969,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  <div className={cn("space-y-3 transition-all duration-500", !selectedTrainerType &&"opacity-40 grayscale pointer-events-none")}>
  <Label className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/60 ml-2">2. Search Qualified Trainer</Label>
 
- <Command shouldFilter={false} className="rounded-2xl border border-border bg-background/50 overflow-hidden shadow-inner">
+ <Command shouldFilter={false} className="rounded-md border border-border bg-background/50 overflow-hidden shadow-inner">
  <CommandInput
  placeholder={selectedTrainerType ? `Search ${selectedTrainerType} experts...` :"Select a module first..."}
  value={trainerSelectorSearch}
@@ -1006,7 +1006,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  key={trainer.id}
  onSelect={() => setSelectedTrainerId(trainer.id)}
  className={cn(
-"flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all mb-1 mx-1",
+"flex items-center justify-between p-3 rounded-md cursor-pointer transition-all mb-1 mx-1",
  selectedTrainerId === trainer.id ?"bg-violet-500/10 text-violet-600 scale-[0.98]" :"hover:bg-muted/50"
  )}
  >
@@ -1036,7 +1036,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  </Command>
  </div>
 
- <div className="flex gap-4 p-5 rounded-3xl bg-violet-500/5 border border-violet-500/10 items-start">
+ <div className="flex gap-4 p-5 rounded-md bg-violet-500/5 border border-violet-500/10 items-start">
  <Settings2 className="h-5 w-5 text-violet-500 shrink-0 mt-0.5" />
  <p className="text-[10px] font-bold text-violet-500/80 uppercase tracking-widest leading-relaxed">
  The selected trainer will be granted administrative access to this cohort's performance metrics and session logs.
@@ -1045,11 +1045,11 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  </div>
 
  <div className="pt-2 flex gap-4">
- <Button type="button" variant="ghost" onClick={() => setAssignTrainerOpen(false)} className="flex-1 h-14 rounded-2xl font-semibold text-sm hover:bg-muted/50 transition-colors">Abort</Button>
+ <Button type="button" variant="ghost" onClick={() => setAssignTrainerOpen(false)} className="flex-1 h-14 rounded-md font-semibold text-sm hover:bg-muted/50 transition-colors">Abort</Button>
  <Button
  type="submit"
  disabled={isSubmitting || !selectedTrainerId}
- className="flex-[2] h-14 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-500/30 font-black uppercase tracking-widest text-[11px] transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+ className="flex-[2] h-14 rounded-md bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-500/30 font-black uppercase tracking-widest text-[11px] transition-all transform hover:scale-[1.02] active:scale-[0.98]"
  >
  {isSubmitting ?"Synchronizing..." :"Finalize Assignment"}
  </Button>

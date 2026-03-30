@@ -23,7 +23,7 @@ export function StudentOverview({ overview }: OverviewProps) {
  <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Top 10% of Batch</span>
  </div>
  ),
- header: <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/20 relative overflow-hidden group/header">
+ header: <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-md bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent border border-amber-500/20 relative overflow-hidden group/header">
  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(232,160,32,0.1),transparent)]" />
  <BookOpen className="absolute -bottom-2 -right-2 h-24 w-24 text-amber-500/10 group-hover/header:scale-110 transition-transform duration-500" />
  </div>,
@@ -41,7 +41,7 @@ export function StudentOverview({ overview }: OverviewProps) {
  <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Consistency improving</span>
  </div>
  ),
- header: <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-brown-800/10 via-brown-800/5 to-transparent border border-brown-800/20 relative overflow-hidden group/header">
+ header: <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-md bg-gradient-to-br from-brown-800/10 via-brown-800/5 to-transparent border border-brown-800/20 relative overflow-hidden group/header">
  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(81,41,18,0.08),transparent)]" />
  <Trophy className="absolute -bottom-2 -right-2 h-24 w-24 text-brown-800/10 group-hover/header:scale-110 transition-transform duration-500" />
  </div>,
@@ -56,7 +56,7 @@ export function StudentOverview({ overview }: OverviewProps) {
  <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Across platforms</span>
  </div>
  ),
- header: <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-amber-500/20 via-amber-500/5 to-transparent border border-amber-500/20 relative overflow-hidden group/header">
+ header: <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-md bg-gradient-to-br from-amber-500/20 via-amber-500/5 to-transparent border border-amber-500/20 relative overflow-hidden group/header">
  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(245,158,11,0.1),transparent)]" />
  <Code2 className="absolute -bottom-2 -right-2 h-24 w-24 text-amber-500/10 group-hover/header:scale-110 transition-transform duration-500" />
  </div>,
@@ -71,7 +71,7 @@ export function StudentOverview({ overview }: OverviewProps) {
  <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Upcoming drives</span>
  </div>
  ),
- header: <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-xl bg-gradient-to-br from-brown-800/10 via-brown-800/5 to-transparent border border-brown-800/20 relative overflow-hidden group/header">
+ header: <div className="flex flex-1 w-full h-full min-h-[6rem] rounded-md bg-gradient-to-br from-brown-800/10 via-brown-800/5 to-transparent border border-brown-800/20 relative overflow-hidden group/header">
  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(81,41,18,0.08),transparent)]" />
  <Briefcase className="absolute -bottom-2 -right-2 h-24 w-24 text-amber-500/10 group-hover/header:scale-110 transition-transform duration-500" />
  </div>,

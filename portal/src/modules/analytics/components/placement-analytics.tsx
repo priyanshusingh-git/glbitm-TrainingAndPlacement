@@ -73,12 +73,12 @@ export function PlacementAnalytics({ analytics }: PlacementAnalyticsProps) {
  <CardHeader className="flex flex-col justify-between gap-4 border-b border-border/60 bg-muted/10 pb-4 sm:flex-row sm:items-center">
  <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
  <CardTitle className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-    <div className="rounded-xl border border-border/60 bg-primary/10 p-2 shadow-sm">
+    <div className="rounded-md border border-border/60 bg-primary/10 p-2 shadow-sm">
       <BarChart3 className="h-5 w-5 text-primary" />
     </div>
  Analytics
  </CardTitle>
- <div className="flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-semibold uppercase text-emerald-500">
+ <div className="flex items-center gap-1.5 rounded-sm border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-semibold uppercase text-emerald-500">
  <TrendingUp className="h-3 w-3" />
  <span>+22% YoY</span>
  </div>
@@ -101,7 +101,7 @@ export function PlacementAnalytics({ analytics }: PlacementAnalyticsProps) {
  </div>
  </CardHeader>
  <CardContent className="p-5 space-y-8">
- <div className="premium-muted rounded-2xl border border-border/60 p-4">
+ <div className="premium-muted rounded-md border border-border/60 p-4">
  <div className="mb-6 flex items-center justify-between">
  <div className="space-y-1">
  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">Recruitment Velocity</p>
@@ -185,14 +185,14 @@ export function PlacementAnalytics({ analytics }: PlacementAnalyticsProps) {
  </ChartContainer>
  </div>
 
- <div className="premium-tint flex flex-col justify-center space-y-3 rounded-2xl border border-brown-800/15 p-5 text-center">
+ <div className="premium-tint flex flex-col justify-center space-y-3 rounded-md border border-brown-800/15 p-5 text-center">
  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brown-800/70">Milestone Reached</p>
  <h3 className="text-3xl font-semibold text-foreground">92%</h3>
  <p className="text-sm text-muted-foreground leading-relaxed">
  Overall placement percentage reached for the current graduating batch.
  </p>
   <div className="pt-2">
-    <div className="h-2 w-full overflow-hidden rounded-full bg-primary/10">
+    <div className="h-2 w-full overflow-hidden rounded-sm bg-primary/10">
       <div className="h-full w-[92%] bg-primary" />
     </div>
   </div>

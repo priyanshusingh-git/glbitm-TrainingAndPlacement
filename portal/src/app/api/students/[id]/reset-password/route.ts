@@ -19,35 +19,33 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     if (!student) return NextResponse.json({ error: 'Student not found' }, { status: 404 });
 
-    // Generate temporary password
-    const tempPassword = generateStrongPassword(12);
-
-    // Hash it natively with bcrypt (Firebase removed)
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(tempPassword, salt);
+    // Generate magic token instead of password
+    const magicToken = crypto.randomUUID();
+    const magicTokenExpires = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 hours
 
     // Update in Postgres directly
     await prisma.user.update({
       where: { id: student.userId },
       data: {
-        password: hashedPassword,
+        magicToken,
+        magicTokenExpires,
         mustChangePassword: true
       }
     });
 
-    // Send email with temp password
+    // Send email with magic link
     const emailSent = await sendAdminPasswordResetEmail(
       student.user.email,
       student.user.name || "Student",
-      tempPassword
+      magicToken
     );
 
     if (emailSent) {
-      return NextResponse.json({ message: 'Password reset successfully' });
+      return NextResponse.json({ message: 'Password reset link sent successfully' });
     } else {
       return NextResponse.json({
-        message: 'Password reset successful, but email failed to send. Please share credentials manually.',
-        tempPassword: tempPassword
+        message: 'Reset initialized, but email failed to send. Please share the recovery link manually.',
+        magicLink: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/auth/magic?token=${magicToken}`
       }, { status: 200 });
     }
   } catch (error: any) {

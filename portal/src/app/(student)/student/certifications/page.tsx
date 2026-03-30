@@ -137,7 +137,7 @@ export default function CertificationsPage() {
  ))}
 
  {/* Upload Placeholder */}
- <button className="group relative flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed p-8 text-center hover:bg-muted/50 transition-colors h-full min-h-[300px]">
+ <button className="group relative flex flex-col items-center justify-center gap-4 rounded-md border-2 border-dashed p-8 text-center hover:bg-muted/50 transition-colors h-full min-h-[300px]">
  <div className="rounded-full bg-muted group-hover:bg-background p-4 transition-colors">
  <Upload className="h-6 w-6 text-muted-foreground" />
  </div>

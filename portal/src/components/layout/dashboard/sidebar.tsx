@@ -79,76 +79,108 @@ export function Sidebar({ role }: SidebarProps) {
 
       {/* Navigation items start immediately after logo for a tighter look */}
 
-      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2 custom-scrollbar" aria-label="Main Navigation">
-        {navItems.map((item: any, index: number) => {
-          if (item.type === "header") {
-            return (
-              <div
-                key={`header-${index}`}
+      <TooltipProvider delayDuration={0}>
+        <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2 custom-scrollbar" aria-label="Main Navigation">
+          {navItems.map((item: any, index: number) => {
+            if (item.type === "header") {
+              return (
+                <div
+                  key={`header-${index}`}
+                  className={cn(
+                    index === 0 ? "mt-2 mb-2" : "mt-6 mb-2",
+                    "px-3 transition-all duration-300",
+                    (!collapsed || mobileOpen) ? "opacity-100" : "opacity-0 hidden"
+                  )}
+                >
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
+                    {item.label}
+                  </h4>
+                </div>
+              )
+            }
+
+            const isRootPath = item.href === "/student" || item.href === "/admin" || item.href === "/trainer" || item.href === "/recruiter";
+            const isActive = isRootPath
+              ? pathname === item.href
+              : pathname === item.href || (item.items && item.items.some((subItem: any) => pathname.startsWith(item.href) || pathname === subItem.href));
+
+            const isSidebarCollapsed = collapsed && !mobileOpen;
+
+            const linkContent = (
+              <Link
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
                 className={cn(
-                  index === 0 ? "mt-2 mb-2" : "mt-6 mb-2",
-                  "px-3 transition-all duration-300",
-                  (!collapsed || mobileOpen) ? "opacity-100" : "opacity-0 hidden"
+                  "group relative flex items-center gap-3 rounded-md px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 overflow-hidden",
+                  isActive
+                    ? "bg-white/5 text-white"
+                    : "text-white/50 hover:bg-white/10 hover:text-white",
+                  isSidebarCollapsed && "justify-center px-2"
                 )}
               >
-                <h4 className="text-[10px] font-bold uppercase tracking-[0.25em] text-white/40">
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-r-md bg-amber-500 shadow-[0_0_10px_rgba(232,160,32,0.3)]" />
+                )}
+                <item.icon className={cn("h-5 w-5 shrink-0 transition-colors z-10", isActive ? "text-amber-500" : "group-hover:text-white")} />
+                <span className={cn(
+                  "truncate transition-all duration-300 z-10",
+                  (!collapsed || mobileOpen) ? "opacity-100 max-w-[200px]" : "opacity-0 max-w-0 pointer-events-none hidden"
+                )}>
                   {item.label}
-                </h4>
-              </div>
-            )
-          }
-
-          const isRootPath = item.href === "/student" || item.href === "/admin" || item.href === "/trainer" || item.href === "/recruiter";
-          const isActive = isRootPath
-            ? pathname === item.href
-            : pathname === item.href || (item.items && item.items.some((subItem: any) => pathname.startsWith(item.href) || pathname === subItem.href));
-
-          return (
-            <Link
-              key={item.label}
-              href={item.href}
-              onClick={() => setMobileOpen(false)}
-              className={cn(
-                "group flex items-center gap-3 rounded-md px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200",
-                isActive
-                  ? "bg-amber-500/10 text-amber-500 ring-1 ring-amber-500/20"
-                  : "text-white/60 hover:bg-white/5 hover:text-white",
-                collapsed && !mobileOpen && "justify-center px-2"
-              )}
-            >
-              <item.icon className={cn("h-5 w-5 shrink-0 transition-colors", isActive ? "text-amber-500" : "group-hover:text-white")} />
-              <span className={cn(
-                "truncate transition-all duration-300",
-                (!collapsed || mobileOpen) ? "opacity-100 max-w-[200px]" : "opacity-0 max-w-0 pointer-events-none hidden"
-              )}>
-                {item.label}
-              </span>
-              {item.count && (!collapsed || mobileOpen) && (
-                <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-brown-900">
-                  {item.count}
                 </span>
-              )}
-            </Link>
-          )
-        })}
-      </nav>
+                {item.count && (!collapsed || mobileOpen) && (
+                  <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-amber-500 text-[10px] font-bold text-brown-900 z-10">
+                    {item.count}
+                  </span>
+                )}
+              </Link>
+            )
+
+            if (isSidebarCollapsed) {
+              return (
+                <Tooltip key={item.label}>
+                  <TooltipTrigger asChild>
+                    {linkContent}
+                  </TooltipTrigger>
+                  <TooltipContent side="right" sideOffset={14} className="bg-brown-900 text-white font-bold text-xs border border-white/10 shadow-xl px-3 py-1.5 rounded-md">
+                    {item.label}
+                  </TooltipContent>
+                </Tooltip>
+              )
+            }
+
+            return <div key={item.label}>{linkContent}</div>
+          })}
+        </nav>
+      </TooltipProvider>
 
       <div className="mt-auto border-t border-white/5 p-4">
-        <button
-          onClick={() => logout()}
-          className={cn(
-            "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/60 transition-all hover:bg-red-500/10 hover:text-red-500",
-            collapsed && !mobileOpen && "justify-center px-2"
-          )}
-        >
-          <LogOut className="h-5 w-5 shrink-0" />
-          <span className={cn(
-            "truncate transition-all duration-300",
-            (!collapsed || mobileOpen) ? "opacity-100" : "opacity-0 hidden"
-          )}>
-            Sign Out
-          </span>
-        </button>
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => logout()}
+                className={cn(
+                  "group relative flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-white/60 transition-all hover:bg-destructive/10 hover:text-destructive",
+                  collapsed && !mobileOpen && "justify-center px-2"
+                )}
+              >
+                <LogOut className="h-5 w-5 shrink-0" />
+                <span className={cn(
+                  "truncate transition-all duration-300",
+                  (!collapsed || mobileOpen) ? "opacity-100" : "opacity-0 hidden"
+                )}>
+                  Sign Out
+                </span>
+              </button>
+            </TooltipTrigger>
+            {collapsed && !mobileOpen && (
+              <TooltipContent side="right" sideOffset={14} className="bg-destructive text-destructive-foreground font-bold text-xs border border-destructive shadow-xl px-3 py-1.5 rounded-md">
+                Sign Out
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   )

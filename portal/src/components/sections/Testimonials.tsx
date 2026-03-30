@@ -68,7 +68,7 @@ export default function Testimonials() {
             {pages[page]?.map((testimonial) => (
               <article
                 key={`${testimonial.name}-${testimonial.company}`}
-                className="relative flex flex-col overflow-hidden rounded-2xl border border-white/8 bg-white/5 px-4 py-5 transition hover:bg-white/8 animate-in fade-in slide-in-from-right-1 duration-300"
+                className="relative flex flex-col overflow-hidden rounded-md border border-white/8 bg-white/5 px-4 py-5 transition hover:bg-white/8 animate-in fade-in slide-in-from-right-1 duration-300"
               >
                     <div className="mb-4 flex flex-wrap items-center gap-2">
                       <div className="font-display text-[20px] font-bold tracking-[-0.02em] text-amber-400">

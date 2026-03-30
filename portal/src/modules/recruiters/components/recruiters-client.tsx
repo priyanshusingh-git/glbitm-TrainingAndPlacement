@@ -267,7 +267,7 @@ export default function RecruitersClient() {
           description="Add a recruiter account to get started. They will receive login credentials via email."
         />
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-border/60 shadow-sm">
+        <div className="overflow-x-auto rounded-md border border-border/60 shadow-sm">
           <Table>
             <TableHeader>
               <TableRow className="bg-transparent hover:bg-transparent">
@@ -282,8 +282,8 @@ export default function RecruitersClient() {
                 <TableRow key={recruiter.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-9 w-9 rounded-lg border border-border/60">
-                        <AvatarFallback className="rounded-lg bg-brown-800/10 text-brown-800 text-xs font-bold">
+                      <Avatar className="h-9 w-9 rounded-md border border-border/60">
+                        <AvatarFallback className="rounded-md bg-brown-800/10 text-brown-800 text-xs font-bold">
                           {getInitials(recruiter.name)}
                         </AvatarFallback>
                       </Avatar>
@@ -383,7 +383,7 @@ export default function RecruitersClient() {
               <p className="text-sm text-muted-foreground">
                 A welcome email has been sent. Share these credentials if email delivery failed.
               </p>
-              <div className="rounded-lg border border-border/60 bg-muted/30 p-4 space-y-3">
+              <div className="rounded-md border border-border/60 bg-muted/30 p-4 space-y-3">
                 <div>
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Email</p>
                   <p className="text-sm font-mono font-medium">{credentials.email}</p>

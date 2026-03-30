@@ -73,7 +73,7 @@ export default function NumbersBar() {
             ))}
           </AnimatedSection>
 
-          <div className="mt-9 overflow-x-auto rounded-2xl border border-white/6">
+          <div className="mt-9 overflow-x-auto rounded-md border border-white/6">
             <table className="min-w-[720px] w-full border-collapse">
               <thead>
                 <tr className="border-b border-white/7">
@@ -152,7 +152,7 @@ export default function NumbersBar() {
 
             <div className="grid gap-2 sm:grid-cols-2 lg:w-[22rem] lg:grid-cols-2">
               {placementMiniStats.map((stat) => (
-                <div key={stat.label} className="rounded-xl border border-white/7 bg-white/[0.052] px-5 py-5 text-center">
+                <div key={stat.label} className="rounded-md border border-white/7 bg-white/[0.052] px-5 py-5 text-center">
                   <div className="font-display text-[34px] font-bold leading-none tracking-[-0.03em] text-amber-400">
                     {stat.value}
                     <span className="ml-0.5 text-[0.46em]">{stat.suffix}</span>

@@ -385,7 +385,7 @@ export default function AdminSessionsPage() {
  <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
  <DialogHeader className="p-8 bg-muted border-b">
  <div className="flex items-center gap-4">
- <div className="h-12 w-12 rounded-xl bg-brown-800/10 flex items-center justify-center border border-brown-800/20">
+ <div className="h-12 w-12 rounded-md bg-brown-800/10 flex items-center justify-center border border-brown-800/20">
  <CalendarIcon className="h-6 w-6 text-brown-800" />
  </div>
  <div>

@@ -145,12 +145,12 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </div>
 
  <div className="flex items-center gap-3 w-full md:w-auto mt-4 md:mt-0 print:hidden">
- <Button variant="outline" className="flex-1 md:flex-none h-11 px-6 rounded-xl font-bold border-2 hover:bg-muted transition-all">
+ <Button variant="outline" className="flex-1 md:flex-none h-11 px-6 rounded-md font-bold border-2 hover:bg-muted transition-all">
  <Mail className="h-4 w-4 mr-2" /> Message
  </Button>
  <Button
  onClick={handleGenerateReport}
- className="flex-1 md:flex-none h-11 px-6 rounded-xl font-bold shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+ className="flex-1 md:flex-none h-11 px-6 rounded-md font-bold shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
  >
  Generate Report
  </Button>
@@ -159,7 +159,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </div>
 
  <Tabs defaultValue="profile" className="w-full">
- <TabsList className="grid grid-cols-2 lg:grid-cols-5 h-auto p-1.5 bg-muted/40 rounded-xl border border-border/50 sticky top-4 z-20 backdrop-blur-xl transition-all shadow-lg shadow-black/5">
+ <TabsList className="grid grid-cols-2 lg:grid-cols-5 h-auto p-1.5 bg-muted/40 rounded-md border border-border/50 sticky top-4 z-20 backdrop-blur-xl transition-all shadow-lg shadow-black/5">
  {[
  { value:"profile", label:"Identity", icon: User },
  { value:"academic", label:"Academics", icon: GraduationCap },
@@ -170,7 +170,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  <TabsTrigger
  key={tab.value}
  value={tab.value}
- className="py-3 rounded-xl data-[state=active]:bg-background data-[state=active]:shadow-md font-bold text-[10px] uppercase tracking-[0.15em] transition-all"
+ className="py-3 rounded-md data-[state=active]:bg-background data-[state=active]:shadow-md font-bold text-[10px] uppercase tracking-[0.15em] transition-all"
  >
  <tab.icon className="h-4 w-4 mr-2 opacity-70" /> {tab.label}
  </TabsTrigger>
@@ -305,7 +305,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  <div className={cn("h-2 w-full", card.color)} />
  <CardHeader className="flex flex-row items-center justify-between pb-6 pt-8">
  <div className="flex items-center gap-4">
- <div className={cn("h-12 w-12 rounded-xl border flex items-center justify-center shadow-lg shadow-black/5", card.light, card.accent)}>
+ <div className={cn("h-12 w-12 rounded-md border flex items-center justify-center shadow-lg shadow-black/5", card.light, card.accent)}>
  <Award className="h-6 w-6" />
  </div>
  <CardTitle className="text-2xl font-bold tracking-tight">{card.title}</CardTitle>
@@ -334,7 +334,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </Card>
  ))}
 
- <Card className="lg:col-span-2 shadow-xl border-border/60 rounded-xl overflow-hidden bg-gradient-to-br from-card to-muted/20">
+ <Card className="lg:col-span-2 shadow-xl border-border/60 rounded-md overflow-hidden bg-gradient-to-br from-card to-muted/20">
  <CardHeader className="border-b bg-muted/10 p-8">
  <div className="flex items-center justify-between">
  <div>
@@ -394,7 +394,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </TabsContent>
 
  <TabsContent value="portfolio" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
- <Card className="shadow-2xl border-border/60 rounded-xl overflow-hidden">
+ <Card className="shadow-2xl border-border/60 rounded-md overflow-hidden">
  <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between border-b bg-gradient-to-r from-primary/10 to-transparent p-8">
  <div>
  <CardTitle className="text-3xl font-bold text-brown-800 uppercase tracking-tighter">Technical Registry</CardTitle>
@@ -421,7 +421,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </h3>
  <div className="space-y-4">
  {student.projects?.map((project: any) => (
- <div key={project.id} className="group p-6 rounded-xl border-2 border-muted bg-muted/10 hover:border-brown-800/30 hover:bg-brown-800/5 transition-all duration-300">
+ <div key={project.id} className="group p-6 rounded-md border-2 border-muted bg-muted/10 hover:border-brown-800/30 hover:bg-brown-800/5 transition-all duration-300">
  <div className="flex items-start justify-between">
  <h4 className="font-bold text-xl tracking-tight leading-none mb-2">{project.title}</h4>
  <Badge className="bg-brown-800/10 text-brown-800 border-brown-800/20 text-[8px] font-bold uppercase tracking-widest">{project.status}</Badge>
@@ -453,8 +453,8 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  <div className="space-y-4">
  {student.certifications?.length > 0 ? (
  student.certifications.map((cert: any) => (
- <div key={cert.id} className="flex gap-4 p-5 rounded-xl border border-border/60 bg-card hover:shadow-xl hover:shadow-black/5 transition-all">
- <div className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center shrink-0">
+ <div key={cert.id} className="flex gap-4 p-5 rounded-md border border-border/60 bg-card hover:shadow-xl hover:shadow-black/5 transition-all">
+ <div className="h-12 w-12 rounded-md bg-muted flex items-center justify-center shrink-0">
  <Award className="h-6 w-6 text-muted-foreground/50" />
  </div>
  <div className="flex-1">
@@ -472,7 +472,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </div>
  ))
  ) : (
- <div className="text-center py-10 opacity-30 border-2 border-dashed rounded-xl">
+ <div className="text-center py-10 opacity-30 border-2 border-dashed rounded-md">
  <Award className="h-8 w-8 mx-auto mb-3" />
  <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">No validated credentials</p>
  </div>
@@ -492,7 +492,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </TabsContent>
 
  <TabsContent value="coding" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
- <Card className="shadow-2xl border-border/60 rounded-xl overflow-hidden">
+ <Card className="shadow-2xl border-border/60 rounded-md overflow-hidden">
  <CardHeader className="bg-brown-800 p-10 relative">
  <Code className="absolute top-0 right-0 h-48 w-48 text-background/10 -mr-16 -mt-16" />
  <div className="relative">
@@ -506,8 +506,8 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  { label:"GitHub", key:"githubId", icon:"G", color:"text-[#181717]", bg:"bg-[#181717]/10", border:"border-[#181717]/30", url: (id: string) => `https://github.com/${id}` },
  { label:"CodeChef", key:"codechefId", icon:"C", color:"text-[#5B4638]", bg:"bg-[#5B4638]/10", border:"border-[#5B4638]/30", url: (id: string) => `https://codechef.com/users/${id}` }
  ].map((plat) => (
- <div key={plat.label} className={cn("relative p-8 rounded-2xl border-2 bg-card transition-all hover:shadow-2xl hover:-translate-y-2 flex flex-col items-center text-center group", plat.border)}>
- <div className={cn("h-20 w-20 rounded-xl flex items-center justify-center text-3xl font-bold mb-6 shadow-lg shadow-black/5 transition-all group-hover:rotate-6", plat.bg)}>
+ <div key={plat.label} className={cn("relative p-8 rounded-md border-2 bg-card transition-all hover:shadow-2xl hover:-translate-y-2 flex flex-col items-center text-center group", plat.border)}>
+ <div className={cn("h-20 w-20 rounded-md flex items-center justify-center text-3xl font-bold mb-6 shadow-lg shadow-black/5 transition-all group-hover:rotate-6", plat.bg)}>
  <span className={plat.color}>{plat.icon}</span>
  </div>
  <Label className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60 mb-2">{plat.label}</Label>
@@ -531,7 +531,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
 
  <TabsContent value="group" className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
  <div className="grid lg:grid-cols-2 gap-8">
- <Card className="shadow-2xl border-border/60 rounded-xl overflow-hidden">
+ <Card className="shadow-2xl border-border/60 rounded-md overflow-hidden">
  <CardHeader className="p-8 border-b bg-muted/10">
  <CardTitle className="text-2xl font-bold flex items-center gap-3 tracking-tighter">
  <Group className="h-6 w-6 text-brown-800" />
@@ -540,14 +540,14 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </CardHeader>
  <CardContent className="p-8 space-y-10">
  <div
- className="group p-8 rounded-xl border-2 border-brown-800/20 bg-brown-800/5 hover:bg-brown-800/10 transition-all cursor-pointer relative overflow-hidden active:scale-[0.98]"
+ className="group p-8 rounded-md border-2 border-brown-800/20 bg-brown-800/5 hover:bg-brown-800/10 transition-all cursor-pointer relative overflow-hidden active:scale-[0.98]"
  onClick={() => student.trainingGroupId && router.push(`/admin/training/groups/${student.trainingGroupId}`)}
  >
  <div className="absolute top-0 right-0 p-8 opacity-5">
  <Users className="h-32 w-32" />
  </div>
  <div className="flex items-center gap-6 relative">
- <div className="h-20 w-20 rounded-xl bg-brown-800 flex items-center justify-center text-brown-800-foreground shadow-xl shadow-primary/40 transition-transform group-hover:-rotate-3">
+ <div className="h-20 w-20 rounded-md bg-brown-800 flex items-center justify-center text-brown-800-foreground shadow-xl shadow-primary/40 transition-transform group-hover:-rotate-3">
  <Users className="h-10 w-10" />
  </div>
  <div>
@@ -561,14 +561,14 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </div>
 
  <div className="grid grid-cols-2 gap-6">
- <div className="p-6 rounded-xl border-2 border-muted bg-card group hover:border-brown-800/20 transition-all shadow-sm">
+ <div className="p-6 rounded-md border-2 border-muted bg-card group hover:border-brown-800/20 transition-all shadow-sm">
  <Label className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground/50 mb-3 block">Deployment Batch</Label>
  <div className="flex items-center gap-2">
  <Calendar className="h-5 w-5 text-brown-800 opacity-50" />
  <p className="font-bold text-2xl tracking-tighter">{student.year ||"N/A"}</p>
  </div>
  </div>
- <div className="p-6 rounded-xl border-2 border-muted bg-card group hover:border-brown-800/20 transition-all shadow-sm">
+ <div className="p-6 rounded-md border-2 border-muted bg-card group hover:border-brown-800/20 transition-all shadow-sm">
  <Label className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground/50 mb-3 block">Domain Branch</Label>
  <div className="flex items-center gap-2">
  <GraduationCap className="h-5 w-5 text-brown-800 opacity-50" />
@@ -579,7 +579,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </CardContent>
  </Card>
 
- <Card className="shadow-2xl border-border/60 rounded-xl p-10 flex flex-col items-center justify-center bg-gradient-to-br from-card to-muted relative overflow-hidden group">
+ <Card className="shadow-2xl border-border/60 rounded-md p-10 flex flex-col items-center justify-center bg-gradient-to-br from-card to-muted relative overflow-hidden group">
  <div className="absolute top-0 right-0 p-6">
  <CheckCircle2 className="h-10 w-10 text-brown-800/10" />
  </div>

@@ -259,7 +259,7 @@ export default function AdminTrainersPage() {
  <LoadingTable rows={6} cols={5} />
  </div>
  ) : fetchError ? (
- <div className="text-center py-20 border-2 border-dashed rounded-xl bg-destructive/5 border-destructive/20">
+ <div className="text-center py-20 border-2 border-dashed rounded-md bg-destructive/5 border-destructive/20">
  <div className="bg-destructive/10 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
  <AlertTriangle className="h-6 w-6 text-destructive" />
  </div>
@@ -442,13 +442,13 @@ export default function AdminTrainersPage() {
  name="name"
  defaultValue={editingTrainer.name}
  required
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  <div className="space-y-1.5">
  <Label className="text-sm font-semibold">Trainer Type <span className="text-rose-500">*</span></Label>
  <Select name="trainerType" defaultValue={editingTrainer.trainerProfile?.trainerType ||"Technical"}>
- <SelectTrigger className="h-10 rounded-xl border-input">
+ <SelectTrigger className="h-10 rounded-md border-input">
  <SelectValue placeholder="Select type" />
  </SelectTrigger>
  <SelectContent>
@@ -466,7 +466,7 @@ export default function AdminTrainersPage() {
  type="email"
  defaultValue={editingTrainer.email}
  required
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  disabled
  />
  </div>
@@ -475,7 +475,7 @@ export default function AdminTrainersPage() {
  <Input
  name="mobileNo"
  defaultValue={editingTrainer.trainerProfile?.mobileNo ||""}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  <div className="space-y-1.5">
@@ -483,7 +483,7 @@ export default function AdminTrainersPage() {
  <Input
  name="specialization"
  defaultValue={editingTrainer.trainerProfile?.specialization ||""}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  <div className="space-y-1.5">
@@ -491,7 +491,7 @@ export default function AdminTrainersPage() {
  <Input
  name="department"
  defaultValue={editingTrainer.trainerProfile?.department ||""}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  <div className="space-y-1.5 col-span-2">
@@ -499,7 +499,7 @@ export default function AdminTrainersPage() {
  <Input
  name="experience"
  defaultValue={editingTrainer.trainerProfile?.experience ||""}
- className="h-10 rounded-xl border-input"
+ className="h-10 rounded-md border-input"
  />
  </div>
  </div>
@@ -508,14 +508,14 @@ export default function AdminTrainersPage() {
  type="button"
  variant="outline"
  onClick={() => setEditTrainerOpen(false)}
- className="rounded-xl h-10 px-6 font-medium"
+ className="rounded-md h-10 px-6 font-medium"
  >
  Cancel
  </Button>
  <Button
  type="submit"
  disabled={isSubmitting}
- className="min-w-[140px] rounded-xl h-10 font-medium"
+ className="min-w-[140px] rounded-md h-10 font-medium"
  >
  {isSubmitting ? (
  <>
@@ -544,7 +544,7 @@ export default function AdminTrainersPage() {
  </DialogHeader>
 
  {newTrainerCredentials && (
- <div className="space-y-4 p-4 bg-muted/50 rounded-xl border">
+ <div className="space-y-4 p-4 bg-muted/50 rounded-md border">
  <div className="space-y-1">
  <Label className="text-xs text-muted-foreground uppercase">Email</Label>
  <div className="flex items-center justify-between gap-2 p-2 bg-background border rounded">

@@ -415,7 +415,7 @@ function ForgotPasswordContent() {
                   type="submit"
                   size="lg"
                   className={cn(
-                    "group relative w-full h-[54px] rounded-xl overflow-hidden font-bold transition-all duration-400 active:scale-[0.98]",
+                    "group relative w-full h-[54px] rounded-md overflow-hidden font-bold transition-all duration-400 active:scale-[0.98]",
                     isEmailValid
                       ? "bg-brown-900 text-brown-50 hover:bg-brown-800 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
                       : "bg-brown-100/50 text-brown-400 border border-brown-200/60 cursor-not-allowed shadow-none"
@@ -467,7 +467,7 @@ function ForgotPasswordContent() {
                   type="submit"
                   size="lg"
                   className={cn(
-                    "group relative w-full h-[54px] rounded-xl overflow-hidden font-bold transition-all duration-400 active:scale-[0.98]",
+                    "group relative w-full h-[54px] rounded-md overflow-hidden font-bold transition-all duration-400 active:scale-[0.98]",
                     otpValue.length === 6
                       ? "bg-brown-900 text-brown-50 hover:bg-brown-800 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
                       : "bg-brown-100/50 text-brown-400 border border-brown-200/60 cursor-not-allowed shadow-none"
@@ -534,7 +534,7 @@ function ForgotPasswordContent() {
                   type="submit"
                   size="lg"
                   className={cn(
-                    "group relative w-full h-[54px] rounded-xl overflow-hidden font-bold transition-all duration-400 active:scale-[0.98]",
+                    "group relative w-full h-[54px] rounded-md overflow-hidden font-bold transition-all duration-400 active:scale-[0.98]",
                     (newPassword && confirmPassword && !pwErrors.new && !pwErrors.confirm)
                       ? "bg-brown-900 text-brown-50 hover:bg-brown-800 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
                       : "bg-brown-100/50 text-brown-400 border border-brown-200/60 cursor-not-allowed shadow-none"
@@ -567,7 +567,7 @@ function ForgotPasswordContent() {
                 <br />
                 You can now sign in with your new credentials.
               </p>
-              <Button asChild className="w-full bg-brown-800 text-brown-50 hover:bg-brown-700 shadow-lg active:scale-[0.98] h-[54px] rounded-xl font-bold transition-all">
+              <Button asChild className="w-full bg-brown-800 text-brown-50 hover:bg-brown-700 shadow-lg active:scale-[0.98] h-[54px] rounded-md font-bold transition-all">
                 <Link href="/login">Return to Login</Link>
               </Button>
             </section>

@@ -18,7 +18,7 @@ export function TrainingSection({ training }: TrainingSectionProps) {
  <Card className="overflow-hidden group">
  <CardHeader className="border-b border-border/60 bg-muted/10">
  <CardTitle className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-  <div className="rounded-xl border border-border/60 bg-primary/10 p-2 shadow-sm">
+  <div className="rounded-md border border-border/60 bg-primary/10 p-2 shadow-sm">
     <Users className="h-5 w-5 text-primary" />
   </div>
  Training Batches
@@ -31,7 +31,7 @@ export function TrainingSection({ training }: TrainingSectionProps) {
  {trainingBatches.length === 0 ? (
  <p className="text-sm text-muted-foreground italic">No active training batches.</p>
  ) : trainingBatches.map((batch) => (
- <div key={batch.id} className="premium-muted space-y-3 rounded-xl border border-border/60 p-4 transition-colors duration-200 hover:bg-card-hover">
+ <div key={batch.id} className="premium-muted space-y-3 rounded-md border border-border/60 p-4 transition-colors duration-200 hover:bg-card-hover">
  <div className="flex items-start justify-between">
  <div>
  <h4 className="font-semibold text-foreground">{batch.name}</h4>
@@ -74,9 +74,9 @@ export function TrainingSection({ training }: TrainingSectionProps) {
  ) : upcomingSessions.map((session: any) => (
  <div
  key={session.id}
- className="premium-muted group/session flex items-center gap-4 rounded-xl border border-border/60 p-3 transition-all duration-200 hover:border-brown-800/20 hover:bg-card-hover"
+ className="premium-muted group/session flex items-center gap-4 rounded-md border border-border/60 p-3 transition-all duration-200 hover:border-brown-800/20 hover:bg-card-hover"
  >
-  <div className="flex flex-col items-center justify-center h-12 w-12 rounded-lg bg-primary/10 border border-primary/20 shrink-0">
+  <div className="flex flex-col items-center justify-center h-12 w-12 rounded-md bg-primary/10 border border-primary/20 shrink-0">
     <span className="text-xs font-bold text-primary">FEB</span>
     <span className="text-lg font-black text-primary leading-none">18</span>
   </div>

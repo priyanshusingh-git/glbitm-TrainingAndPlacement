@@ -28,7 +28,7 @@ export default function Recruiters() {
           {recruiterCategories.map((category) => (
             <div
               key={category.title}
-              className="min-w-[240px] sm:min-w-0 rounded-2xl border border-border bg-white px-4 py-4 shadow-[0_2px_12px_rgba(81,41,18,0.07)]"
+              className="min-w-[240px] sm:min-w-0 rounded-md border border-border bg-white px-4 py-4 shadow-[0_2px_12px_rgba(81,41,18,0.07)]"
             >
               <div className="font-display text-[18px] font-bold text-brown-900">
                 {category.icon} {category.title}
@@ -49,7 +49,7 @@ export default function Recruiters() {
           {recruiterShowcase.map((company) => (
             <div
               key={`${company.initial}-${company.name}`}
-              className="flex flex-col items-center gap-1.5 rounded-2xl border border-border bg-white px-3 py-4 text-center shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-0.5 hover:border-brown-800/25"
+              className="flex flex-col items-center gap-1.5 rounded-md border border-border bg-white px-3 py-4 text-center shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-0.5 hover:border-brown-800/25"
             >
               <div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-brown-800 to-brown-700 font-display text-[15px] font-bold text-white">
                 {company.initial}

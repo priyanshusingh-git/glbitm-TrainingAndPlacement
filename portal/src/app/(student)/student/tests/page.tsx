@@ -101,14 +101,14 @@ export default function StudentTestsPage() {
  const isOngoing = status ==="Ongoing";
 
  return (
- <div key={test.id} className="group bg-background border rounded-xl p-4 shadow-sm hover:border-brown-800/50 transition-all">
+ <div key={test.id} className="group bg-background border rounded-md p-4 shadow-sm hover:border-brown-800/50 transition-all">
  <div className="flex justify-between items-start mb-2">
  <Badge variant="secondary" className="text-[10px] uppercase font-bold tracking-wider">
  {test.type}
  </Badge>
  <Badge className={`${isOngoing
- ?"bg-indigo-500 hover:bg-indigo-600 animate-pulse"
- :"bg-amber-500 hover:bg-amber-600"
+ ?"bg-amber-500 hover:bg-amber-600 animate-pulse"
+ :"bg-brown-800 hover:bg-brown-900"
  } text-[10px] font-bold uppercase transition-all`}>
  {status}
  </Badge>
@@ -176,7 +176,7 @@ export default function StudentTestsPage() {
  <CardContent className="pt-6">
  <div className="space-y-4">
  {results.length === 0 ? (
- <div className="text-center py-12 border border-dashed rounded-xl bg-muted/5">
+ <div className="text-center py-12 border border-dashed rounded-md bg-muted/5">
  <CheckCircle2 className="h-10 w-10 text-muted-foreground mx-auto mb-3 opacity-30" />
  <h3 className="font-semibold text-lg">No results yet</h3>
  <p className="text-muted-foreground max-w-xs mx-auto text-sm">
@@ -189,7 +189,7 @@ export default function StudentTestsPage() {
  const isPassed = result.marksObtained >= passingScore;
 
  return (
- <div key={result.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border p-5 rounded-xl hover:shadow-md hover:border-brown-800/20 transition-all bg-card/50 backdrop-blur-sm">
+ <div key={result.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border p-5 rounded-md hover:shadow-md hover:border-brown-800/20 transition-all bg-card/50 backdrop-blur-sm">
  <div className="space-y-1">
  <div className="flex items-center gap-2">
  <h4 className="font-bold text-lg">{result.test?.title ||"Unknown Test"}</h4>

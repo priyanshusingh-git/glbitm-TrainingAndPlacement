@@ -32,7 +32,7 @@ export const forgotPasswordBrandContent = {
   ),
   description: "A 6-digit OTP will be sent to your registered email. The entire reset process takes under two minutes and your data stays protected throughout.",
   bottom: (
-    <div className="space-y-3 rounded-2xl border border-white/9 bg-white/5 p-5">
+    <div className="space-y-3 rounded-md border border-white/9 bg-white/5 p-5">
       {[
         {
           icon: "🔐",
@@ -71,9 +71,9 @@ export const changePasswordBrandContent = {
   ),
   description: "To keep your professional profile and internship records secure, we require a one-time password update before you proceed to the placement portal.",
   bottom: (
-    <div className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+    <div className="space-y-4 rounded-md border border-white/10 bg-white/5 p-6 backdrop-blur-md">
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/20 text-amber-500">
+        <div className="flex h-10 w-10 items-center justify-center rounded-md bg-amber-500/20 text-amber-500">
           <CheckCircle2 className="h-5 w-5" />
         </div>
         <div>

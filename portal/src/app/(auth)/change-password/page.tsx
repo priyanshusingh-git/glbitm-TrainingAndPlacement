@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, CheckCircle2, Loader2, MoveRight } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
@@ -16,9 +16,18 @@ import { cn } from "@/lib/utils";
 
 function Feedback({ message, success = false }: { message: string; success?: boolean }) {
   return (
-    <div className={cn("feedback-message", success ? "feedback-message-success" : "feedback-message-error")}>
-      {success ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" /> : <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />}
-      <span>{message}</span>
+    <div className={cn(
+      "flex items-start gap-3 rounded-md border p-4 text-[14px] leading-snug animate-fade-in shadow-sm",
+      success 
+        ? "border-emerald-100 bg-emerald-50/50 text-emerald-800 shadow-emerald-500/5" 
+        : "border-red-100 bg-red-50/50 text-red-800 shadow-red-500/5"
+    )}>
+      {success ? (
+        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+      ) : (
+        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
+      )}
+      <div className="flex-1 font-medium">{message}</div>
     </div>
   );
 }
@@ -36,6 +45,7 @@ export default function ChangePasswordPage() {
   const [loading, setLoading] = useState(false);
   const { user, logout, updateUser } = useAuth();
   const router = useRouter();
+  const confirmRef = useRef<HTMLInputElement>(null);
 
   // Field-level validation
   const [touched, setTouched] = useState({ new: false, confirm: false });
@@ -137,6 +147,12 @@ export default function ChangePasswordPage() {
                   if (touched.new) setFieldErrors((p) => ({ ...p, new: validateNewPw(e.target.value) }));
                 }}
                 onBlur={handleNewPwBlur}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    confirmRef.current?.focus();
+                  }
+                }}
                 showStrength
                 showBreachCheck
                 className={cn("auth-input", touched.new && fieldErrors.new && "input-error")}
@@ -149,6 +165,7 @@ export default function ChangePasswordPage() {
               <Label htmlFor="confirm" className="auth-label text-[13px] font-semibold text-brown-800/80">CONFIRM PASSWORD</Label>
               <PasswordInput
                 id="confirm"
+                ref={confirmRef}
                 value={confirmPassword}
                 onChange={(e) => {
                   setConfirmPassword(e.target.value);
@@ -161,17 +178,17 @@ export default function ChangePasswordPage() {
               <FieldError message={touched.confirm ? fieldErrors.confirm : null} />
             </div>
 
-            <div className="space-y-3 pt-2">
+            <div className="space-y-1.5 pt-4">
               <Button
                 type="submit"
                 size="lg"
                 className={cn(
-                  "group relative w-full h-[54px] rounded-xl overflow-hidden font-bold transition-all duration-400 active:scale-[0.98]",
+                  "group relative w-full h-[54px] rounded-md overflow-hidden font-bold transition-all duration-400 active:scale-[0.98] animate-fade-in",
                   success
-                    ? "bg-emerald-600 text-white"
+                    ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/20"
                     : isFormValid
-                      ? "bg-brown-900 text-brown-50 hover:bg-brown-800 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
-                      : "bg-brown-100/50 text-brown-400 border border-brown-200/60 cursor-not-allowed shadow-none"
+                      ? "bg-brown-900 text-white hover:bg-brown-800 shadow-xl shadow-amber-900/10 hover:shadow-amber-900/20 hover:-translate-y-0.5"
+                      : "bg-brown-50 text-brown-300 border border-brown-100 cursor-not-allowed shadow-none"
                 )}
                 disabled={loading || !!success}
               >
@@ -181,13 +198,18 @@ export default function ChangePasswordPage() {
                   <div className="flex items-center gap-2"><Loader2 className="h-5 w-5 animate-spin" /><span>Updating…</span></div>
                 ) : (
                   <>
-                    <span>Update Password</span>
+                    <span>Complete Setup & Sign In</span>
                     <MoveRight className="h-4.5 w-4.5 transition-transform duration-300 group-hover:translate-x-1" />
                   </>
                 )}
               </Button>
 
-              <Button variant="outline" type="button" className="w-full h-[50px] rounded-xl border-brown-100 text-brown-600 hover:bg-brown-50 transition-colors font-medium" onClick={logout}>
+              <Button 
+                variant="ghost" 
+                type="button" 
+                className="w-full h-[50px] rounded-md border border-transparent text-brown-500 hover:bg-brown-100/40 hover:text-brown-900 transition-all font-bold active:scale-[0.98] animate-fade-in" 
+                onClick={logout}
+              >
                 Cancel and sign out
               </Button>
             </div>

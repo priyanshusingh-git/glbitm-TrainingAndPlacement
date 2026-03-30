@@ -60,7 +60,7 @@ export function StatCard({
  </p>
  )}
  </div>
- <div className={cn("rounded-xl p-3", iconStyles[variant])}>
+ <div className={cn("rounded-md p-3", iconStyles[variant])}>
  <Icon className="h-6 w-6" />
  </div>
  </div>

@@ -55,7 +55,7 @@ export function AuthShell({
         }
         description={asideDescription}
         bottom={
-          <div className="space-y-3 rounded-2xl border border-white/9 bg-white/5 p-5">
+          <div className="space-y-3 rounded-md border border-white/9 bg-white/5 p-5">
             {highlights.map((item) => (
               <div key={item.title} className="flex items-start gap-3">
                 <div className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg bg-amber-500/12 text-[15px]">

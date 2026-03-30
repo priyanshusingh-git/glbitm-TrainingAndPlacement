@@ -266,10 +266,33 @@ Never use arbitrary z-index values. Use the defined scale:
 3. **Eager validation shames users** — Always use blur-event + touched-state logic.
 4. **Hardcoded hex breaks theme updates** — Always use Tailwind tokens or CSS vars.
 5. **Content in JSX breaks maintainability** — Always put text/data in `/src/data/`.
+6. **Phantom Captcha on Localhost** — Always check `hcaptchaSiteKey` before enforcing captcha required states.
+7. **Clear-text Passwords in Emails** — NEVER include temporary passwords in any email template or queue payload. Use Magic Links.
+8. **SaaS Design Drift** — Never use bubbly `rounded-2xl` or generic tailwind grey shadows. Enforce strict `rounded-md` and brown-tinted `--shadow-md` to maintain the authoritative 'Prestige Institutional' aesthetic.
 
 ---
 
-## 12. Environment Variables
+## 14. Authentication & Induction (The Magic Link Flow)
+
+### 14.1 New Student Induction
+New students are bulk-imported or created without a password. 
+- Generated: `magicToken` (48h expiry) stored in Prisma.
+- Communicated: A secure, one-click Magic Link in the welcome email.
+- Action: On click, they are verified, authenticated, and redirected to `/change-password`.
+
+### 14.2 Admin Password Resets
+Admins can trigger a password reset for any user.
+- Action: Purges the old password, generates a `magicToken`.
+- Link: Sent via email; one-time use ONLY (deleted on successful sign-in).
+
+### 14.3 Self-Heal UX (Resend induction)
+If an induction link is lost or expired, the Login page implements a **contextual** recovery flow.
+- Triggers only when a login attempt fails for a user with `mustChangePassword = true`.
+- Displays a specialized error with a "Resend Link" action.
+
+---
+
+## 15. Environment Variables
 
 | Variable | Purpose |
 |:---------|:--------|
@@ -280,7 +303,29 @@ Never use arbitrary z-index values. Use the defined scale:
 
 ---
 
-## 13. Reference Documents
+## 16. Serverless Optimization & Timeouts
+
+The portal is designed for **Vercel / Next.js Serverless** infrastructure. This imposes a strict **10s–30s execution timeout** on all API routes. 
+
+### 16.1 The Problem
+Operations like bulk importing 2,000+ students, generating hundreds of Magic Links, or uploading large Excel files will **FAIL** if processed synchronously.
+
+### 16.2 Optimization Patterns (REQUIRED)
+
+| Pattern | Usage | Benefit |
+|:--------|:------|:--------|
+| **Client-Side Parsing** | `xlsx` in browser | Offloads CPU work to student/admin machine. Server receives clean JSON, not raw files. |
+| **Async Workers (QStash)** | `Triggering Events` | Long tasks (Email blasts, Heavy CSVs) are pushed to QStash and processed in the background. |
+| **Object Offloading (R2)** | `Cloudflare R2` | Large files are uploaded to R2 FIRST. The API only handles the file URL. |
+
+### 16.3 When to use which?
+- **Small (1-100 rows)**: Direct API call is acceptable.
+- **Medium (100-500 rows)**: Use Client-side parsing + Direct API.
+- **Large (500-5,000+ rows)**: Use R2 Upload + QStash Eventual Processing.
+
+---
+
+## 17. Reference Documents
 
 For deeper technical specifications, consult:
 - `docs/DESIGN_SYSTEM_v2.md` — **Master Reference** (Colors, Fonts, Spacing, Architecture)

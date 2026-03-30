@@ -32,7 +32,7 @@ export function EmptyState({
 "flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-500",
  variant ==="default" &&"py-20 px-4",
  variant ==="minimal" &&"py-10 px-2",
- variant ==="card" &&"py-16 px-6 border-2 border-dashed rounded-2xl bg-muted/5",
+ variant ==="card" &&"py-16 px-6 border-2 border-dashed rounded-md bg-muted/5",
  className
  )}
  {...props}
@@ -42,7 +42,7 @@ export function EmptyState({
  <div className="absolute inset-0 -m-4 bg-brown-800/5 rounded-full blur-2xl animate-pulse" />
 
  {/* Icon Container */}
- <div className="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-background to-muted border border-border/50 shadow-xl shadow-primary/5">
+ <div className="relative flex h-20 w-20 items-center justify-center rounded-md bg-gradient-to-br from-background to-muted border border-border/50 shadow-xl shadow-primary/5">
  {Icon ? (
  <Icon className="h-10 w-10 text-brown-800/60" />
  ) : (
@@ -64,7 +64,7 @@ export function EmptyState({
  <div className="mt-8">
  <Button
  onClick={action.onClick}
- className="rounded-xl px-8 h-11 font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
+ className="rounded-md px-8 h-11 font-semibold transition-all hover:shadow-lg hover:shadow-primary/20"
  >
  {action.icon && <action.icon className="mr-2 h-4 w-4" />}
  {action.label}
