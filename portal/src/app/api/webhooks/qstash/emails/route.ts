@@ -25,5 +25,11 @@ async function handler(req: Request) {
   }
 }
 
+const isDev = process.env.NODE_ENV === 'development';
+const hasKeys = !!(process.env.QSTASH_CURRENT_SIGNING_KEY && process.env.QSTASH_NEXT_SIGNING_KEY);
+
 // Next.js App Router verification wrapper
-export const POST = verifySignatureAppRouter(handler);
+// Bypass for local development if keys are missing
+export const POST = (isDev && !hasKeys) 
+  ? handler 
+  : verifySignatureAppRouter(handler);

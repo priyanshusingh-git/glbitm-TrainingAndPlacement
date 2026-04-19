@@ -306,6 +306,9 @@ If an induction link is lost or expired, the Login page implements a **contextua
 | `DATABASE_URL` | Prisma database connection string |
 | `JWT_SECRET` | Secret for native session signing |
 | `EMAIL_USER` / `EMAIL_PASS` | SMTP credentials for notifications |
+| `QSTASH_CURRENT_SIGNING_KEY` | Upstash QStash current signing key (Production only) |
+| `QSTASH_NEXT_SIGNING_KEY` | Upstash QStash next signing key (Production only) |
+| `QSTASH_TOKEN` | Upstash QStash REST API token |
 
 ---
 
