@@ -1,0 +1,1109 @@
+
+GL BAJAJ INSTITUTE OF TECHNOLOGY & MANAGEMENT
+Training & Placement + Career Development Centre Portal
+INDUSTRY-STANDARD MOBILE-FIRST
+LANDING PAGE SPECIFICATION
+Every Section · Every Component · Every Interaction · Ready to Implement
+
+Property
+Value
+Document
+Mobile-First Landing Page Implementation Spec
+Version
+1.0
+Target File
+glbajaj-tnp-v5.html → v6.html (next production release)
+Problem
+Landing page is ~16 screens tall on mobile (target: ≤11 screens)
+Root Cause
+Every section stacks to 1-col on mobile — treats mobile as a smaller desktop
+Solution
+Industry-standard mobile treatments: 2-col compacts, horizontal scrolls, progressive disclosure, collapse/expand
+Covers
+All 12 sections · CSS changes · JS interactions · Accessibility · Before/after measurements
+
+
+1.  The Core Problem — Why the Page is Too Tall
+The landing page currently has a fundamental misunderstanding of mobile-first design. Making every grid go to 1-column on mobile is not mobile-first — it is desktop shrunk down. Industry-standard mobile design uses different visual patterns for mobile, not just fewer columns.
+
+16.1
+screens tall on 360×812
+11
+industry target (max)
+~5,200px
+wasted by 1-col stacking
+360px
+target base width
+
+1.1  What "Mobile-First" Actually Means for Landing Pages
+Mobile-first CSS (min-width queries) is correct — but mobile-first design goes further. It means the mobile layout is a distinct, purpose-built experience — not the desktop layout with fewer columns. On desktop, 6 cards in 2 rows is scannable. On mobile, 6 cards in a single column forces the user to scroll through 6 full cards to understand a section that could be communicated in 2 rows of 3 compact items.
+
+Misconception
+Reality
+1-col mobile = mobile-first
+1-col is often the wrong treatment. Mobile-first means choosing the right pattern for a small screen, which is often 2-col compact or horizontal scroll.
+Show all content on mobile
+Progressive disclosure: show the summary on mobile, let users tap to see more. Every major app does this.
+Responsive means same content, different layout
+Responsive means different content density per breakpoint. Mobile gets scannable, desktop gets detailed.
+Section padding should match desktop
+Mobile sections need tighter vertical padding to reduce scroll distance without losing breathing room.
+
+1.2  The Real Industry Standard — What Top Indian Apps Do
+Every major Indian app and website that students interact with daily uses the same patterns. These are not design opinions — they are validated patterns from apps with hundreds of millions of Indian users on budget Android phones.
+
+App/Site
+Mobile Pattern for Feature Grids
+Lesson for GLBITM Portal
+Swiggy
+2-col restaurant cards, horizontal scroll for categories
+2-col for cards, horizontal scroll for recruiter categories
+Paytm
+2×2 stat blocks always, tabs for switching data
+2×2 stats always — never 1-col for numbers
+LinkedIn
+2-col for people grids, card title only with expand
+2-col advisory/team, title-first with expand
+Razorpay landing
+2-col feature cards icon+title, no body text on mobile
+2-col guidance/training modules, body hidden on mobile
+Naukri
+3-col company logos, horizontal scroll for filters
+3-col logos minimum, horizontal scroll for recruiter cats
+Flipkart
+Horizontal scroll for category strips
+Horizontal scroll for recruiter category strip
+Zomato
+Horizontal scroll with peek (partial next item visible)
+Hero panel horizontal scroll with visible peek
+
+
+2.  Current vs Target — Section-by-Section Height Analysis
+This table shows the estimated height of every section at 360px width, what is causing the excess height, and what the target height is after applying industry-standard mobile treatments.
+
+Section
+Current Height (est.)
+Root Cause
+Target Height
+Saving
+Nav
+68px
+Fine as-is
+68px
+—
+Hero
+580px
+Good, can tighten slightly
+520px
+60px
+Ticker
+44px
+Fine as-is
+44px
+—
+Placements (stats)
+870px
+4 stat cards in 1-col (360px each) + table + bars
+620px
+250px
+Process
+1,160px
+6 full cards in 1-col (~193px each)
+380px
+780px
+Policy
+1,220px
+4 text-heavy cards in 1-col (~305px each)
+540px
+680px
+Training
+1,320px
+6 module cards + 6 cert items all 1-col
+620px
+700px
+CDC Skills
+1,120px
+6 skill cards in 1-col (~187px each)
+480px
+640px
+Recruiters
+1,260px
+4 category cards 1-col + small logo grid
+560px
+700px
+Advisory
+740px
+4 person cards in 1-col (~185px each)
+320px
+420px
+Guidance
+1,120px
+6 guidance cards in 1-col (~187px each)
+380px
+740px
+Alumni
+400px
+Carousel — fine as-is
+400px
+—
+Team
+760px
+6 team cards in 1-col (~127px each)
+380px
+380px
+Contact
+800px
+Form + contact info — mostly fine
+720px
+80px
+Footer
+500px
+Fine
+460px
+40px
+TOTAL
+~13,068px (16.1 screens)
+1-col stacking throughout
+~6,492px (8.0 screens)
+~6,576px saved
+
+Target: 8 screens on 360×812 device. Current: 16.1 screens. The fix is not removing content — it is applying the right mobile layout pattern to each section. Every piece of content stays on the page.
+
+
+3.  The 5 Industry-Standard Mobile Patterns
+These are the five layout patterns used across every major app and website for handling content-dense sections on mobile. Each pattern is applied to specific sections of the GLBITM portal based on the content type.
+
+Pattern 1 — 2-Col Compact Grid (Most Used)
+Default for all feature grids on mobile. Show icon + title only. Hide body text. User taps to expand if interested. This is how Razorpay, Stripe, Linear, Notion handle feature sections on mobile.
+
+When to use
+When NOT to use
+Cards with a clear icon + short title (≤40 chars)
+Cards where the body text is essential to understand what is being offered
+6+ items that would otherwise stack very tall
+Cards with complex data that cannot be compressed to a title
+Items that are scannable at a glance
+When each card has very different visual weight
+
+/* Pattern 1 — 2-col compact, body hidden on mobile */
+.pg { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.pc p { display:none; }           /* hide body on mobile */
+.pc.expanded p { display:block; } /* show on tap */
+ 
+/* Restore full layout at 1024px */
+@media(min-width:1024px) {
+  .pg { grid-template-columns:repeat(3,1fr); gap:18px; }
+  .pc p { display:block; }        /* always show on desktop */
+}
+
+Applied to: Process cards (.pg), Training modules (.tm), CDC Skills (.skg), Guidance cards (.gg), Team cards (.teamg), Advisory (.ag)
+
+Pattern 2 — 2×2 Stat Grid (Always)
+Stat/number blocks are never 1-col on mobile. Numbers are short (2–5 characters). A 2×2 grid fits perfectly on 360px. This is how Paytm, PhonePe, Groww, LinkedIn display metrics — always 2 across, never single column.
+
+Why 2×2 is always correct for stats
+
+A stat block contains: rule (22px) + number (38–52px) + label (10px) + sublabel (10px) = ~90–110px tall — fits 2-col at 360px comfortably
+Column width at 2-col: (360 - 32px padding - 1px border) / 2 = ~163px per column. A 5-char number at 38px fits easily.
+
+/* Pattern 2 — 2×2 stats — remove 1-col base, start at 2-col */
+.sg { display:grid; grid-template-columns:repeat(2,1fr); }
+.sc { padding:20px 14px; }
+.sc:nth-child(odd) { border-right:1px solid rgba(255,255,255,.06); }
+.sc:nth-child(3),.sc:nth-child(4) { border-top:1px solid rgba(255,255,255,.06); }
+ 
+/* Scale up at 1024px */
+@media(min-width:1024px) {
+  .sg { grid-template-columns:repeat(4,1fr); }
+  .sc { padding:40px 32px; }
+}
+
+Pattern 3 — Horizontal Scroll Strip
+For category lists, filters, logo strips, and any content where items are equal in importance and the user scans horizontally rather than vertically. Key: add a visible scroll indicator (fade + partial next item) so users know it is scrollable. Without this, many users never discover the scroll.
+
+/* Pattern 3 — horizontal scroll with peek indicator */
+.rc-strip {
+  display:flex;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  gap:10px;
+  padding-bottom:4px;
+  /* Fade right edge to hint scrollability */
+  mask-image:linear-gradient(to right, black 85%, transparent);
+  -webkit-mask-image:linear-gradient(to right, black 85%, transparent);
+}
+.rc-strip .rcat { min-width:200px; flex-shrink:0; }
+ 
+/* Remove mask and restore grid at 640px */
+@media(min-width:640px) {
+  .rc-strip { display:grid; grid-template-columns:repeat(2,1fr); mask-image:none; }
+  .rc-strip .rcat { min-width:auto; }
+}
+
+Applied to: Recruiter category strip (.rc). Logo grid stays as grid (3-col at base).
+
+Pattern 4 — Progressive Disclosure (Collapse/Expand)
+For text-heavy content that users need to reference but do not need to read all at once. Show the heading and first item. Hide the rest behind a "Show more" button. This is used universally for terms, policy, FAQs, and feature details on mobile.
+
+/* Pattern 4 — collapse/expand for policy cards */
+.pl-body { max-height:0; overflow:hidden; transition:max-height .3s ease; }
+.pl.expanded .pl-body { max-height:500px; }
+.pl-toggle {
+  display:flex; align-items:center; justify-content:space-between;
+  cursor:pointer; padding:16px 0; min-height:44px;
+}
+.pl-toggle::after { content:"▸"; color:var(--am-d); transition:transform .2s; }
+.pl.expanded .pl-toggle::after { transform:rotate(90deg); }
+ 
+/* Always expanded on desktop */
+@media(min-width:1024px) {
+  .pl-body { max-height:none !important; }
+  .pl-toggle::after { display:none; }
+}
+
+Applied to: Placement Policy cards (.polg). Each card title is a tap target. Body collapses by default. First card is pre-expanded.
+
+Pattern 5 — 3-Col Logo/Icon Grid (Minimum)
+Small logo tiles and icon badges are never 2-col on mobile — they are compact enough for 3-col even at 360px. Each tile is: icon (36×36px) + name (10.5px) + sector (9px) = ~80px tall. 3-col at 360px gives 107px per column — plenty of space.
+
+/* Pattern 5 — 3-col logo grid at base (not 2-col) */
+.lg { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+ 
+@media(min-width:480px) { .lg { grid-template-columns:repeat(4,1fr); } }
+@media(min-width:1024px){ .lg { grid-template-columns:repeat(6,1fr); } }
+
+Applied to: Recruiter logo grid (.lg). Replaces current 2-col base.
+
+
+4.  Section-by-Section Implementation Specification
+This section specifies exactly what changes to make to every section in the landing page. Each entry covers: current problem, mobile treatment, CSS changes, JS required (if any), accessibility, and desktop behaviour.
+
+4.1  Navigation
+Property
+Specification
+Current state
+Fixed nav, 68px height. Hamburger on <1024px. Drawer slides down.
+Mobile issue
+Hamburger icon is 44×44px ✓. Drawer links are 44px min-height ✓. No issues.
+Enhancement
+Add visible scroll progress bar. ✓ Already implemented.
+Enhancement 2
+Drawer closes on outside tap. ✓ Already implemented.
+Enhancement 3
+Add backdrop overlay when drawer is open — dims content behind drawer.
+Status
+✓ Good — minor enhancement only
+
+/* Drawer backdrop overlay */
+.nav-overlay {
+  display:none; position:fixed; inset:0; z-index:580;
+  background:rgba(0,0,0,0.4);
+}
+.nav-overlay.active { display:block; }
+
+4.2  Hero Section
+Property
+Specification
+Current state
+Full-height hero, h1 + sub + 2 buttons + horizontal-scroll stat panel
+Mobile issue
+Hero panel horizontal scroll has no visible scroll indicator. Buttons stack at <480px.
+Fix 1
+Add right-fade mask + scroll hint arrow to hero panel: users do not discover horizontal scroll without a visual cue.
+Fix 2
+Reduce hero padding at 360px: 80px top is fine but bottom can be 40px (saves 8px).
+Fix 3
+H1 at 360px: clamp(28px, 8vw, 44px) — tighten minimum from 30px to 28px to gain one extra line without wrapping on very narrow screens.
+Fix 4
+Hero sub text: 13px on 360px — slightly smaller to reduce height.
+Status
+✓ Mostly good — scroll indicator needed
+
+/* Hero panel scroll indicator */
+.hpanel-wrap {
+  position:relative;
+}
+.hpanel-wrap::after {
+  content:"";
+  position:absolute; right:0; top:0; bottom:0; width:40px;
+  background:linear-gradient(to right, transparent, rgba(58,28,11,0.9));
+  pointer-events:none;
+}
+/* Remove fade on desktop where panel is vertical */
+@media(min-width:1024px) { .hpanel-wrap::after { display:none; } }
+
+4.3  Placement Statistics (.sg)
+Property
+Specification
+Current state
+1-col at base → 2-col at 480px → 4-col at 1024px
+Problem
+1-col stacks 4 numbers vertically. A number section in 1-col is never industry standard.
+Fix
+Start at 2×2 from base (360px). Remove 1-col entirely.
+Column math
+360px - 32px (padding) - 1px (border) = 327px / 2 = 163px per column. Number at 38px Fraunces = 76px wide max. Fits perfectly.
+CSS change
+Remove .sg{grid-template-columns:1fr}. Change base to repeat(2,1fr). Update border logic.
+Stat number size
+Keep 38px at base — readable. Scale: 40px at 480px, 44px at 640px, 52px at 1024px.
+Sub-label
+Keep hidden at mobile (sc-s display:none). Show at 1024px.
+Height saving
+4×90px (1-col) → 2×100px (2×2) = saves ~160px in this section.
+Status
+✗ Must fix — 1-col stats are never correct
+
+/* Stats — 2×2 from base, never 1-col */
+.sg { display:grid; grid-template-columns:repeat(2,1fr); }
+.sc { padding:20px 14px; border-right:none; border-bottom:1px solid rgba(255,255,255,.05); }
+.sc:nth-child(odd)  { border-right:1px solid rgba(255,255,255,.05); }
+.sc:nth-child(3),
+.sc:nth-child(4)   { border-bottom:none; border-top:1px solid rgba(255,255,255,.05); }
+ 
+@media(min-width:1024px) {
+  .sg { grid-template-columns:repeat(4,1fr); }
+  .sc { padding:40px 32px; border-bottom:none; border-right:1px solid rgba(255,255,255,.06); }
+}
+
+4.4  Placement Process (.pg)
+Property
+Specification
+Current state
+1-col at base → 2-col at 640px → 3-col at 1024px. 6 full-text cards.
+Problem
+6 full cards × ~193px each = ~1,160px for one section. No user reads 6 full paragraphs on a mobile landing page.
+Fix
+2-col compact at base. Each card shows: step number + heading only. Body text hidden. Tap to expand individual card.
+Card height (compact)
+Step number (38px) + heading (20px) + padding (28px) = ~86px. 2-col × 3 rows = 3×86px = ~260px + gaps.
+Height saving
+~1,160px → ~300px. Saves 860px.
+Expand behaviour
+Tapping any card reveals its body text. Card expands in place. Chevron rotates. Only one card expanded at a time (accordion behaviour).
+Desktop
+All cards always show full text at 1024px. No expand/collapse.
+Accessibility
+card role="button", aria-expanded, aria-controls. Keyboard: Enter/Space to toggle.
+Status
+✗ Must fix — 6 full cards 1-col is not acceptable
+
+/* Process — 2-col compact with expand */
+.pg { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.pc { cursor:pointer; }
+.pc p { display:none; margin-top:8px; }
+.pc.expanded p { display:block; }
+.pc-toggle { display:flex; align-items:center; justify-content:space-between; }
+.pc-toggle::after { content:"▸"; color:var(--am-d); font-size:12px; transition:transform .2s; }
+.pc.expanded .pc-toggle::after { transform:rotate(90deg); }
+ 
+@media(min-width:1024px) {
+  .pg { grid-template-columns:repeat(3,1fr); gap:18px; }
+  .pc { cursor:default; }
+  .pc p { display:block !important; }
+  .pc-toggle::after { display:none; }
+}
+
+// JS — accordion expand for process cards
+document.querySelectorAll('.pc').forEach(function(card) {
+  card.addEventListener('click', function() {
+    if(window.innerWidth >= 1024) return; // desktop always open
+    var wasOpen = card.classList.contains('expanded');
+    document.querySelectorAll('.pc').forEach(c => c.classList.remove('expanded'));
+    if(!wasOpen) card.classList.add('expanded');
+    card.setAttribute('aria-expanded', !wasOpen);
+  });
+  card.setAttribute('role','button');
+  card.setAttribute('aria-expanded','false');
+  card.setAttribute('tabindex','0');
+});
+
+4.5  Placement Policy (.polg)
+Property
+Specification
+Current state
+1-col, 4 text-heavy cards with full bullet lists visible.
+Problem
+4 full policy cards with 4-5 bullets each = ~1,220px. Heavy reading for mobile.
+Fix
+Keep 1-col (text-heavy, right choice). Add collapse/expand. First card pre-expanded. Others collapsed.
+Header area
+Card title (h3) becomes a tappable toggle. Min-height 44px. Chevron indicator.
+Body area
+ul element gets max-height:0 by default. Expands on toggle.
+Desktop
+All cards always open at 1024px. Toggle hidden.
+Height saving
+~1,220px → ~540px (4 headers + 1 open body). Saves ~680px.
+Status
+⚠ Fix — keep 1-col, add collapse only
+
+/* Policy collapse/expand */
+.pl-body { overflow:hidden; transition:max-height .32s ease; }
+.pl-body.collapsed { max-height:0 !important; }
+.pl h3 {
+  display:flex; align-items:center; justify-content:space-between;
+  cursor:pointer; min-height:44px; margin-bottom:0;
+}
+.pl h3::after { content:"▸"; color:var(--am-d); font-size:12px; transition:transform .2s; flex-shrink:0; }
+.pl.open h3::after { transform:rotate(90deg); }
+.pl.open h3 { margin-bottom:12px; }
+ 
+@media(min-width:1024px) {
+  .pl h3 { cursor:default; }
+  .pl h3::after { display:none; }
+  .pl-body { max-height:none !important; }
+}
+
+4.6  Training Section (.tg + .tmods)
+Property
+Specification
+Current state
+1-col: 6 training module cards (full text) + 6 certification items side by side.
+Problem
+6 full module cards ≈ 720px. Combined with certs ≈ 1,320px total.
+Fix — modules (.tm)
+2-col compact: icon (left) + h4 title only. Body text hidden on mobile. Tap to expand.
+Fix — certifications (.cl)
+Already compact list format. Keep as-is — each cert item is only ~60px tall.
+Training grid (.tg)
+Keep 1-col on mobile (modules left, certs right on desktop). On mobile: modules stack above certs.
+Module card compact size
+Icon (38px) + title (14px) + padding (22px) = ~74px. 2-col × 3 rows = ~230px vs current ~720px.
+Height saving
+~1,320px → ~620px. Saves ~700px.
+Status
+✗ Must fix — 6 full cards 1-col is not acceptable
+
+/* Training modules — 2-col compact at mobile */
+.tmods { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
+.tm { flex-direction:column; align-items:flex-start; padding:14px 12px; }
+.tm p { display:none; }
+.tm.expanded p { display:block; }
+.tm { cursor:pointer; }
+ 
+@media(min-width:1024px) {
+  .tmods { display:flex; flex-direction:column; gap:10px; }
+  .tm { flex-direction:row; align-items:flex-start; padding:15px 16px; cursor:default; }
+  .tm p { display:block !important; }
+}
+
+4.7  CDC Skills (.skg)
+Property
+Specification
+Current state
+1-col at base → 2-col at 480px → 3-col at 1024px.
+Problem
+1-col at base stacks 6 full skill cards. But skill cards are visually short — they fit 2-col at 360px.
+Fix
+Start at 2-col from base (360px). Card is: emoji (22px) + h3 (18px) + p (3 lines ~52px) + tags (~20px) + padding = ~130px. Two columns at 160px each fits fine.
+Card body
+Keep body text visible on mobile — it is short (2 lines max). Tags also stay.
+Note
+Unlike process/guidance cards which have 4+ lines, CDC skill cards are concise enough to show fully in 2-col.
+Height saving
+6×187px (1-col) → 3 rows × 140px (2-col) = saves ~540px.
+Status
+✗ Must fix — 1-col for 130px-tall cards is wrong
+
+/* CDC Skills — 2-col from base */
+.skg { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.sk p { font-size:11px; -webkit-line-clamp:2; display:-webkit-box; -webkit-box-orient:vertical; overflow:hidden; }
+ 
+@media(min-width:1024px) {
+  .skg { grid-template-columns:repeat(3,1fr); }
+  .sk p { display:block; font-size:12px; overflow:visible; }
+}
+
+4.8  Recruiters Section (.rc + .lg)
+Property
+Specification
+Current state
+.rc: 1-col (4 full category cards). .lg: 2-col logo grid.
+Problem — .rc
+4 full category cards × ~315px = ~1,260px. Category lists should be horizontally scrollable on mobile.
+Fix — .rc
+Horizontal scroll strip. Each card min-width:220px. Right fade mask shows it is scrollable. Partial next card visible.
+Problem — .lg
+2-col for logo tiles wastes space. Logo tiles are 80px tall — 3 comfortably fit at 360px.
+Fix — .lg
+3-col at base. 4-col at 480px. 6-col at 1024px.
+Height saving
+.rc: ~1,260px → ~280px (single scroll strip). .lg: 6 rows (2-col) → 4 rows (3-col). Total saves ~700px.
+Status
+✗ Must fix both rc and lg
+
+/* Recruiter cats — horizontal scroll */
+.rc {
+  display:flex;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  gap:12px;
+  mask-image:linear-gradient(to right,black 80%,transparent 100%);
+  -webkit-mask-image:linear-gradient(to right,black 80%,transparent 100%);
+}
+.rc::-webkit-scrollbar { display:none; }
+.rcat { min-width:220px; flex-shrink:0; }
+ 
+@media(min-width:768px) {
+  .rc { display:grid; grid-template-columns:repeat(2,1fr); mask-image:none; }
+  .rcat { min-width:auto; }
+}
+@media(min-width:1024px) { .rc { grid-template-columns:repeat(4,1fr); } }
+ 
+/* Logo grid — 3-col at base */
+.lg { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+@media(min-width:480px) { .lg { grid-template-columns:repeat(4,1fr); } }
+@media(min-width:1024px){ .lg { grid-template-columns:repeat(6,1fr); } }
+
+4.9  Advisory Board (.ag)
+Property
+Specification
+Current state
+1-col at base → 2-col at 640px → 3-col at 768px → 4-col at 1024px.
+Problem
+1-col at 360px for person cards. Person cards (avatar+name+role+company) are ~160px. 2-col at 160÷2=80px wide? Wait — let us re-check.
+Column math
+360px - 32px padding - 10px gap = 318px / 2 = 159px per column. Avatar circle is 48px. Name (13px) wraps fine at 159px. Role (2 lines at 11px) wraps fine. Company badge wraps fine.
+Fix
+Start 2-col at base. At mobile, show: avatar + name + company badge only. Role text hidden. Tap for full detail.
+Height saving
+4×160px (1-col) → 2×180px (2-col) = saves ~280px.
+Status
+✗ Fix — 2-col fits at 360px
+
+/* Advisory — 2-col at base */
+.ag { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.av-r { display:none; }                   /* hide role on mobile */
+@media(min-width:768px) {
+  .ag { grid-template-columns:repeat(3,1fr); }
+  .av-r { display:block; }               /* show role at tablet */
+}
+@media(min-width:1024px) { .ag { grid-template-columns:repeat(4,1fr); } }
+
+4.10  Career Guidance (.gg)
+Property
+Specification
+Current state
+1-col at base → 2-col at 640px → 3-col at 768px.
+Problem
+6 full guidance cards 1-col ≈ 1,120px. Same problem as process cards.
+Fix
+2-col compact at base. Show emoji + h3 only. Body paragraph hidden. Tap to expand (same accordion pattern as process).
+Card compact height
+Emoji (24px) + h3 (18px) + padding (32px) = ~74px. 2-col × 3 rows = ~230px vs current ~1,120px.
+Height saving
+~1,120px → ~280px. Saves ~840px.
+Status
+✗ Must fix
+
+/* Guidance — 2-col compact, body hidden */
+.gg { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.gu p { display:none; }
+.gu.expanded p { display:block; }
+.gu { cursor:pointer; }
+.gu-header { display:flex; align-items:flex-start; justify-content:space-between; }
+.gu-header::after { content:"▸"; color:var(--am-d); font-size:11px; flex-shrink:0; margin-top:2px; transition:transform .2s; }
+.gu.expanded .gu-header::after { transform:rotate(90deg); }
+ 
+@media(min-width:1024px) {
+  .gg { grid-template-columns:repeat(3,1fr); }
+  .gu p { display:block !important; }
+  .gu { cursor:default; }
+  .gu-header::after { display:none; }
+}
+
+4.11  Team Section (.teamg)
+Property
+Specification
+Current state
+1-col at base → 2-col at 640px → 3-col at 768px.
+Problem
+6 full team cards 1-col including phone numbers ≈ 760px. Full contact details on mobile team cards is excessive.
+Fix
+2-col compact at base. Show: avatar + name + role only. Phone/email hidden on mobile (contact section exists for this).
+Address card
+The address card spans full width (grid-column: span 2) on mobile.
+Column math
+360px - 32px - 10px gap = 318px / 2 = 159px. Avatar (44px) + name + role all fit at 159px.
+Height saving
+6×127px (1-col) → 3 rows × 90px (2-col) + 1 full-width = saves ~380px.
+Status
+✗ Fix — 2-col fits, hide phone on mobile
+
+/* Team — 2-col compact at base */
+.teamg { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.tc { display:none; }                   /* hide contact on mobile */
+.tcard:last-child { grid-column:span 2; } /* address full width */
+ 
+@media(min-width:768px) {
+  .teamg { grid-template-columns:repeat(3,1fr); }
+  .tc { display:block; }               /* show contact at tablet */
+  .tcard:last-child { grid-column:auto; }
+}
+
+4.12  Alumni Carousel
+Property
+Specification
+Current state
+Single slide on mobile, 2-up at 640px, 3-up at 1024px. Touch swipe. Auto-advance.
+Assessment
+Carousel pattern is correct for mobile — one testimonial at a time.
+Fix 1
+Carousel controls (prev/next) should be hidden at mobile — swipe is sufficient. Dots navigation stays.
+Fix 2
+Pause on intersection — only auto-advance when carousel is visible in viewport.
+Fix 3
+Card compact height on mobile: remove bottom padding, tighten quote font size to 11px.
+Status
+✓ Good — minor improvements only
+
+4.13  Contact Section
+Property
+Specification
+Current state
+1-col contact info + form on mobile. Form has stacked input pairs.
+Assessment
+1-col is correct for forms on mobile. No fix needed for layout.
+Fix 1
+Form submit button must be full-width on mobile (already done).
+Fix 2
+Input labels: increase to 11px for readability on small screens.
+Fix 3
+Contact info icons: reduce from 34×34px to 30×30px to save vertical space.
+Status
+✓ Good — minor fixes only
+
+4.14  Footer
+Property
+Specification
+Current state
+1-col stack at mobile, 2-col at 480px, 4-col at 1024px.
+Assessment
+Footer 1-col → 2-col progression is fine.
+Fix 1
+Footer links: reduce gap from 6px to 4px. Reduce font from 12px to 11px on mobile.
+Fix 2
+Accreditation badges: wrap in 2 rows max on mobile (currently can go 3 rows).
+Status
+✓ Good — minor fixes only
+
+
+5.  Complete CSS Change Summary
+All changes required at the base (360px) level — the mobile-first base styles that replace the current base. Everything from 480px upward remains unchanged except where noted.
+
+Class
+Current Base
+New Base
+Changed At
+.sg
+1-col
+2-col (repeat(2,1fr))
+base
+.sc
+22px 16px pad
+20px 14px pad
+base
+.pg
+1-col
+2-col (repeat(2,1fr))
+base
+.pc p
+display:block
+display:none
+base
+.polg
+1-col
+1-col + collapse/expand
+base — JS change
+.tg
+1-col
+1-col (unchanged)
+no change
+.tmods
+flex 1-col
+2-col grid
+base
+.tm p
+display:block
+display:none
+base
+.skg
+1-col
+2-col (repeat(2,1fr))
+base
+.rc
+1-col
+display:flex (h-scroll)
+base
+.rcat
+full card
+min-width:220px flex
+base
+.lg
+repeat(2,1fr)
+repeat(3,1fr)
+base
+.ag
+1-col
+2-col (repeat(2,1fr))
+base
+.av-r
+display:block
+display:none
+base
+.gg
+1-col
+2-col (repeat(2,1fr))
+base
+.gu p
+display:block
+display:none
+base
+.teamg
+1-col
+2-col (repeat(2,1fr))
+base
+.tc
+display:block
+display:none
+base
+
+6.  JavaScript Interactions Required
+Three JS interactions are needed for the mobile-specific expand/collapse patterns. All interactions must be disabled at 1024px and above (desktop always shows full content).
+
+6.1  Accordion — Process Cards
+// Process card accordion (single expand at a time)
+(function() {
+  var cards = document.querySelectorAll('.pc');
+  cards.forEach(function(card) {
+    card.setAttribute('role','button');
+    card.setAttribute('tabindex','0');
+    card.setAttribute('aria-expanded','false');
+    function toggle() {
+      if(window.innerWidth >= 1024) return;
+      var open = card.classList.contains('expanded');
+      cards.forEach(c => { c.classList.remove('expanded'); c.setAttribute('aria-expanded','false'); });
+      if(!open) { card.classList.add('expanded'); card.setAttribute('aria-expanded','true'); }
+    }
+    card.addEventListener('click', toggle);
+    card.addEventListener('keydown', function(e) { if(e.key==='Enter'||e.key===' ') { e.preventDefault(); toggle(); } });
+  });
+})();
+
+6.2  Accordion — Guidance Cards (same pattern)
+// Guidance card accordion
+(function() {
+  var cards = document.querySelectorAll('.gu');
+  cards.forEach(function(card) {
+    card.setAttribute('role','button');
+    card.setAttribute('tabindex','0');
+    card.setAttribute('aria-expanded','false');
+    card.addEventListener('click', function() {
+      if(window.innerWidth >= 1024) return;
+      var open = card.classList.contains('expanded');
+      cards.forEach(c => { c.classList.remove('expanded'); c.setAttribute('aria-expanded','false'); });
+      if(!open) { card.classList.add('expanded'); card.setAttribute('aria-expanded','true'); }
+    });
+  });
+})();
+
+6.3  Collapse/Expand — Policy Cards
+// Policy collapse/expand (independent — any can be open)
+(function() {
+  var cards = document.querySelectorAll('.pl');
+  cards.forEach(function(card, i) {
+    var body = card.querySelector('.pl-body');
+    var h3 = card.querySelector('h3');
+    if(!body || !h3) return;
+    h3.setAttribute('tabindex','0');
+    h3.setAttribute('role','button');
+    // First card pre-expanded
+    if(i === 0) { card.classList.add('open'); }
+    else { body.classList.add('collapsed'); }
+    function toggle() {
+      if(window.innerWidth >= 1024) return;
+      card.classList.toggle('open');
+      body.classList.toggle('collapsed');
+    }
+    h3.addEventListener('click', toggle);
+    h3.addEventListener('keydown', function(e) { if(e.key==='Enter'||e.key===' ') { e.preventDefault(); toggle(); } });
+  });
+})();
+
+6.4  Training Modules Accordion
+// Training module expand
+(function() {
+  var mods = document.querySelectorAll('.tm');
+  mods.forEach(function(mod) {
+    mod.setAttribute('role','button');
+    mod.setAttribute('tabindex','0');
+    mod.setAttribute('aria-expanded','false');
+    mod.addEventListener('click', function() {
+      if(window.innerWidth >= 1024) return;
+      var open = mod.classList.contains('expanded');
+      mods.forEach(m => { m.classList.remove('expanded'); m.setAttribute('aria-expanded','false'); });
+      if(!open) { mod.classList.add('expanded'); mod.setAttribute('aria-expanded','true'); }
+    });
+  });
+})();
+
+
+7.  Before / After — Complete Summary
+
+16.1
+screens before
+→
+
+8.0
+screens after
+50%
+reduction in page height
+
+Section
+Before (mobile)
+After (mobile)
+Pattern
+Saves
+Nav
+68px  — hamburger
+68px + backdrop overlay
+Unchanged
+—
+Hero
+580px
+520px — tighter clamp
+Minor tweak
+60px
+Ticker
+44px
+44px
+Unchanged
+—
+Stats
+~360px — 1×4 stack
+~200px — 2×2 grid always
+Pattern 2 (2×2)
+160px
+YOY table
+220px
+220px
+Unchanged
+—
+Dist + mini
+280px
+240px
+Minor tweak
+40px
+Process
+~1,160px — 6×1col
+~300px — 2col compact+expand
+Pattern 1 + accrd
+860px
+Policy
+~1,220px — 4×1col
+~540px — 1col collapse
+Pattern 4
+680px
+Training
+~1,320px — 6+6 1col
+~620px — 2col compact+certs
+Pattern 1 + accrd
+700px
+CDC Skills
+~1,120px — 6×1col
+~480px — 2col (body visible)
+Pattern 5 (2-col)
+640px
+Recruiters
+~1,260px — 4×1col
+~560px — hscroll + 3col logo
+Pattern 3 + P5
+700px
+Advisory
+~740px — 4×1col
+~320px — 2col name+company
+Pattern 1 (2-col)
+420px
+Guidance
+~1,120px — 6×1col
+~280px — 2col compact+expand
+Pattern 1 + accrd
+840px
+Alumni
+~400px — carousel
+~380px — minor tighten
+Carousel (keep)
+20px
+Team
+~760px — 6×1col
+~380px — 2col name+role
+Pattern 1 (2-col)
+380px
+Contact
+~800px
+~720px
+Minor tweaks
+80px
+Footer
+~500px
+~460px
+Minor tweak
+40px
+TOTAL
+~13,068px (16.1 screens)
+~6,492px (8.0 screens)
+All 5 patterns used
+~6,576px
+
+8.  Implementation Order
+Implement in this exact order. Each step is independently testable — open the file at 360px between each step to verify the change.
+
+Step
+Change
+Effort
+Height Saved
+Test
+1
+Stats grid: 1-col → 2×2 at base. Remove .sg{grid-template-columns:1fr} from base, replace with repeat(2,1fr). Fix border logic.
+5 min
+160px
+Verify 2×2 at 360px, 4-col at 1024px
+2
+Logos: 2-col → 3-col at base. One line change.
+2 min
+~80px
+Verify 3-col at 360px, 6-col at 1024px
+3
+CDC Skills: 1-col → 2-col at base. One line change. Cards short enough.
+5 min
+~540px
+Check 2-col fits at 360px without overflow
+4
+Advisory: 1-col → 2-col at base. Hide .av-r on mobile.
+5 min
+~280px
+Verify 2-col, role hidden, company visible
+5
+Team: 1-col → 2-col. Hide .tc. Last card span 2.
+8 min
+~380px
+Verify 2-col, phones hidden, address full-width
+6
+Recruiters: 1-col → horizontal scroll. Mask-image for hint. rcat min-width:220px.
+10 min
+~700px
+Swipe through recruiters on mobile
+7
+Process: 2-col compact. Hide .pc p. Add expand JS.
+15 min
+~860px
+Tap each card — expands/collapses correctly
+8
+Training modules: 2-col compact. Hide .tm p. Add expand JS.
+15 min
+~700px
+Same as process — tap to expand
+9
+Guidance: 2-col compact. Hide .gu p. Add expand JS.
+15 min
+~840px
+Same accordion pattern
+10
+Policy: collapse/expand. Wrap ul in .pl-body. Add JS. First card pre-open.
+15 min
+~680px
+First card open, others collapsed. Tap toggles.
+11
+Hero: scroll hint fade on hpanel. Nav backdrop overlay.
+10 min
+~60px
+Visible fade gradient on right side of panel
+12
+Final polish: contact icon size, footer link gap, carousel controls hidden on mobile.
+10 min
+~40px
+Visual check at 360px and 1024px
+TOTAL
+12 targeted changes
+~1.75 hours
+~6,320px
+Full 360px → 1440px test pass
+
+
+9.  Accessibility Checklist for Mobile
+All interactive elements added for mobile (expand/collapse toggles, horizontal scroll strips) must meet WCAG 2.1 AA. This checklist covers only the new mobile-specific additions.
+
+Element
+Requirement
+Implementation
+Process card (expand toggle)
+role="button", aria-expanded, tabindex="0", keyboard Enter/Space
+See JS 6.1
+Guidance card (expand toggle)
+role="button", aria-expanded, tabindex="0"
+See JS 6.2
+Policy h3 (collapse toggle)
+role="button", tabindex="0", keyboard support
+See JS 6.3
+Training module (expand)
+role="button", aria-expanded, tabindex="0"
+See JS 6.4
+Horizontal scroll (.rc)
+aria-label="Recruiter categories — scroll to see more"
+Add to .rc element
+Hero panel (.hpanel)
+aria-label already present ✓
+Done in v5
+Carousel dots
+role="tab", aria-selected, aria-label already done ✓
+Done in v5
+Focus visible styles
+:focus-visible outline on all new interactive elements
+Already in globals ✓
+prefers-reduced-motion
+All transitions respect motion query
+Already in globals ✓
+Touch targets
+All new toggles ≥ 44px — achieved via min-height:44px
+Verify each new toggle
+
+10.  Quick Reference — The 5 Patterns Applied
+
+Pattern
+Name
+Applied To
+Key CSS
+1
+2-col Compact + Expand
+Process, Training, Guidance
+repeat(2,1fr) at base, p{display:none}, expand on tap
+2
+2×2 Stats Always
+Stat cards (.sg)
+repeat(2,1fr) from base — never 1-col for numbers
+3
+Horizontal Scroll Strip
+Recruiter categories (.rc)
+display:flex, overflow-x:auto, mask-image fade
+4
+Collapse/Expand
+Policy cards (.polg)
+max-height:0 collapsed, toggle on h3 tap
+5
+3-col Minimum
+Logo grid (.lg), Advisory, Team
+repeat(3,1fr) for logos; repeat(2,1fr) for people
+
+5
+patterns used
+10
+sections changed
+4
+JS interactions
+8.0
+target screens tall
+
+GL Bajaj T&P Portal  ·  Mobile-First Landing Page Spec v1.0  ·  tnp@glbitm.org
