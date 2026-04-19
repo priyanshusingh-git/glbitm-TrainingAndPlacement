@@ -39,7 +39,7 @@ if (match) {
     await tx.emailQueue.create({
       data: {
         to: email,
-        subject: "Welcome to Scorlo Training & Placement Portal",
+        subject: "Welcome to GL Bajaj Training & Placement Portal",
         payload: JSON.stringify({ name, email, rawPassword: password }),
         status: "PENDING"
       }

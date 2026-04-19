@@ -13,13 +13,15 @@ import {
   EyeOff,
   Sun,
   Moon,
-  Zap,
   Layout,
   Layers,
-  Database
+  Database,
+  Zap
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { useSidebar } from "@/components/layout/dashboard/dashboard-layout"
+import { useToast } from "@/hooks/use-toast"
 
 const THEMES = {
   prestige: {
@@ -64,6 +66,7 @@ export function DesignInspector() {
   const [structureAudit, setStructureAudit] = useState(false)
   const [showPalette, setShowPalette] = useState(false)
   const [activeTheme, setActiveTheme] = useState<keyof typeof THEMES>("prestige")
+  const { toast } = useToast()
 
   // Toggle on Ctrl + Shift + P
   useEffect(() => {
@@ -282,6 +285,7 @@ export function DesignInspector() {
               Scan Aesthetics
             </Button>
           </div>
+
 
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold uppercase text-white/60">Structure Scan</span>

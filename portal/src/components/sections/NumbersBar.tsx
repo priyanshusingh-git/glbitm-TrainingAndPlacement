@@ -46,16 +46,16 @@ export default function NumbersBar() {
             </p>
           </div>
 
-          <AnimatedSection className="grid overflow-hidden rounded-[24px] border border-white/8 bg-white/4 sm:grid-cols-2 lg:grid-cols-4">
+          <AnimatedSection className="grid overflow-hidden rounded-[24px] border border-white/8 bg-white/4 grid-cols-2 lg:grid-cols-4">
             {placementStats.map((stat, index) => (
               <div
                 key={stat.label}
                 className={cn(
-                  "border-b border-white/6 px-5 py-6 sm:px-6 lg:border-b-0 lg:px-8 lg:py-9",
-                  index % 2 === 0 && "sm:border-r sm:border-white/6 lg:border-r",
-                  index >= 2 && "sm:border-b-0",
-                  index < placementStats.length - 1 && "lg:border-r lg:border-white/6",
-                  index === placementStats.length - 1 && "border-b-0 sm:border-r-0 lg:border-r-0"
+                  "p-5 sm:p-6 lg:p-8",
+                  "border-b border-white/6 lg:border-b-0",
+                  index >= 2 && "border-b-0",
+                  index % 2 === 0 && "border-r border-white/6",
+                  index === 1 && "lg:border-r lg:border-white/6"
                 )}
               >
                 <div className="mb-4 h-0.5 w-6 rounded-full bg-gradient-to-r from-amber-700 to-amber-400" />
@@ -150,14 +150,14 @@ export default function NumbersBar() {
               </div>
             </div>
 
-            <div className="grid gap-2 sm:grid-cols-2 lg:w-[22rem] lg:grid-cols-2">
+            <div className="grid gap-2 grid-cols-2 lg:w-[22rem] lg:grid-cols-2">
               {placementMiniStats.map((stat) => (
                 <div key={stat.label} className="rounded-md border border-white/7 bg-white/[0.052] px-5 py-5 text-center">
-                  <div className="font-display text-[34px] font-bold leading-none tracking-[-0.03em] text-amber-400">
+                  <div className="font-display text-[28px] sm:text-[34px] font-bold leading-none tracking-[-0.03em] text-amber-400">
                     {stat.value}
                     <span className="ml-0.5 text-[0.46em]">{stat.suffix}</span>
                   </div>
-                  <div className="mt-1.5 text-[10px] uppercase tracking-[0.08em] text-white/38">{stat.label}</div>
+                  <div className="mt-1.5 text-[9px] sm:text-[10px] uppercase tracking-[0.08em] text-white/38">{stat.label}</div>
                 </div>
               ))}
             </div>

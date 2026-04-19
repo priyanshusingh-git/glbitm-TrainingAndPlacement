@@ -1,4 +1,4 @@
-# AI Context — GL Bajaj T&P / CDC Portal (Scorlo)
+# AI Context — GL Bajaj T&P / CDC Portal
 
 > **PURPOSE**: This file provides rules, constraints, and architectural context for any AI
 > assistant (Copilot, Cursor, Claude, Gemini, etc.) working on this codebase. Read this
@@ -9,7 +9,6 @@
 ## 1. Project Identity
 
 - **Project**: GL Bajaj Institute Training & Placement + Career Development Centre Portal
-- **Internal Name**: Scorlo
 - **Stack**: Next.js 16 · Tailwind CSS v4 · shadcn/ui · Framer Motion · Prisma · Context-based Auth
 - **Dashboards**: Student · T&P Admin · CDC Trainer · Recruiter
 - **Design Language**: "Prestige Institutional" — warm, authoritative, premium
@@ -193,6 +192,13 @@ className={cn(
   variant === "active" ? "active-classes" : "inactive-classes"
 )}
 ```
+
+### Use Mobile-First Responsive Classes
+```
+❌ NEVER: className="max-sm:hidden" or className="max-md:flex-col"
+✅ ALWAYS: className="hidden sm:block" or className="flex-col md:flex-row"
+```
+The codebase strictly follows a Mobile-First design pattern. Write base classes for mobile screens first, and use `sm:`, `md:`, `lg:`, etc., to adapt for larger screens. Never use desktop-first (`max-md:`) utilities.
 
 ### Custom CSS utility classes (defined in globals.css)
 Use these instead of writing inline classes:

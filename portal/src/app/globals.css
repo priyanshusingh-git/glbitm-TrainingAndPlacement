@@ -136,7 +136,7 @@
 
  /* Primary — GL Bajaj Brown */
  --color-primary-950: 18 10 5; /* #120A05 warm near-black (deep cocoa) */
- --color-primary-900: 55 25 8; /* #371908 darkest usable (warm walnut) */
+ --color-primary-900: 35 15 6; /* #230F06 ← FINALIZED ELITE MIDNIGHT COCOA */
  --color-primary-800: 81 41 18; /* #512912 ← MAIN BRAND COLOR */
  --color-primary-700: 107 58 31; /* #6B3A1F */
  --color-primary-600: 140 82 48; /* #8C5230 */
@@ -680,11 +680,13 @@
 
  /* Gold rule underline used beneath h2s */
  .gold-rule {
- width: 3.5rem;
+ width: 25%;
+ max-width: 12rem;
+ min-width: 3.5rem;
  height: 3px;
  border-radius: 9999px;
  margin-top: 1.25rem;
- background: rgb(var(--color-accent-500));
+ background: linear-gradient(to right, rgb(var(--color-accent-500)), transparent);
  }
 
  /* Primary button */

@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
+import NextImage from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AlertCircle, CheckCircle2, Loader2, MoveRight } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
@@ -8,6 +10,7 @@ import { api } from "@/lib/api";
 import { getAuthErrorMessage } from "@/lib/auth-ui-messages";
 import { validateStrongPassword } from "@/lib/validators";
 import { AuthBrandPanel } from "@/components/layout/auth-brand-panel";
+import { MobileAuthHeader } from "@/components/layout/mobile-auth-header";
 import { changePasswordBrandContent } from "@/data/auth";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -118,10 +121,12 @@ export default function ChangePasswordPage() {
     <div className="min-h-[100svh] overflow-x-hidden bg-brown-50 text-foreground lg:grid lg:h-screen lg:min-h-0 lg:grid-cols-[1fr_1fr] lg:overflow-hidden">
       <AuthBrandPanel {...changePasswordBrandContent} />
 
-      <main className="relative flex items-center justify-center p-6 md:p-12">
+      <main className="relative flex min-h-[100svh] items-center justify-center p-6 md:p-12 lg:h-full lg:min-h-0">
         <div className="w-full max-w-[400px]">
+          <MobileAuthHeader />
+
           {/* Header */}
-          <div className="mb-6 animate-fade-up stagger-1">
+          <div className="mb-6 animate-fade-up stagger-1 lg:mt-0">
             <h2 className="mb-2 font-display text-[42px] font-bold leading-[1.05] tracking-tight text-brown-900">
               Change your <span className="text-amber-700 italic">password</span>
             </h2>

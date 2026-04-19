@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
+import Image from "next/image"
 import { X, Download } from "lucide-react"
 
 export function PWAInstallBanner() {
@@ -24,8 +25,14 @@ export function PWAInstallBanner() {
         <X className="h-4 w-4 text-muted-foreground" />
       </button>
       <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brown-900">
-          <span className="font-display text-sm font-bold text-amber-500">GL</span>
+        <div className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-brown-900 border border-border">
+          <Image
+            src="/glbitm-logo.png"
+            alt="GL Bajaj App Icon"
+            fill
+            sizes="40px"
+            className="object-cover object-center"
+          />
         </div>
         <div className="flex-1 pr-6">
           <p className="text-sm font-semibold text-foreground">Add to Home Screen</p>

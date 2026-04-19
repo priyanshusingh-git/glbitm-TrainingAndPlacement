@@ -4,12 +4,12 @@ import prisma from '@/lib/db';
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const authResult = await authorize(req, ['ADMIN', 'TRAINER']);
   if (authResult instanceof NextResponse) return authResult;
 
-  const testId = params.id;
+  const testId = (await params).id;
 
   try {
     const body = await req.json();

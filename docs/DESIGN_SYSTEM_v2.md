@@ -152,6 +152,35 @@ Standard Tailwind shadows (`shadow-md`) are neutral black/grey, which makes the 
 Do not use arbitrary gaps like `space-y-10` (40px) just because it "looks okay". 
 - **Rule**: Strictly adhere to the 9-step baseline grid. The standard section divider is **always** `gap-8` (32px).
 
+### 8.4 Reject Desktop-First Styling
+The portal is built strictly on a **Mobile-First** responsive pattern.
+- **Rule**: Never use `max-sm:` or `max-md:` properties to shrink standard desktop layouts. Always design the base CSS structure for a single vertical mobile column, then add `sm:`, `md:`, `lg:` utilities to expand the layout for larger screens (e.g., `flex-col md:flex-row`).
+
+---
+
+## 9. The 5 Industry-Standard Mobile Patterns
+To prevent mobile pages from becoming excessively tall (the "scroll debt" problem), strictly follow these 5 structural patterns on mobile screens:
+
+### 1. 2-Col Compact Grid
+- **Use for**: Feature grids (Process, Guidance, CDC Skills).
+- **Rule**: Never stack 6 full cards in 1 column. Use `grid-cols-2`. Show only the icon and title. Hide the body text (`hidden md:block`) and implement an expand/collapse toggle via React state to view the text on mobile.
+
+### 2. 2×2 Stat Grid
+- **Use for**: Key numbers and placement statistics.
+- **Rule**: Stat blocks must *never* be 1-column on mobile. Always start with `grid-cols-2` at the base size.
+
+### 3. Horizontal Scroll Strip
+- **Use for**: Categories, filters, equal-priority strips.
+- **Rule**: Use `flex w-full overflow-x-auto`. Always implement a right-fade mask overlay to provide a visual cue that the container is scrollable.
+
+### 4. Progressive Disclosure (Accordion)
+- **Use for**: Text-heavy policy lists, terms, or FAQs.
+- **Rule**: Show only the section heading. Hide the heavy text inside a collapsible container that opens on tap. Do not force users to scroll past entire policy blocks.
+
+### 5. 3-Col Logo Grid
+- **Use for**: Recruiter grids and small square icons.
+- **Rule**: Logo squares are compact. A 1-col or 2-col stack on mobile wastes horizontal space. Use `grid-cols-3` minimum for standard mobile screens.
+
 ---
 **Document Status**: PRODUCTION READY (v2.1)
-**Last Update**: 2026-03-30
+**Last Update**: 2026-03-31

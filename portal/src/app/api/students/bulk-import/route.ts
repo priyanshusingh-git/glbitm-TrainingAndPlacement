@@ -165,7 +165,7 @@ export async function POST(req: NextRequest) {
         emailsToInsert.push({
             id: randomUUID(),
             to: row.email,
-            subject: "Welcome to Scorlo Training & Placement Portal",
+            subject: "Welcome to GL Bajaj Training & Placement Portal",
             payload: JSON.stringify({ 
                 name: 'Student', 
                 email: row.email, 

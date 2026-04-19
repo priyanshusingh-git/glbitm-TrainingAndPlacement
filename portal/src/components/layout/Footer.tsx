@@ -1,3 +1,4 @@
+import Image from "next/image"
 import Link from "next/link"
 import { footerLinks } from "@/data/landing"
 
@@ -5,11 +6,17 @@ export default function Footer() {
   return (
     <footer className="border-t border-white/5 bg-brown-900 px-4 pb-5 pt-10 text-white sm:px-6 lg:px-[max(80px,calc((100vw-1200px)/2))]">
       <div className="mx-auto max-w-[1200px]">
-        <div className="mb-8 grid gap-8 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr_1fr] lg:gap-9">
-          <div>
+        <div className="mb-8 grid gap-8 grid-cols-2 md:grid-cols-3 lg:grid-cols-[2fr_1fr_1fr_1fr] lg:gap-9">
+          <div className="col-span-2 md:col-span-3 lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-3 no-underline">
-              <div className="grid h-10 w-10 place-items-center rounded-[10px] bg-gradient-to-br from-amber-500 to-amber-700 font-display text-base font-bold text-brown-900">
-                GL
+              <div className="relative h-10 w-[52px] shrink-0 overflow-hidden rounded-[10px] border border-white/10 bg-white/5 shadow-[0_4px_16px_rgba(0,0,0,0.18)]">
+                <Image
+                  src="/glbitm-logo.png"
+                  alt="GL Bajaj logo"
+                  fill
+                  sizes="52px"
+                  className="object-cover object-center"
+                />
               </div>
               <div>
                 <div className="text-[14px] font-semibold leading-[1.15] text-white">GL Bajaj Institute</div>
@@ -75,7 +82,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div>
+          <div className="col-span-2 md:col-span-1 lg:col-span-1">
             <h4 className="mb-3 text-[9px] font-bold uppercase tracking-[0.2em] text-white/28">Contact</h4>
             <div className="space-y-2 text-xs text-white/48">
               <a href={`mailto:${footerLinks.contact.email}`} className="block transition-colors hover:text-amber-400">

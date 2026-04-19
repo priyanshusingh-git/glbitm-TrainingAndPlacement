@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import NextImage from "next/image"
 import { useSearchParams } from "next/navigation"
 import { Suspense, useEffect, useMemo, useRef, useState } from "react"
 import { AlertCircle, ArrowLeft, CheckCircle2, Info, Loader2, LockKeyhole, Mail, MoveRight, RefreshCw, ShieldCheck } from "lucide-react"
@@ -8,6 +9,7 @@ import { api } from "@/lib/api"
 import { getAuthErrorMessage } from "@/lib/auth-ui-messages"
 import { validateStrongPassword } from "@/lib/validators"
 import { AuthBrandPanel } from "@/components/layout/auth-brand-panel"
+import { MobileAuthHeader } from "@/components/layout/mobile-auth-header"
 import { forgotPasswordBrandContent } from "@/data/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -354,8 +356,10 @@ function ForgotPasswordContent() {
 
         <div className="relative z-10 flex min-h-[100svh] w-full items-center justify-center overflow-x-hidden overflow-y-auto py-10 lg:h-full lg:min-h-0 lg:py-6">
         <div className="w-full max-w-[400px]">
+          <MobileAuthHeader />
+
           {/* Header & Step Indicator */}
-          <div className="mb-8 animate-fade-up stagger-1">
+          <div className="mb-8 animate-fade-up stagger-1 lg:mt-0">
             <h2 className="mb-2 font-display text-[48px] font-bold leading-[1.05] tracking-tight text-brown-900 [font-variation-settings:'opsz'_48,'SOFT'_0,'WONK'_0]">
               {step === 3 ? (
                 <>Reset <span className="text-amber-700 italic">password</span></>

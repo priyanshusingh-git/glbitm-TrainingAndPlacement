@@ -24,7 +24,7 @@ export default function Recruiters() {
           </p>
         </div>
 
-        <AnimatedSection className="flex gap-3 overflow-x-auto hide-scrollbar pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-4">
+        <AnimatedSection className="flex gap-3 overflow-x-auto hide-scrollbar pb-2 sm:grid sm:grid-cols-2 sm:overflow-visible lg:grid-cols-4 [mask-image:linear-gradient(to_right,white_80%,transparent)] sm:[mask-image:none]">
           {recruiterCategories.map((category) => (
             <div
               key={category.title}
@@ -45,7 +45,7 @@ export default function Recruiters() {
           ))}
         </AnimatedSection>
 
-        <AnimatedSection className="mt-6 grid gap-2.5 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+        <AnimatedSection className="mt-6 grid gap-2.5 grid-cols-3 sm:grid-cols-4 lg:grid-cols-6">
           {recruiterShowcase.map((company) => (
             <div
               key={`${company.initial}-${company.name}`}

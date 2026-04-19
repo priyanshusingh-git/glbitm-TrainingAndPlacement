@@ -4,6 +4,7 @@ import NextLink from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { AuthBrandPanel } from "@/components/layout/auth-brand-panel"
+import { MobileAuthHeader } from "@/components/layout/mobile-auth-header"
 
 interface AuthShellProps {
   title: string
@@ -75,6 +76,8 @@ export function AuthShell({
         <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(232,160,32,0.08)_0%,transparent_70%)]" />
 
         <div className="relative z-10 w-full max-w-[400px]">
+          <MobileAuthHeader />
+
           <NextLink
             href="/login"
             className="mb-7 inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground transition-colors hover:text-brown-800"

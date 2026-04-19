@@ -33,7 +33,8 @@ export async function POST(req: NextRequest) {
 
  try {
  const body = await req.json();
- const { name, branch, branches, year, description } = body;
+ const { name, branch, branches, description } = body;
+ const year = body.year ? parseInt(body.year.toString(), 10) : null;
 
  let targetBranches = branches || (branch ? [branch] : []);
  if (targetBranches.length === 0) {

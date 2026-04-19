@@ -36,27 +36,33 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
  select: { userId: true } // Select userId for notification
  });
 
- // Create Notification
- await prisma.notification.create({
- data: {
- userId: updatedProfile.userId,
- title:"Section Locked 🔒",
- message: `Admin has locked the ${section} section of your profile.`,
- type:"WARNING"
- }
- });
+  // Create Notification
+  const notification = await prisma.notification.create({
+    data: {
+       userId: updatedProfile.userId,
+       title:"Section Locked 🔒",
+       message: `Admin has locked the ${section} section of your profile.`,
+       type:"WARNING"
+    }
+  });
 
- // Broadcast Event
- try {
- const { broadcastMessage } = await import('@/lib/realtime');
- await broadcastMessage({
- channel: `profile-updates-${updatedProfile.userId}`,
- event: 'profile:locked',
- payload: { userId: updatedProfile.userId, section }
- });
- } catch (e) {
- console.error("Broadcast failed", e);
- }
+  // Broadcast Event
+  try {
+    const { broadcastMessage } = await import('@/lib/realtime');
+    await broadcastMessage({
+      channel: `student-${updatedProfile.userId}`,
+      event: 'data-update',
+      payload: { type: 'LOCK_SECTION', section }
+    });
+
+    await broadcastMessage({
+      channel: `user-${updatedProfile.userId}`,
+      event: 'notification',
+      payload: notification
+    });
+  } catch (e) {
+    console.error("Broadcast failed", e);
+  }
 
  return NextResponse.json({ message: `${section} section locked` });
 

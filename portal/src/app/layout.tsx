@@ -28,6 +28,7 @@ export const metadata: Metadata = {
 import { Fira_Code, Fraunces, Inter } from"next/font/google"
 import { AuthProvider } from"@/contexts/auth-context"
 import { NotificationProvider } from"@/contexts/notification-context"
+import { AblyRealtimeProvider } from "@/contexts/ably-context"
 import { Toaster } from"@/components/ui/toaster"
 import { FloatingNavActions } from "@/components/layout/floating-nav-actions"
 
@@ -62,10 +63,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning className={cn(fraunces.variable, inter.variable, firaCode.variable, "scroll-smooth")}>
       <body suppressHydrationWarning className="font-body antialiased text-foreground selection:bg-amber-500/20">
         <AuthProvider>
-          <NotificationProvider>
-            {children}
-            <FloatingNavActions />
-          </NotificationProvider>
+          <AblyRealtimeProvider>
+            <NotificationProvider>
+              {children}
+              <FloatingNavActions />
+            </NotificationProvider>
+          </AblyRealtimeProvider>
         </AuthProvider>
         <Toaster />
         <Analytics />

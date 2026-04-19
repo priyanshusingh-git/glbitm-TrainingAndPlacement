@@ -37,7 +37,7 @@ function buildContentSecurityPolicy() {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com",
-    "connect-src 'self' https://*.firebase.com https://*.googleapis.com https://*.upstash.io https://api.pwnedpasswords.com https://hcaptcha.com https://*.hcaptcha.com https://vitals.vercel-insights.com",
+    "connect-src 'self' https://*.firebase.com https://*.googleapis.com https://*.upstash.io https://api.pwnedpasswords.com https://hcaptcha.com https://*.hcaptcha.com https://vitals.vercel-insights.com https://*.ably.io wss://*.ably.io https://*.ably-realtime.com wss://*.ably-realtime.com",
     "frame-src 'self' https://hcaptcha.com https://*.hcaptcha.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
@@ -65,7 +65,13 @@ export async function proxy(request: NextRequest) {
   const requestId = request.headers.get("x-request-id") ?? crypto.randomUUID()
 
   try {
-    if (path.startsWith("/api") && !path.startsWith("/api/auth/") && path !== "/api/auth/csrf") {
+    const isRateLimitExempt =
+      path.startsWith("/api/auth/") ||
+      path === "/api/auth/csrf" ||
+      path === "/api/ably/auth" ||
+      path.startsWith("/api/ably/");
+
+    if (path.startsWith("/api") && !isRateLimitExempt) {
       const result = await generalApiLimiter.limit(getIpAddress(request))
       if (!result.success) {
         const retryAfter = Math.max(

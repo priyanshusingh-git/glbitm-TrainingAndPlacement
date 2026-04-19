@@ -180,7 +180,7 @@ export default function AdminTrainingPage() {
  } else if (!selectedYear && groups.length > 0 && !yearParam) {
  // Only set default if NO url param and NO current selection
  const years = getYearOptions();
- const defaultYear = years.find(y => groups.some(g => g.year === y)) || years[0];
+ const defaultYear = years.find(y => groups.some(g => g.year?.toString() === y)) || years[0];
  setSelectedYear(defaultYear);
  // Optional: Set URL for default? Maybe better not to clutter unless user clicks
  }
@@ -282,7 +282,7 @@ export default function AdminTrainingPage() {
  return;
  }
 
- const occupiedBranchesForYear = groups.filter(g => g.year === formData.get('year') && g.name === name).map(g => g.branch);
+ const occupiedBranchesForYear = groups.filter(g => g.year?.toString() === formData.get('year') && g.name === name).map(g => g.branch);
 
  // Filter out any branches that somehow got selected but are actually occupied
  const targetBranches = selectedBranches.filter(b => !occupiedBranchesForYear.includes(b));
@@ -516,7 +516,7 @@ export default function AdminTrainingPage() {
  }
  }
 
- const occupiedBranchesForYear = groups.filter(g => g.year === createGroupYear && g.name === selectedMasterName).map(g => g.branch);
+ const occupiedBranchesForYear = groups.filter(g => g.year?.toString() === createGroupYear && g.name === selectedMasterName).map(g => g.branch);
  const isAllBranchesTaken = occupiedBranchesForYear.includes("ALL");
 
  return (
@@ -652,7 +652,7 @@ export default function AdminTrainingPage() {
  {groupMasters.map((master, index) => {
  const masterGroups = groups.filter(g =>
  g.name === master.name &&
- g.year === year &&
+ g.year?.toString() === year &&
  (selectedBranch ==="ALL" || g.branch === selectedBranch || g.branch ==="ALL")
  );
  // Skip if no groups (Optional: Keep empty sections if desired, but user likely wants to see data)
@@ -801,7 +801,7 @@ export default function AdminTrainingPage() {
  })}
 
  {/* Uncategorized / Orphaned Groups */}
- {groups.filter(g => g.year === year && !groupMasters.some(m => m.name === g.name)).length > 0 && (
+ {groups.filter(g => g.year?.toString() === year && !groupMasters.some(m => m.name === g.name)).length > 0 && (
  <div className="space-y-6 pb-8">
  <div className="flex items-center gap-4 px-2">
  <div className="flex items-center gap-3">
@@ -813,7 +813,7 @@ export default function AdminTrainingPage() {
  <div className="h-px flex-1 bg-gradient-to-r from-border/60 to-transparent" />
  </div>
  <div className="flex gap-6 overflow-x-auto pb-4 snap-x">
- {groups.filter(g => g.year === year && !groupMasters.some(m => m.name === g.name)).map(group => (
+ {groups.filter(g => g.year?.toString() === year && !groupMasters.some(m => m.name === g.name)).map(group => (
  <Card key={group.id} className="group relative flex flex-col shrink-0 w-[300px] md:w-[350px] overflow-hidden bg-card border-border hover:border-brown-800/40 hover:shadow-md hover:shadow-primary/5 transition-all duration-500 rounded-md snap-start">
  <div className="absolute top-0 right-0 p-6 z-10">
  <DropdownMenu>
@@ -910,7 +910,7 @@ export default function AdminTrainingPage() {
  )}
 
  {/* Empty State */}
- {groups.filter(g => g.year === year).length === 0 && (
+ {groups.filter(g => g.year?.toString() === year).length === 0 && (
  <div className="py-32 text-center rounded-md border-2 border-dashed border-border bg-muted backdrop-blur-sm animate-in fade-in duration-700">
  {/* ... existing empty state ... */}
  <div className="p-6 rounded-md bg-brown-800/5 border border-brown-800/10 inline-block mb-6">

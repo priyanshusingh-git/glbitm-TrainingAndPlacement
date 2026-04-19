@@ -1,9 +1,13 @@
 "use client"
 
+import { useState } from "react"
 import { guidanceFeatures } from "@/data/landing"
 import { AnimatedSection } from "@/components/ui/AnimatedSection"
+import { cn } from "@/lib/utils"
 
 export default function Guidance() {
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+
   return (
     <section id="guidance" className="bg-brown-50 px-4 py-14 sm:px-5 md:px-8 md:py-16 lg:px-[clamp(28px,5vw,80px)] lg:py-[84px] xl:px-[clamp(40px,6vw,80px)]">
       <div className="mx-auto max-w-[1200px]">
@@ -24,27 +28,52 @@ export default function Guidance() {
           </p>
         </div>
 
-        <AnimatedSection className="grid gap-4 grid-cols-2 lg:grid-cols-3">
-          {guidanceFeatures.map((feature) => (
-            <article
-              key={feature.title}
-              className="rounded-md border border-border bg-white px-5 py-6 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-1 hover:border-brown-400/35 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)]"
-            >
-              <div className="mb-3 text-2xl">{feature.icon}</div>
-              <h3 className="font-display text-[22px] font-bold tracking-[-0.02em] text-brown-900">{feature.title}</h3>
-              <p className="mt-2 hidden md:block text-[12.5px] leading-[1.72] text-muted-foreground">{feature.description}</p>
-              {feature.cta && (
-                <a
-                  href={feature.cta.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-3 inline-block text-xs font-semibold text-brown-800 transition-colors hover:text-amber-700"
-                >
-                  {feature.cta.label}
-                </a>
-              )}
-            </article>
-          ))}
+        <AnimatedSection className="grid gap-3 md:gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {guidanceFeatures.map((feature) => {
+            const isExpanded = expandedId === feature.title;
+            return (
+              <article
+                key={feature.title}
+                onClick={() => {
+                  if (typeof window !== "undefined" && window.innerWidth >= 768) return;
+                  setExpandedId(isExpanded ? null : feature.title);
+                }}
+                role="button"
+                tabIndex={0}
+                className="group relative rounded-md border border-border bg-white px-4 py-4 md:px-5 md:py-6 shadow-[0_2px_12px_rgba(81,41,18,0.07)] transition hover:-translate-y-1 hover:border-brown-400/35 hover:shadow-[0_6px_32px_rgba(81,41,18,0.11)] cursor-pointer md:cursor-default"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="mb-2 md:mb-3 text-[20px] md:text-2xl shrink-0">{feature.icon}</div>
+                  <div className={cn("text-amber-600 text-[11px] transition-transform md:hidden", isExpanded && "rotate-90")}>
+                    ▸
+                  </div>
+                </div>
+                
+                <h3 className="font-display text-[16px] md:text-[22px] font-bold tracking-[-0.02em] text-brown-900">{feature.title}</h3>
+                
+                <p className={cn(
+                  "mt-2 text-[11.5px] md:text-[12.5px] leading-[1.72] text-muted-foreground transition-all duration-300",
+                  isExpanded ? "block" : "hidden md:block"
+                )}>
+                  {feature.description}
+                </p>
+                
+                {feature.cta && (
+                  <a
+                    href={feature.cta.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(
+                      "mt-3 inline-block text-xs font-semibold text-brown-800 transition-colors hover:text-amber-700",
+                      isExpanded ? "block" : "hidden md:inline-block"
+                    )}
+                  >
+                    {feature.cta.label}
+                  </a>
+                )}
+              </article>
+            )
+          })}
         </AnimatedSection>
       </div>
     </section>

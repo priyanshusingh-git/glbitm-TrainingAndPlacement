@@ -110,7 +110,7 @@ const brandShell = (content: string, previewText = '') => `
                     <table role="presentation" cellpadding="0" cellspacing="0" border="0">
                       <tr>
                         <td style="vertical-align:middle;">
-                          <div style="width:44px;height:44px;background:linear-gradient(135deg,#E8A020,#C07A10);border-radius:10px;display:inline-block;text-align:center;line-height:44px;font-family:Georgia,serif;font-size:18px;font-weight:700;color:#3A1C0B;">GL</div>
+                          <img src="${getSiteUrl()}/glbitm-logo.png" alt="GL Bajaj Logo" width="44" height="44" style="border-radius:10px;display:inline-block;background-color:#fff;border:1px solid rgba(255,255,255,0.1);object-fit:cover;" />
                         </td>
                         <td style="padding-left:13px;vertical-align:middle;">
                           <div style="color:#ffffff;font-family:Arial,sans-serif;font-size:14px;font-weight:600;line-height:1.2;">GL Bajaj Institute</div>

@@ -121,36 +121,36 @@ export function StudentTable() {
  className="pl-9"
  />
  </div>
- <div className="flex gap-2">
- <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
- <SelectTrigger className="w-32">
- <Filter className="mr-2 h-4 w-4" />
- <SelectValue placeholder="Department" />
- </SelectTrigger>
- <SelectContent>
- <SelectItem value="all">All Dept</SelectItem>
- <SelectItem value="CSE">CSE</SelectItem>
- <SelectItem value="IT">IT</SelectItem>
- <SelectItem value="ECE">ECE</SelectItem>
- </SelectContent>
- </Select>
- <Select value={statusFilter} onValueChange={setStatusFilter}>
- <SelectTrigger className="w-32">
- <SelectValue placeholder="Status" />
- </SelectTrigger>
- <SelectContent>
- <SelectItem value="all">All Status</SelectItem>
- <SelectItem value="eligible">Eligible</SelectItem>
- <SelectItem value="placed">Placed</SelectItem>
- <SelectItem value="not-eligible">Not Eligible</SelectItem>
- </SelectContent>
- </Select>
- </div>
+        <div className="flex flex-1 gap-2">
+          <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+            <SelectTrigger className="flex-1 min-w-[100px]">
+              <Filter className="mr-2 h-4 w-4 shrink-0" />
+              <SelectValue placeholder="Department" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Dept</SelectItem>
+              <SelectItem value="CSE">CSE</SelectItem>
+              <SelectItem value="IT">IT</SelectItem>
+              <SelectItem value="ECE">ECE</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="flex-1 min-w-[100px]">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="eligible">Eligible</SelectItem>
+              <SelectItem value="placed">Placed</SelectItem>
+              <SelectItem value="not-eligible">Not Eligible</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
  </div>
 
  {/* Table */}
- <div className="overflow-x-auto rounded-md">
- <Table>
+        <div className="overflow-x-auto -mx-5 px-5">
+          <Table className="min-w-[640px]">
  <TableHeader>
  <TableRow>
  <TableHead>Student</TableHead>

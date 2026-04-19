@@ -55,10 +55,11 @@ export async function PUT(
  const { id } = await params;
  const body = await req.json();
  const { name, branch, year, description } = body;
+ const parsedYear = year ? parseInt(year.toString(), 10) : null;
 
  const group = await prisma.trainingGroup.update({
  where: { id },
- data: { name, branch, year, description },
+ data: { name, branch, year: parsedYear, description },
  include: {
  trainers: {
  include: {

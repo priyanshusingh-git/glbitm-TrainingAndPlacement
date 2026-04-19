@@ -10,6 +10,7 @@ import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
 import { Badge } from"@/components/ui/badge"
+import { Checkbox } from"@/components/ui/checkbox"
 import { ScrollArea } from"@/components/ui/scroll-area"
 import {
  Search, ChevronRight, ChevronLeft, Plus,
@@ -31,9 +32,10 @@ interface TestWizardProps {
  onClose: () => void
  onSuccess: () => void
  initialData?: any
+ groups?: { id: string, name: string }[]
 }
 
-export function TestWizard({ isOpen, onClose, onSuccess, initialData }: TestWizardProps) {
+export function TestWizard({ isOpen, onClose, onSuccess, initialData, groups = [] }: TestWizardProps) {
  const [step, setStep] = useState(1)
  const [loading, setLoading] = useState(false)
  const [questions, setQuestions] = useState<any[]>([])
@@ -189,6 +191,36 @@ export function TestWizard({ isOpen, onClose, onSuccess, initialData }: TestWiza
  value={formData.totalMarks}
  onChange={(e) => setFormData({ ...formData, totalMarks: Number(e.target.value) })}
  />
+ </div>
+ <div className="space-y-2">
+ <Label>Assign to Groups (Optional)</Label>
+ <ScrollArea className="h-[120px] rounded-md border p-4">
+ <div className="grid grid-cols-2 gap-4">
+ {groups.length === 0 ? (
+ <p className="text-sm text-muted-foreground col-span-2 text-center py-4">No groups available. Create a training group first.</p>
+ ) : (
+ groups.map(group => (
+ <div key={group.id} className="flex items-center space-x-2">
+ <Checkbox
+ id={`group-${group.id}`}
+ checked={formData.groupIds.includes(group.id)}
+ onCheckedChange={(checked: boolean) => {
+ setFormData(prev => ({
+ ...prev,
+ groupIds: checked
+ ? [...prev.groupIds, group.id]
+ : prev.groupIds.filter(id => id !== group.id)
+ }))
+ }}
+ />
+ <label htmlFor={`group-${group.id}`} className="text-sm cursor-pointer truncate max-w-[200px]" title={group.name}>
+ {group.name}
+ </label>
+ </div>
+ ))
+ )}
+ </div>
+ </ScrollArea>
  </div>
  </div>
  </div>

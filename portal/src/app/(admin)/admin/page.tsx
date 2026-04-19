@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { PageHeader, SectionHeader } from "@/components/layout/page-header"
 import { Users, Building2, UserPlus, FileSpreadsheet, Send } from "lucide-react";
 import { getAdminDashboardStats, AdminDashboardData } from "@/services/dashboard.service";
@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { adminQuickActions } from "@/data/dashboard";
+import { getAblyClient } from "@/contexts/ably-context";
 
 const iconMap: Record<string, any> = { UserPlus, Building2, FileSpreadsheet, Send };
 
@@ -20,19 +21,32 @@ export default function AdminDashboard() {
   const [data, setData] = useState<AdminDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchData = useCallback(async () => {
+    try {
+      const stats = await getAdminDashboardStats();
+      setData(stats);
+    } catch (error) {
+      console.error("Failed to fetch admin stats", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const stats = await getAdminDashboardStats();
-        setData(stats);
-      } catch (error) {
-        console.error("Failed to fetch admin stats", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, []);
+
+  // Listen for real-time student updates to refresh data instantly
+  useEffect(() => {
+    const client = getAblyClient();
+    if (!client) return;
+    const channel = client.channels.get("admin-activity");
+
+    channel.subscribe("student-update", fetchData);
+    return () => {
+      channel.unsubscribe("student-update", fetchData);
+    };
+  }, [fetchData]);
 
   if (loading) {
     return (
@@ -43,37 +57,36 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="flex flex-col gap-8 pb-10">
+    <div className="flex flex-col gap-6 pb-10">
       {/* Clean Dashboard Header */}
       <div className="animate-fade-up stagger-1">
         <PageHeader
           title="Overview"
           description="Orchestrate placements, track performance, and manage operations across the platform."
-          action={
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 hide-scrollbar">
-              {adminQuickActions.map((action, idx) => {
-                const IconComponent = iconMap[action.iconName];
-                return (
-                  <Button
-                    key={idx}
-                    variant="outline"
-                    size="sm"
-                    className="whitespace-nowrap bg-card/80 border-border/60 hover:bg-card-hover hover:border-brown-800/20 transition-all shadow-sm group"
-                  >
-                    <div className={cn("mr-2 flex h-5 w-5 items-center justify-center rounded-sm transition-colors", action.bgClass, "group-hover:bg-brown-800/15")}>
-                      <IconComponent className={cn("h-3.5 w-3.5", action.colorClass)} />
-                    </div>
-                    {action.label}
-                  </Button>
-                );
-              })}
-              <Button size="sm" className="whitespace-nowrap shadow-sm shadow-amber-500/20">
-                <Plus className="mr-2 h-4 w-4" />
-                Global Search
-              </Button>
-            </div>
-          }
         />
+        {/* Quick Actions — always visible, scrollable on mobile */}
+        <div className="mt-4 flex items-center gap-2 overflow-x-auto pb-1 hide-scrollbar">
+          {adminQuickActions.map((action, idx) => {
+            const IconComponent = iconMap[action.iconName];
+            return (
+              <Button
+                key={idx}
+                variant="outline"
+                size="sm"
+                className="whitespace-nowrap shrink-0 bg-card/80 border-border/60 hover:bg-card-hover hover:border-brown-800/20 transition-all shadow-sm group"
+              >
+                <div className={cn("mr-2 flex h-5 w-5 items-center justify-center rounded-sm transition-colors", action.bgClass, "group-hover:bg-brown-800/15")}>
+                  <IconComponent className={cn("h-3.5 w-3.5", action.colorClass)} />
+                </div>
+                {action.label}
+              </Button>
+            );
+          })}
+          <Button size="sm" className="whitespace-nowrap shrink-0 shadow-sm shadow-amber-500/20">
+            <Plus className="mr-2 h-4 w-4" />
+            Global Search
+          </Button>
+        </div>
       </div>
 
       {/* Main Stats Grid */}

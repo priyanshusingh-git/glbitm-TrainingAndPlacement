@@ -47,15 +47,15 @@ export async function GET(req: NextRequest) {
  ...recentPlacements.map((p: any) => ({
  id: `placement-${p.id}`,
  type:"placement",
- message: `${p.student.name ||"Student"} placed at ${p.drive.company.name}`,
- time: new Date(p.appliedAt).toISOString(),
+ message: `${p?.student?.name ||"Student"} placed at ${p?.drive?.company?.name ||"a company"}`,
+ time: p.appliedAt ? new Date(p.appliedAt).toISOString() : new Date().toISOString(),
  icon:"Trophy",
  })),
  ...recentCompaniesQuery.map((c: any) => ({
  id: `company-${c.id}`,
  type:"company",
- message: `${c.name} registered as a placement partner.`,
- time: new Date(c.createdAt).toISOString(),
+ message: `${c?.name ||"A company"} registered as a placement partner.`,
+ time: c.createdAt ? new Date(c.createdAt).toISOString() : new Date().toISOString(),
  icon:"Building2",
  }))
  ].sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
@@ -72,9 +72,9 @@ export async function GET(req: NextRequest) {
  industry: c.industry ||"Technology",
  location: c.location ||"Remote",
  status: c.status === 'Active' ?"upcoming" :"completed",
- driveDate: c.placementDrives[0] ? new Date(c.placementDrives[0].date).toLocaleDateString() :"TBD",
- positions: c.placementDrives.length,
- package: c.placementDrives[0]?.ctc ||"TBD"
+ driveDate: c.placementDrives?.[0]?.date ? new Date(c.placementDrives[0].date).toLocaleDateString() :"TBD",
+ positions: c.placementDrives?.length || 0,
+ package: c.placementDrives?.[0]?.ctc ||"TBD"
  }));
 
  return NextResponse.json({

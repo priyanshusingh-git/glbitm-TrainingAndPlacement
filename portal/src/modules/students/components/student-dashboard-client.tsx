@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuth } from "@/contexts/auth-context";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Search, Briefcase, Trophy, CheckCircle, BookOpen, Building2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -11,6 +11,7 @@ import { PlacementPipeline } from "./placement-pipeline";
 import { cn } from "@/lib/utils";
 import { getStudentGreeting, dashboardBanner, statCards } from "@/data/dashboard";
 import { PageHeader } from "@/components/layout/page-header";
+import { getAblyClient } from "@/contexts/ably-context";
 
 export default function StudentDashboard() {
   const router = useRouter();
@@ -18,19 +19,37 @@ export default function StudentDashboard() {
   const [loading, setLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState<any>(null);
 
+  const fetchData = useCallback(async (silent = false) => {
+    try {
+      if (!silent) setLoading(true);
+      const data = await api.get("/dashboard/student");
+      setDashboardData(data);
+    } catch (error) {
+      console.error("Failed to fetch dashboard:", error);
+    } finally {
+      if (!silent) setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await api.get("/dashboard/student");
-        setDashboardData(data);
-      } catch (error) {
-        console.error("Failed to fetch dashboard:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
   }, []);
+
+  // Listen for real-time updates for this specific student
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const ablyClient = getAblyClient();
+    if (!ablyClient) return;
+
+    const channel = ablyClient.channels.get(`student-${user.id}`);
+    const onUpdate = () => fetchData(true);
+    
+    channel.subscribe("data-update", onUpdate);
+    return () => {
+      channel.unsubscribe("data-update", onUpdate);
+    };
+  }, [user?.id, fetchData]);
 
   if (loading) {
     return (

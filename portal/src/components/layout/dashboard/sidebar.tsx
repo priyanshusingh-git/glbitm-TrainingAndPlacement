@@ -185,28 +185,28 @@ export function Sidebar({ role }: SidebarProps) {
     </div>
   )
 
- return (
- <>
- <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
- <SheetContent side="left" className="w-72 border-r border-sidebar-border bg-sidebar p-0">
- <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
- <SheetDescription className="sr-only">
- Mobile navigation menu for accessing dashboard sections.
- </SheetDescription>
- <NavContent />
- </SheetContent>
- </Sheet>
+  return (
+    <>
+      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+        <SheetContent side="left" className="w-72 border-r border-sidebar-border bg-sidebar p-0">
+          <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+          <SheetDescription className="sr-only">
+            Mobile navigation menu for accessing dashboard sections.
+          </SheetDescription>
+          <NavContent />
+        </SheetContent>
+      </Sheet>
 
- <aside
- onMouseEnter={expandOnHover ? handleMouseEnter : undefined}
- onMouseLeave={expandOnHover ? handleMouseLeave : undefined}
-  className={cn(
-    "fixed left-0 top-0 z-40 hidden h-screen flex-col border-r border-white/5 bg-brown-900 shadow-2xl transition-all duration-300 md:flex",
-    collapsed ? "w-16" : "w-64"
-  )}
- >
- <NavContent />
- </aside>
- </>
- )
+      <aside
+        onMouseEnter={expandOnHover ? handleMouseEnter : undefined}
+        onMouseLeave={expandOnHover ? handleMouseLeave : undefined}
+        className={cn(
+          "fixed left-0 top-0 z-40 hidden h-screen flex-col border-r border-white/5 bg-brown-900 shadow-2xl transition-all duration-300 md:flex",
+          collapsed ? "w-16" : "w-64"
+        )}
+      >
+        <NavContent />
+      </aside>
+    </>
+  )
 }

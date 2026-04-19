@@ -6,13 +6,16 @@ import { logger } from '@/lib/logger';
 import { broadcastMessage } from '@/lib/realtime';
 
 const studentProfileUpdateSchema = z.object({
- name: z.string().optional(),
- rollNo: z.string().optional().nullable(),
- branch: z.string().optional().nullable(),
- year: z.string().optional().nullable(),
- course: z.string().optional().nullable(),
- studentType: z.string().optional().nullable(),
- currentSemester: z.number().optional().nullable(),
+  name: z.string().optional(),
+  dob: z.string().datetime().optional().nullable(),
+  gender: z.enum(['Male', 'Female', 'Other']).optional().nullable(),
+  rollNo: z.string().regex(/^\d{13}$/, "Roll Number must be exactly 13 digits").optional().nullable(),
+  branch: z.string().optional().nullable(),
+  year: z.number().optional().nullable(),
+  course: z.string().optional().nullable(),
+  studentType: z.string().optional().nullable(),
+  admissionId: z.string().min(6).max(15).regex(/^[A-Z0-9]+$/).optional().nullable(),
+  currentSemester: z.number().optional().nullable(),
 
  class10School: z.string().optional().nullable(),
  class10Board: z.string().optional().nullable(),
@@ -32,6 +35,45 @@ const studentProfileUpdateSchema = z.object({
  diplomaYear: z.number().optional().nullable(),
 
  photoUrl: z.string().optional().nullable(),
+
+ // Career Fields
+ githubId: z.string().optional().nullable(),
+ leetcodeId: z.string().optional().nullable(),
+ codechefId: z.string().optional().nullable(),
+ linkedinId: z.string().optional().nullable(),
+ resumeLink: z.string().optional().nullable(),
+ bio: z.string().optional().nullable(),
+ skills: z.array(z.string()).optional(),
+
+ // Personal Fields
+ mobileNo: z.string().optional().nullable(),
+ personalEmail: z.string().optional().nullable(),
+ fatherName: z.string().optional().nullable(),
+ fatherOccupation: z.string().optional().nullable(),
+ fatherMobile: z.string().optional().nullable(),
+ fatherEmail: z.string().optional().nullable(),
+ motherName: z.string().optional().nullable(),
+ motherOccupation: z.string().optional().nullable(),
+ motherMobile: z.string().optional().nullable(),
+ motherEmail: z.string().optional().nullable(),
+ presentHouseNo: z.string().optional().nullable(),
+ presentBlock: z.string().optional().nullable(),
+ presentLocality: z.string().optional().nullable(),
+ presentCity: z.string().optional().nullable(),
+ presentTehsil: z.string().optional().nullable(),
+ presentDistrict: z.string().optional().nullable(),
+ presentState: z.string().optional().nullable(),
+ presentCountry: z.string().optional().nullable(),
+ presentPincode: z.string().optional().nullable(),
+ permanentHouseNo: z.string().optional().nullable(),
+ permanentBlock: z.string().optional().nullable(),
+ permanentLocality: z.string().optional().nullable(),
+ permanentCity: z.string().optional().nullable(),
+ permanentTehsil: z.string().optional().nullable(),
+ permanentDistrict: z.string().optional().nullable(),
+ permanentState: z.string().optional().nullable(),
+ permanentCountry: z.string().optional().nullable(),
+ permanentPincode: z.string().optional().nullable(),
 
  isBasicInfoLocked: z.boolean().optional(),
  isClass10Locked: z.boolean().optional(),
@@ -68,7 +110,7 @@ export async function GET(req: NextRequest) {
  return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
  }
 
- return NextResponse.json(student);
+  return NextResponse.json(student);
  } catch (error) {
  logger.error("Get Profile Error:", error);
  return NextResponse.json({ error: 'Server error' }, { status: 500 });
@@ -115,7 +157,7 @@ export async function PUT(req: NextRequest) {
  // @ts-ignore
  if (otherFields.isDiplomaLocked !== true) delete otherFields.isDiplomaLocked;
 
- const basicInfoFields = ['name', 'rollNo', 'admissionId', 'branch', 'year', 'currentSemester', 'course', 'studentType'];
+ const basicInfoFields = ['name', 'dob', 'gender', 'rollNo', 'admissionId', 'branch', 'year', 'currentSemester', 'course', 'studentType'];
  const class10Fields = ['class10School', 'class10Board', 'class10Percentage', 'class10Year'];
  const class12Fields = ['class12School', 'class12Board', 'class12Percentage', 'class12PcmPercentage', 'class12MathPercentage', 'class12Year'];
  const diplomaFields = ['diplomaInstitute', 'diplomaBranch', 'diplomaPercentage', 'diplomaYear'];
@@ -135,13 +177,14 @@ export async function PUT(req: NextRequest) {
  return NextResponse.json({ error:"Diploma section is locked." }, { status: 403 });
  }
 
- const updateData: any = { ...otherFields };
- if (photoUrl !== undefined) updateData.photoUrl = photoUrl;
+  const updateData: any = { ...otherFields };
+  if (photoUrl !== undefined) updateData.photoUrl = photoUrl;
+  
 
- const student = await prisma.studentProfile.update({
- where: { userId: authResult.id },
- data: updateData
- });
+  const student = await prisma.studentProfile.update({
+  where: { userId: authResult.id },
+  data: updateData
+  });
 
  if (semesterResults && Array.isArray(semesterResults)) {
  if (currentProfile.currentSemester) {
@@ -176,20 +219,21 @@ export async function PUT(req: NextRequest) {
  }
  }
 
- // Broadcast real-time update
- await broadcastMessage({
- channel: `profile-updates-${authResult.id}`,
- event: 'profile:updated',
- payload: { userId: authResult.id, name: student.name }
- });
+  // Broadcast real-time update to the student's dashboard
+  await broadcastMessage({
+    channel: `student-${authResult.id}`,
+    event: 'data-update',
+    payload: { type: 'PROFILE_UPDATED', name: student.name }
+  });
 
- await broadcastMessage({
- channel: 'admin-student-updates',
- event: 'student:updated',
- payload: { userId: authResult.id, student }
- });
+  // Broadcast real-time update to the admin dashboard
+  await broadcastMessage({
+    channel: 'admin-activity',
+    event: 'student-update',
+    payload: { userId: authResult.id, student }
+  });
 
- return NextResponse.json(student);
+  return NextResponse.json(student);
 
  } catch (error) {
  logger.error("Update Profile Error:", error);

@@ -154,11 +154,11 @@ model Education {
   level          String
   institution    String
   board          String?
-  yearOfPassing  String
-  score          String
   scoreType      String         @default("Percentage")
   specialization String?
   createdAt      DateTime       @default(now())
+  yearOfPassing  Int?
+  score          Float?
   student        StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@index([studentId])
@@ -168,9 +168,9 @@ model StudentProfile {
   id                    String           @id @default(uuid())
   userId                String           @unique
   name                  String?
-  rollNo                String?          @unique
+  dob                   DateTime?
+  gender                String?
   branch                String?
-  year                  String?
   skills                String[]
   resumeLink            String?
   githubId              String?
@@ -179,20 +179,12 @@ model StudentProfile {
   batchId               String?
   admissionId           String?          @unique
   class10Board          String?
-  class10Percentage     String?
   class10School         String?
-  class10Year           String?
   class12Board          String?
-  class12MathPercentage String?
-  class12PcmPercentage  String?
-  class12Percentage     String?
   class12School         String?
-  class12Year           String?
   currentSemester       Int?
   diplomaBranch         String?
   diplomaInstitute      String?
-  diplomaPercentage     String?
-  diplomaYear           String?
   educationType         String?
   fatherEmail           String?
   fatherMobile          String?
@@ -234,6 +226,18 @@ model StudentProfile {
   attendancePercentage  Float?           @default(0.0)
   cgpa                  Float?           @default(0.0)
   section               String?
+  bio                   String?
+  linkedinId            String?
+  year                  Int?
+  class10Percentage     Float?
+  class10Year           Int?
+  class12MathPercentage Float?
+  class12PcmPercentage  Float?
+  class12Percentage     Float?
+  class12Year           Int?
+  diplomaPercentage     Float?
+  diplomaYear           Int?
+  rollNo                String?          @unique
   applications          Application[]
   attendances           Attendance[]
   certifications        Certification[]
@@ -302,10 +306,10 @@ model TrainingGroup {
   id                String              @id @default(uuid())
   name              String
   branch            String
-  year              String
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   description       String?
+  year              Int?
   students          StudentProfile[]
   trainers          TrainerAssignment[]
   assignedBootcamps Bootcamp[]          @relation("BootcampAssignments")
@@ -561,23 +565,23 @@ model SystemSetting {
   @@index([category])
 }
 
-enum Role {
-  ADMIN
-  TRAINER
-  RECRUITER
-  STUDENT
-}
-
 model EmailQueue {
   id        String   @id @default(uuid())
   to        String
   subject   String?
-  payload   String   // JSON payload (e.g. { name: "", email: "", rawPassword: "" })
-  status    String   @default("PENDING") // PENDING, SENT, FAILED
+  payload   String
+  status    String   @default("PENDING")
   retries   Int      @default(0)
   error     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([status])
+}
+
+enum Role {
+  ADMIN
+  TRAINER
+  RECRUITER
+  STUDENT
 }

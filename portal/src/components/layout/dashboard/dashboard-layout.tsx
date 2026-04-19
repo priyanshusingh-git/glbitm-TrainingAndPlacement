@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, createContext, useContext } from "react"
+import React, { useState, createContext, useContext, useEffect } from "react"
 import { Sidebar } from "@/components/layout/dashboard/sidebar"
 import { Header } from "@/components/layout/dashboard/header"
 import { DesignInspector } from "@/components/layout/dashboard/design-inspector"
@@ -47,7 +47,7 @@ export function DashboardLayout({ children, role, user, headerAction, defaultCol
   const [expandOnHover, setExpandOnHoverState] = useState(false)
 
   // Initialize from localStorage on mount
-  React.useEffect(() => {
+  useEffect(() => {
     const savedExpand = localStorage.getItem("sidebar-expand-on-hover")
     if (savedExpand !== null) {
       setExpandOnHoverState(savedExpand === "true")
@@ -65,7 +65,16 @@ export function DashboardLayout({ children, role, user, headerAction, defaultCol
   }
 
   return (
-    <SidebarContext.Provider value={{ collapsed, setCollapsed, mobileOpen, setMobileOpen, expandOnHover, setExpandOnHover }}>
+    <SidebarContext.Provider
+      value={{
+        collapsed,
+        setCollapsed,
+        mobileOpen,
+        setMobileOpen,
+        expandOnHover,
+        setExpandOnHover,
+      }}
+    >
       <div className="dashboard-canvas min-h-screen">
         <Sidebar role={role} />
         <div

@@ -101,54 +101,57 @@ export function PlacementAnalytics({ analytics }: PlacementAnalyticsProps) {
  </div>
  </CardHeader>
  <CardContent className="p-5 space-y-8">
- <div className="premium-muted rounded-md border border-border/60 p-4">
- <div className="mb-6 flex items-center justify-between">
- <div className="space-y-1">
- <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">Recruitment Velocity</p>
- <p className="text-sm font-semibold text-foreground">Hiring trend for session {suffix}</p>
- </div>
- </div>
- <ChartContainer config={placementChartConfig} className="h-64 w-full">
- <AreaChart data={currentData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
- <defs>
- <linearGradient id="placedGradient" x1="0" y1="0" x2="0" y2="1">
- <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
- <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
- </linearGradient>
- </defs>
- <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-border/20" />
- <XAxis
- dataKey="month"
- tickLine={false}
- axisLine={false}
- tick={{ fontSize: 10, fontWeight: 700, fill: 'var(--muted-foreground)' }}
- />
- <YAxis
- tickLine={false}
- axisLine={false}
- tick={{ fontSize: 10, fontWeight: 700, fill: 'var(--muted-foreground)' }}
- />
- <ChartTooltip content={<ChartTooltipContent />} />
- <ChartLegend content={<ChartLegendContent />} />
- <Area
- type="monotone"
- dataKey="placed"
- stroke="var(--primary)"
- strokeWidth={3}
- fill="url(#placedGradient)"
- animationDuration={2000}
- />
- <Line
- type="monotone"
- dataKey="offers"
- stroke="var(--accent)"
- strokeWidth={2}
- strokeDasharray="4 4"
- dot={false}
- />
- </AreaChart>
- </ChartContainer>
- </div>
+      <div className="premium-muted rounded-md border border-border/60 p-3 md:p-4">
+        <div className="mb-4 md:mb-6 flex items-center justify-between">
+          <div className="space-y-1">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/70">Recruitment Velocity</p>
+            <p className="text-sm font-semibold text-foreground">Hiring trend for session {suffix}</p>
+          </div>
+        </div>
+        <div className="overflow-hidden w-full">
+          <ChartContainer config={placementChartConfig} className="h-48 w-full md:h-64">
+            <AreaChart data={currentData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+              <defs>
+                <linearGradient id="placedGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} className="stroke-border/20" />
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: 9, fontWeight: 700, fill: 'var(--muted-foreground)' }}
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: 9, fontWeight: 700, fill: 'var(--muted-foreground)' }}
+                width={28}
+              />
+              <ChartTooltip content={<ChartTooltipContent />} />
+              <ChartLegend content={<ChartLegendContent />} />
+              <Area
+                type="monotone"
+                dataKey="placed"
+                stroke="var(--primary)"
+                strokeWidth={3}
+                fill="url(#placedGradient)"
+                animationDuration={2000}
+              />
+              <Line
+                type="monotone"
+                dataKey="offers"
+                stroke="var(--accent)"
+                strokeWidth={2}
+                strokeDasharray="4 4"
+                dot={false}
+              />
+            </AreaChart>
+          </ChartContainer>
+        </div>
+      </div>
 
  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
  <div className="space-y-5">

@@ -1,9 +1,13 @@
 "use client"
 
+import { useState } from "react"
 import { policyGroups } from "@/data/landing"
 import { AnimatedSection } from "@/components/ui/AnimatedSection"
+import { cn } from "@/lib/utils"
 
 export default function Policy() {
+  const [expandedId, setExpandedId] = useState<string | null>(policyGroups[0]?.title || null)
+
   return (
     <section id="policy" className="bg-brown-100 px-4 py-14 sm:px-5 md:px-8 md:py-16 lg:px-[clamp(28px,5vw,80px)] lg:py-[84px] xl:px-[clamp(40px,6vw,80px)]">
       <div className="mx-auto max-w-[1200px]">
@@ -33,25 +37,47 @@ export default function Policy() {
           </p>
         </div>
 
-        <AnimatedSection className="grid gap-4 md:grid-cols-2">
-          {policyGroups.map((group) => (
-            <article
-              key={group.title}
-              className="rounded-md border border-border bg-white p-6 shadow-[0_2px_12px_rgba(81,41,18,0.07)]"
-            >
-              <h3 className="font-display text-[21px] font-bold tracking-[-0.02em] text-brown-900">
-                {group.icon} {group.title}
-              </h3>
-              <ul className="mt-4 space-y-2">
-                {group.items.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-[12.5px] leading-[1.62] text-muted-foreground">
-                    <span className="mt-1 shrink-0 font-bold text-amber-700">→</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </article>
-          ))}
+        <AnimatedSection className="grid gap-3 md:gap-4 grid-cols-1 md:grid-cols-2">
+          {policyGroups.map((group) => {
+            const isExpanded = expandedId === group.title;
+            return (
+              <article
+                key={group.title}
+                className="rounded-md border border-border bg-white p-5 md:p-6 shadow-[0_2px_12px_rgba(81,41,18,0.07)]"
+              >
+                <button 
+                  onClick={() => {
+                    if (typeof window !== "undefined" && window.innerWidth >= 768) return;
+                    setExpandedId(isExpanded ? null : group.title);
+                  }}
+                  className="flex w-full items-center justify-between text-left cursor-pointer md:cursor-default"
+                  aria-expanded={isExpanded}
+                >
+                  <h3 className="font-display text-[18px] md:text-[21px] font-bold tracking-[-0.02em] text-brown-900">
+                    {group.icon} {group.title}
+                  </h3>
+                  <div className={cn("text-amber-600 text-[12px] transition-transform md:hidden", isExpanded && "rotate-90")}>
+                    ▸
+                  </div>
+                </button>
+
+                <div className={cn(
+                  "overflow-hidden transition-all duration-300",
+                  "md:mt-4 md:block", // Desktop: Always visible with margin
+                  isExpanded ? "mt-4 block" : "hidden" // Mobile: Toggle visibility
+                )}>
+                  <ul className="space-y-2">
+                    {group.items.map((item) => (
+                      <li key={item} className="flex items-start gap-2 text-[11.5px] md:text-[12.5px] leading-[1.62] text-muted-foreground">
+                        <span className="mt-1 shrink-0 font-bold text-amber-700">→</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </article>
+            )
+          })}
         </AnimatedSection>
       </div>
     </section>

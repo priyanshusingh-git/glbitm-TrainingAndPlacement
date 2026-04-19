@@ -1,6 +1,7 @@
 "use client"
 
 import { Suspense, useCallback, useEffect, useRef, useState } from "react"
+import NextImage from "next/image"
 import HCaptcha from "@hcaptcha/react-hcaptcha"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -15,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PasswordInput } from "@/components/ui/password-input"
 import { AuthBrandPanel } from "@/components/layout/auth-brand-panel"
+import { MobileAuthHeader } from "@/components/layout/mobile-auth-header"
 import { authBrandContent, authBrandStats } from "@/data/auth"
 
 // ── Helpers ─────────────────────────────────────────
@@ -308,9 +310,11 @@ function LoginContent() {
         <div className="absolute top-[20%] right-8 h-px w-32 bg-gradient-to-l from-brown-200 to-transparent opacity-40" />
 
         <div className="relative z-10 flex min-h-[100svh] w-full items-center justify-center overflow-x-hidden overflow-y-auto py-12 lg:h-full lg:min-h-0 lg:py-6">
-        <div className="w-full max-w-[380px]">
-          {/* ── Heading ── */}
-          <div className="mb-8 animate-fade-up stagger-1">
+          <div className="w-full max-w-[380px]">
+            <MobileAuthHeader />
+
+            {/* ── Heading ── */}
+            <div className="mb-8 animate-fade-up stagger-1 lg:mt-0">
             <h2 className="mb-2 font-display text-[48px] font-bold leading-[1.05] tracking-tight text-brown-900 [font-variation-settings:'opsz'_48,'SOFT'_0,'WONK'_0]">
               Welcome <span className="text-amber-700 italic">back</span>
             </h2>

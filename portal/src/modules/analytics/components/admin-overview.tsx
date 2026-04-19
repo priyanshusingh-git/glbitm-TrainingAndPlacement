@@ -27,18 +27,18 @@ export function AdminOverview({ overview }: AdminOverviewProps) {
       hover: config.hoverClass,
       className: "md:col-span-1",
       description: (
-        <div className="flex flex-col gap-1 mt-2">
-          <span className="text-2xl font-bold text-foreground tabular-nums">{value}</span>
-          <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">{config.label}</span>
+        <div className="flex flex-col gap-1 mt-1.5">
+          <span className="text-xl font-bold text-foreground tabular-nums md:text-2xl">{value}</span>
+          <span className="text-[10px] md:text-xs text-muted-foreground font-medium uppercase tracking-wider leading-tight">{config.label}</span>
         </div>
       ),
       header: (
-        <div className={cn(config.toneClass, "flex h-full min-h-[6rem] w-full flex-1 rounded-md border border-border/40 relative overflow-hidden group/header bg-background")}>
+        <div className={cn(config.toneClass, "flex h-full min-h-[4rem] md:min-h-[6rem] w-full flex-1 rounded-md border border-border/40 relative overflow-hidden group/header bg-background")}>
           <div 
             className="absolute inset-0" 
             style={{ background: `radial-gradient(circle at 50% 0%, ${config.gradient}, transparent)` }} 
           />
-          <IconComponent className="absolute -bottom-2 -right-2 h-24 w-24 opacity-10 group-hover/header:scale-110 transition-transform duration-500 text-foreground" />
+          <IconComponent className="absolute -bottom-2 -right-2 h-16 w-16 md:h-24 md:w-24 opacity-10 group-hover/header:scale-110 transition-transform duration-500 text-foreground" />
         </div>
       ),
       icon: <IconComponent className="h-4 w-4 opacity-70" />,
