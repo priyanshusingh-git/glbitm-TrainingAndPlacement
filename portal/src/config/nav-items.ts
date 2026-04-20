@@ -20,15 +20,18 @@ import {
 
 export const studentNavItems = [
   { type: "header", label: "MAIN" },
-  { label: "Overview", href: "/student", icon: LayoutDashboard },
+  { label: "Overview", href: "/student", icon: LayoutDashboard, bottomNav: true, bottomNavLabel: "Home" },
 
   { type: "header", label: "TRAINING" },
-  { label: "CDC Training", href: "/student/training", icon: BookOpen, count: 3 },
+  { label: "CDC Training", href: "/student/training", icon: BookOpen, count: 3, bottomNav: true, bottomNavLabel: "Training" },
   { label: "Bootcamps", href: "/student/bootcamps", icon: Award },
-  { label: "Tests & Results", href: "/student/tests", icon: FileText },
+  { label: "Tests & Results", href: "/student/tests", icon: FileText, bottomNav: true, bottomNavLabel: "Tests" },
 
   { type: "header", label: "PLACEMENT" },
-  { label: "Placements", href: "/student/placements", icon: Briefcase, count: 2 },
+  { label: "Placements", href: "/student/placements", icon: Briefcase, count: 2, bottomNav: true, bottomNavLabel: "Drives" },
+
+  { type: "header", label: "PROFILE", hideInSidebar: true },
+  { label: "My Profile", href: "/student/profile", icon: User, bottomNav: true, bottomNavLabel: "Profile", hideInSidebar: true },
 
   { type: "header", label: "TECHNICAL PROFILE" },
   { label: "My Projects", href: "/student/portfolio/projects", icon: FolderKanban },

@@ -1,27 +1,24 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Briefcase, BookOpen, FileText, User } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-const STUDENT_BOTTOM_NAV = [
-  { label: "Home",     href: "/student",            icon: LayoutDashboard },
-  { label: "Drives",   href: "/student/placements", icon: Briefcase       },
-  { label: "Training", href: "/student/training",   icon: BookOpen        },
-  { label: "Tests",    href: "/student/tests",      icon: FileText        },
-  { label: "Profile",  href: "/student/profile",    icon: User            },
-]
+import { studentNavItems } from "@/config/nav-items"
 
 export function StudentBottomNav() {
   const pathname = usePathname()
+  
+  // Extract items marked for bottom navigation
+  const bottomNavItems = studentNavItems.filter((item: any) => item.bottomNav)
+
   return (
     <nav
       className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border/60 bg-background/95 backdrop-blur-xl"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <div className="grid grid-cols-5 h-16">
-        {STUDENT_BOTTOM_NAV.map((item) => {
+        {bottomNavItems.map((item: any) => {
           const isActive = pathname === item.href
+          const label = item.bottomNavLabel || item.label
           return (
             <Link
               key={item.href}
@@ -32,7 +29,7 @@ export function StudentBottomNav() {
               )}
             >
               <item.icon className={cn("h-5 w-5 shrink-0", isActive && "text-amber-500")} />
-              <span className="truncate">{item.label}</span>
+              <span className="truncate">{label}</span>
             </Link>
           )
         })}

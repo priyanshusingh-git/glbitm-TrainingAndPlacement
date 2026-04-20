@@ -248,7 +248,7 @@ export function Header({ role, user, headerAction }: HeaderProps) {
  <span className="sr-only">Updates</span>
  </Button>
  </DropdownMenuTrigger>
- <DropdownMenuContent align="end" className="w-80 rounded-md border-border/70">
+ <DropdownMenuContent align="end" className="w-[calc(100vw-2rem)] sm:w-80 rounded-md border-border/70">
  <div className="flex items-center justify-between border-b px-4 py-3">
  <span className="font-semibold text-sm">Updates</span>
  {unreadCount > 0 && (
@@ -340,7 +340,7 @@ export function Header({ role, user, headerAction }: HeaderProps) {
  </div>
 
  <Dialog open={changePasswordOpen} onOpenChange={setChangePasswordOpen}>
- <DialogContent className="rounded-md border-border/70">
+ <DialogContent className="max-h-[85vh] overflow-y-auto rounded-md border-border/70">
  <DialogHeader>
  <DialogTitle>Change Password</DialogTitle>
  <DialogDescription>

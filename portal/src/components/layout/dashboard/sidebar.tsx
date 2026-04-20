@@ -82,6 +82,8 @@ export function Sidebar({ role }: SidebarProps) {
       <TooltipProvider delayDuration={0}>
         <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-2 custom-scrollbar" aria-label="Main Navigation">
           {navItems.map((item: any, index: number) => {
+            if (item.hideInSidebar) return null;
+
             if (item.type === "header") {
               return (
                 <div
