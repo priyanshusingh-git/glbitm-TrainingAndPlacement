@@ -4,16 +4,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/comp
 import { Label } from"@/components/ui/label"
 import { Switch } from"@/components/ui/switch"
 import { useSidebar } from"@/components/layout/dashboard/dashboard-layout"
+import { PageHeader } from "@/components/layout/page-header"
 
 export default function StudentSettingsPage() {
  const { expandOnHover, setExpandOnHover } = useSidebar()
 
  return (
- <div className="space-y-6">
- <div>
- <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
- <p className="text-muted-foreground">Manage your dashboard preferences.</p>
- </div>
+ <div className="flex flex-col gap-8 pb-12 animate-fade-up stagger-1">
+ <PageHeader
+ title="Settings"
+ description="Manage your dashboard preferences."
+ />
 
  <div className="grid gap-6">
  <Card>

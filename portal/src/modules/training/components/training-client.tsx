@@ -564,10 +564,10 @@ export default function AdminTrainingPage() {
  <TabsContent value="overview" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
  {[
- { label:"Total Groups", value: stats.totalGroups, icon: Users, color:"from-blue-500 to-cyan-500" },
- { label:"Sessions Today", value: stats.activeSessionsToday, icon: Clock, color:"from-amber-500 to-orange-500" },
- { label:"Active Trainers", value: stats.totalTrainers, icon: UserPlus, color:"from-emerald-500 to-teal-500" },
- { label:"Students Enrolled", value: stats.studentsInTraining, icon: BookOpen, color:"from-violet-500 to-purple-500" },
+ { label:"Total Groups", value: stats.totalGroups, icon: Users, color:"from-brown-900 to-brown-800" },
+ { label:"Sessions Today", value: stats.activeSessionsToday, icon: Clock, color:"from-amber-500 to-amber-600" },
+ { label:"Active Trainers", value: stats.totalTrainers, icon: UserPlus, color:"from-brown-800 to-brown-700" },
+ { label:"Students Enrolled", value: stats.studentsInTraining, icon: BookOpen, color:"from-amber-500 to-amber-700" },
  ].map((item, idx) => (
           <Card key={idx} className="relative overflow-hidden bg-card border-border group hover:border-primary/40 transition-all duration-300">
  <div className={cn("absolute top-0 right-0 w-32 h-32 -mr-16 -mt-16 rounded-full opacity-[0.03] group-hover:opacity-[0.08] transition-opacity bg-gradient-to-br", item.color)} />
@@ -1091,17 +1091,17 @@ export default function AdminTrainingPage() {
  <Dialog open={assignTrainerOpen} onOpenChange={setAssignTrainerOpen}>
  <DialogContent className="sm:max-w-[450px] rounded-md border-border bg-card p-0 overflow-hidden">
  <DialogHeader className="p-8 bg-muted border-b border-border">
- <div className="p-3 w-fit rounded-md bg-violet-500/10 border border-violet-500/20 mb-4">
- <UserPlus className="h-6 w-6 text-violet-500" />
+ <div className="p-3 w-fit rounded-sm bg-brown-800/10 border border-brown-800/20 mb-4">
+ <UserPlus className="h-6 w-6 text-brown-800" />
  </div>
- <DialogTitle className="text-2xl font-semibold">Deploy <span className="text-violet-500 italic">Personnel</span></DialogTitle>
+ <DialogTitle className="text-2xl font-semibold">Deploy <span className="text-brown-800 italic">Personnel</span></DialogTitle>
  <DialogDescription className="text-sm font-medium">Assign a specialized instructor to this cohort.</DialogDescription>
  </DialogHeader>
  <form onSubmit={handleAssignTrainer} className="p-8 space-y-6">
  <div className="space-y-2">
  <Label className="text-sm font-semibold text-sm font-medium text-muted-foreground">Mission Module</Label>
  <Select name="type" required>
- <SelectTrigger className="h-10 rounded-md bg-background border-border font-bold"><SelectValue placeholder="Select Module" /></SelectTrigger>
+ <SelectTrigger className="h-10 rounded-sm bg-background border-border font-bold"><SelectValue placeholder="Select Module" /></SelectTrigger>
  <SelectContent className="rounded-md">
  <SelectItem value="Verbal" className="font-bold text-sm font-medium">Verbal Hub</SelectItem>
  <SelectItem value="Aptitude" className="font-bold text-sm font-medium">Aptitude Hub</SelectItem>
@@ -1112,7 +1112,7 @@ export default function AdminTrainingPage() {
  <div className="space-y-2">
  <Label className="text-sm font-semibold text-sm font-medium text-muted-foreground">Elite Instructor</Label>
  <Select name="trainerId" required>
- <SelectTrigger className="h-10 rounded-md bg-background border-border font-bold"><SelectValue placeholder="Select Trainer" /></SelectTrigger>
+ <SelectTrigger className="h-10 rounded-sm bg-background border-border font-bold"><SelectValue placeholder="Select Trainer" /></SelectTrigger>
  <SelectContent className="rounded-md">
  {trainers.map(t => (
  <SelectItem key={t.id} value={t.id} className="font-bold text-sm">{t.name}</SelectItem>
@@ -1121,8 +1121,8 @@ export default function AdminTrainingPage() {
  </Select>
  </div>
  <div className="pt-4 flex gap-3">
- <Button type="button" variant="ghost" onClick={() => setAssignTrainerOpen(false)} className="flex-1 h-10 rounded-md font-bold text-sm font-medium">Cancel</Button>
- <Button type="submit" className="flex-[2] h-10 rounded-md bg-violet-600 hover:bg-violet-700 text-white shadow-lg shadow-violet-500/20 font-bold text-sm font-medium">Deploy Unit</Button>
+ <Button type="button" variant="ghost" onClick={() => setAssignTrainerOpen(false)} className="flex-1 h-10 rounded-sm font-bold text-sm font-medium">Cancel</Button>
+ <Button type="submit" className="flex-[2] h-10 rounded-sm bg-brown-900 hover:bg-brown-800 text-brown-50 shadow-md shadow-amber-500/20 hover:-translate-y-0.5 transition-all font-bold text-sm font-medium">Deploy Unit</Button>
  </div>
  </form>
  </DialogContent>

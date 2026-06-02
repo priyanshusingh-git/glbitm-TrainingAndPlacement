@@ -72,7 +72,7 @@ const DIPLOMA_BRANCHES = ["Computer Science","Information Technology","Electroni
 
 // --- Helper Components (Defined outside to prevent focus loss) ---
 const LockedBadge = () => (
-  <div className="flex items-center gap-1 bg-brown-900/5 border border-brown-900/10 px-2.5 py-1 rounded-lg">
+  <div className="flex items-center gap-1 bg-brown-900/5 border border-brown-900/10 px-2.5 py-1 rounded-sm">
     <Lock className="h-3 w-3 text-brown-900/60" />
     <span className="text-[10px] font-bold uppercase tracking-widest text-brown-900/80">Locked</span>
   </div>
@@ -85,7 +85,7 @@ const ROLL_NO_REGEX = /^\d{13}$/;
 const ADMISSION_ID_REGEX = /^[A-Z0-9]{6,15}$/;
 
 const LockButton = ({ onClick, saving: s, label = "Save & Lock", disabled }: { onClick: () => void, saving: boolean, label?: string, disabled?: boolean }) => (
-  <Button onClick={onClick} disabled={disabled || s} size="sm" className="h-10 px-5 text-xs font-bold bg-brown-900 hover:bg-brown-800 text-white rounded-xl shadow-lg shadow-brown-900/10 transition-all active:scale-95">
+  <Button onClick={onClick} disabled={disabled || s} size="sm" className="h-10 px-5 text-xs font-bold bg-brown-900 hover:bg-brown-800 text-white rounded-sm shadow-sm transition-all active:scale-95">
     {s ? <><Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />Locking...</> : <><Lock className="mr-2 h-3.5 w-3.5" />{label}</>}
   </Button>
 );
@@ -614,12 +614,12 @@ export default function StudentProfilePage() {
   return (
     <div className="space-y-6 pb-12">
       {/* ════ IDENTITY HEADER ════════════════════════════════════════════════ */}
-      <div className="overflow-hidden rounded-xl border border-border/60 bg-card shadow-sm">
+      <div className="overflow-hidden rounded-md border border-border/60 bg-card shadow-sm">
         {/* Gradient Banner */}
         <div className="relative h-32 bg-gradient-to-br from-brown-950 via-brown-900 to-brown-900">
           <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,.05) 10px,rgba(255,255,255,.05) 11px)" }} />
           {isLocked && (
-            <div className="absolute top-4 right-4 flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-200 text-[10px] font-bold px-4 py-2 rounded-full backdrop-blur-md uppercase tracking-[0.2em] shadow-xl">
+            <div className="absolute top-4 right-4 flex items-center gap-2 bg-destructive/10 border border-destructive/20 text-destructive text-[10px] font-bold px-4 py-2 rounded-sm backdrop-blur-md uppercase tracking-[0.2em] shadow-md">
               <Lock className="h-3 w-3" /> Locked by Admin
             </div>
           )}
@@ -630,9 +630,9 @@ export default function StudentProfilePage() {
           <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-14 mb-5">
             {/* Avatar with upload */}
             <div className="relative group w-fit shrink-0">
-              <Avatar className="h-24 w-24 sm:h-28 sm:w-28 rounded-xl border-4 border-card shadow-xl">
+              <Avatar className="h-24 w-24 sm:h-28 sm:w-28 rounded-md border-4 border-card shadow-xl">
                 <AvatarImage src={fullPhotoUrl} className="object-cover" />
-                <AvatarFallback className="rounded-xl bg-brown-900 text-white text-2xl font-display font-bold">
+                <AvatarFallback className="rounded-md bg-brown-900 text-white text-2xl font-display font-bold">
                   {formData.name?.split(" ").map((n: string) => n[0]).join("").substring(0,2).toUpperCase() || "ST"}
                 </AvatarFallback>
               </Avatar>
@@ -676,25 +676,25 @@ export default function StudentProfilePage() {
             <div className="flex flex-wrap gap-2 sm:pb-1">
               {formData.linkedinId && (
                 <a href={`https://linkedin.com/in/${formData.linkedinId}`} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-[#0A66C2]/10 border border-[#0A66C2]/30 text-[#0A66C2] hover:bg-[#0A66C2]/20 transition-colors">
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-sm bg-[#0A66C2]/10 border border-[#0A66C2]/30 text-[#0A66C2] hover:bg-[#0A66C2]/20 transition-colors">
                   <Linkedin className="h-3.5 w-3.5" />LinkedIn
                 </a>
               )}
               {formData.githubId && (
                 <a href={`https://github.com/${formData.githubId}`} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-muted border border-border/60 text-foreground hover:bg-muted/70 transition-colors">
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-sm bg-muted border border-border/60 text-foreground hover:bg-muted/70 transition-colors">
                   <Github className="h-3.5 w-3.5" />GitHub
                 </a>
               )}
               {formData.leetcodeId && (
                 <a href={`https://leetcode.com/${formData.leetcodeId}`} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-brown-900/10 border border-brown-900/30 text-brown-900 hover:bg-brown-900/20 transition-colors">
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-sm bg-brown-900/10 border border-brown-900/30 text-brown-900 hover:bg-brown-900/20 transition-colors">
                   <Code2 className="h-3.5 w-3.5" />LeetCode
                 </a>
               )}
               {formData.resumeLink && (
                 <a href={formData.resumeLink} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg bg-brown-900/10 border border-brown-900/30 text-brown-900 hover:bg-brown-900/20 transition-colors">
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-sm bg-brown-900/10 border border-brown-900/30 text-brown-900 hover:bg-brown-900/20 transition-colors">
                   <FileText className="h-3.5 w-3.5" />Resume
                 </a>
               )}
@@ -705,12 +705,12 @@ export default function StudentProfilePage() {
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-foreground">Profile Readiness</span>
-              <span className={cn("text-xs font-bold tabular-nums", completionScore >= 80 ? "text-brown-900" : completionScore >= 50 ? "text-brown-900" : "text-red-500")}>
+              <span className={cn("text-xs font-bold tabular-nums", completionScore >= 80 ? "text-brown-900" : completionScore >= 50 ? "text-brown-900" : "text-destructive")}>
                 {completionScore}%
               </span>
             </div>
             <Progress value={completionScore} className="h-2 [&>div]:bg-[var(--progress-color)]"
-              style={{ "--progress-color": completionScore >= 80 ? "#78350f" : completionScore >= 50 ? "#d97706" : "#991b1b" } as any}
+              style={{ "--progress-color": completionScore >= 80 ? "rgb(var(--primary))" : completionScore >= 50 ? "rgb(var(--accent))" : "rgb(var(--destructive))" } as any}
             />
             {completionScore < 100 && (
               <p className="text-[10px] text-muted-foreground">
@@ -723,17 +723,17 @@ export default function StudentProfilePage() {
 
       {/* ════ CONTENT TABS ═══════════════════════════════════════════════════ */}
       <Tabs defaultValue="basic" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 h-12 bg-muted/20 p-1 rounded-xl border border-border/40 mb-8">
-          <TabsTrigger value="basic" className="rounded-lg border border-transparent data-[state=active]:bg-white data-[state=active]:text-brown-900 data-[state=active]:font-bold data-[state=active]:border-brown-900/20 data-[state=active]:shadow-sm">
+        <TabsList className="overflow-x-auto hide-scrollbar w-full justify-start rounded-none border-b bg-transparent p-0 mb-8 flex h-auto gap-2">
+          <TabsTrigger value="basic" className="relative rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:bg-transparent !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
             <User className="h-4 w-4 mr-2" />Basic
           </TabsTrigger>
-          <TabsTrigger value="academic" disabled={!profile?.isBasicInfoLocked} className="rounded-lg border border-transparent data-[state=active]:bg-white data-[state=active]:text-brown-900 data-[state=active]:font-bold data-[state=active]:border-brown-900/20 data-[state=active]:shadow-sm">
+          <TabsTrigger value="academic" disabled={!profile?.isBasicInfoLocked} className="relative rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:bg-transparent !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
             <GraduationCap className="h-4 w-4 mr-2" />Academic {!profile?.isBasicInfoLocked && "🔒"}
           </TabsTrigger>
-          <TabsTrigger value="personal" disabled={!profile?.isBasicInfoLocked} className="rounded-lg border border-transparent data-[state=active]:bg-white data-[state=active]:text-brown-900 data-[state=active]:font-bold data-[state=active]:border-brown-900/20 data-[state=active]:shadow-sm">
+          <TabsTrigger value="personal" disabled={!profile?.isBasicInfoLocked} className="relative rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:bg-transparent !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
             <Phone className="h-4 w-4 mr-2" />Contact {!profile?.isBasicInfoLocked && "🔒"}
           </TabsTrigger>
-          <TabsTrigger value="career" className="rounded-lg border border-transparent data-[state=active]:bg-white data-[state=active]:text-brown-900 data-[state=active]:font-bold data-[state=active]:border-brown-900/20 data-[state=active]:shadow-sm">
+          <TabsTrigger value="career" className="relative rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:bg-transparent !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
             <Briefcase className="h-4 w-4 mr-2" />Career
           </TabsTrigger>
         </TabsList>
@@ -744,7 +744,7 @@ export default function StudentProfilePage() {
           <div className="space-y-8">
             <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
               <div className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-xl bg-brown-900/8 border border-brown-900/10 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
                   <Fingerprint className="h-5 w-5 text-brown-900/70" />
                 </div>
                 <div>
@@ -755,7 +755,7 @@ export default function StudentProfilePage() {
               {profile?.isBasicInfoLocked ? <LockedBadge /> : <LockButton onClick={handleSaveBasicInfo} saving={saving === "basic"} disabled={!!isLocked} />}
             </div>
 
-            <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-2xl border border-border/40 relative overflow-hidden group/card">
+            <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-md border border-border/40 relative overflow-hidden group/card">
               <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover/card:opacity-[0.07] transition-opacity">
                 <Fingerprint className="h-24 w-24 text-brown-900" />
               </div>
@@ -782,7 +782,7 @@ export default function StudentProfilePage() {
           <div className="space-y-8">
             <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
               <div className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-xl bg-brown-900/8 border border-brown-900/10 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
                   <GraduationCap className="h-5 w-5 text-brown-900/70" />
                 </div>
                 <div>
@@ -792,7 +792,7 @@ export default function StudentProfilePage() {
               </div>
             </div>
 
-            <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-2xl border border-border/40 relative overflow-hidden group/card">
+            <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-md border border-border/40 relative overflow-hidden group/card">
               <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover/card:opacity-[0.07] transition-opacity">
                 <GraduationCap className="h-24 w-24 text-brown-900" />
               </div>
@@ -859,7 +859,7 @@ export default function StudentProfilePage() {
           <div className="space-y-8">
             <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
               <div className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-xl bg-brown-900/8 border border-brown-900/10 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
                   <BookOpen className="h-5 w-5 text-brown-900/70" />
                 </div>
                 <div>
@@ -870,7 +870,7 @@ export default function StudentProfilePage() {
               {profile?.isClass10Locked ? <LockedBadge /> : <LockButton onClick={handleSaveClass10} saving={saving === "class10"} disabled={!!isLocked} />}
             </div>
 
-            <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-2xl border border-border/40 relative overflow-hidden group/card">
+            <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-md border border-border/40 relative overflow-hidden group/card">
               <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover/card:opacity-[0.07] transition-opacity">
                 <BookOpen className="h-24 w-24 text-brown-900" />
               </div>
@@ -911,7 +911,7 @@ export default function StudentProfilePage() {
             <div className="space-y-8">
               <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
                 <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-brown-900/8 border border-brown-900/10 flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
                     <GraduationCap className="h-5 w-5 text-brown-900/70" />
                   </div>
                   <div>
@@ -922,7 +922,7 @@ export default function StudentProfilePage() {
                 {profile?.isClass12Locked ? <LockedBadge /> : <LockButton onClick={handleSaveClass12} saving={saving === "class12"} disabled={!!isLocked} />}
               </div>
 
-              <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-2xl border border-border/40 relative overflow-hidden group/card">
+              <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-md border border-border/40 relative overflow-hidden group/card">
                 <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover/card:opacity-[0.07] transition-opacity">
                   <GraduationCap className="h-24 w-24 text-brown-900" />
                 </div>
@@ -977,7 +977,7 @@ export default function StudentProfilePage() {
             <div className="space-y-8">
               <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
                 <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-brown-900/8 border border-brown-900/10 flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
                     <Award className="h-5 w-5 text-brown-900/70" />
                   </div>
                   <div>
@@ -988,7 +988,7 @@ export default function StudentProfilePage() {
                 {profile?.isDiplomaLocked ? <LockedBadge /> : <LockButton onClick={handleSaveDiploma} saving={saving === "diploma"} disabled={!!isLocked} />}
               </div>
 
-              <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-2xl border border-border/40 relative overflow-hidden group/card">
+              <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-md border border-border/40 relative overflow-hidden group/card">
                 <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover/card:opacity-[0.07] transition-opacity">
                   <Award className="h-24 w-24 text-brown-900" />
                 </div>
@@ -1029,7 +1029,7 @@ export default function StudentProfilePage() {
            <div className="space-y-8 mt-12">
              <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
                <div className="flex items-center gap-4">
-                 <div className="h-10 w-10 rounded-xl bg-brown-900/10 border border-brown-900/20 flex items-center justify-center">
+                 <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
                    <Calculator className="h-5 w-5 text-brown-900" />
                  </div>
                  <div>
@@ -1046,7 +1046,7 @@ export default function StudentProfilePage() {
                    const totalMks = validSems.reduce((s, r) => s + (r.totalMarks || 0), 0);
                    const pct = totalMks > 0 ? ((totalObt / totalMks) * 100).toFixed(2) : "0.00";
                    return (
-                     <div className="bg-white px-6 py-3 rounded-2xl border border-border bg-opacity-80 shadow-sm flex flex-col items-end">
+                     <div className="bg-white px-6 py-3 rounded-sm border border-border bg-opacity-80 shadow-sm flex flex-col items-end">
                        <span className="text-[10px] font-bold text-brown-900/80 uppercase tracking-widest">Aggregate Score</span>
                        <span className="text-2xl font-serif font-bold text-brown-900">{pct}%</span>
                      </div>
@@ -1063,10 +1063,10 @@ export default function StudentProfilePage() {
                    const oi = semesterResults.findIndex(sr => sr.semester === result.semester);
                    const pct = result.totalMarks && result.obtainedMarks && result.totalMarks > 0 ? ((result.obtainedMarks / result.totalMarks) * 100).toFixed(2) : null;
                    return (
-                     <div key={result.semester} className="p-8 bg-white shadow-lg shadow-brown-900/[0.02] rounded-2xl border border-border/40 hover:border-brown-900/20 transition-all group/sem">
+                     <div key={result.semester} className="p-8 bg-white shadow-lg shadow-brown-900/[0.02] rounded-md border border-border/40 hover:border-brown-900/20 transition-all group/sem">
                        <div className="flex items-center justify-between mb-8 pb-4 border-b border-border/40">
                          <div className="flex items-center gap-4">
-                           <div className="h-12 w-12 rounded-xl bg-muted/20 flex items-center justify-center text-brown-900 font-serif font-bold text-lg group-hover/sem:bg-brown-900 group-hover/sem:text-white transition-colors">
+                           <div className="h-12 w-12 rounded-sm bg-muted/20 flex items-center justify-center text-brown-900 font-serif font-bold text-lg group-hover/sem:bg-brown-900 group-hover/sem:text-white transition-colors">
                              S{result.semester}
                            </div>
                            <h4 className="font-serif font-bold text-xl text-brown-900">Semester {result.semester} Details</h4>
@@ -1099,7 +1099,7 @@ export default function StudentProfilePage() {
                              </FieldRow>
                            );
                          })}
-                         <div className="p-4 bg-brown-900/[0.03] border border-brown-900/10 rounded-2xl flex flex-col items-center justify-center h-full">
+                         <div className="p-4 bg-brown-900/[0.03] border border-brown-900/10 rounded-sm flex flex-col items-center justify-center h-full">
                            <span className="text-[10px] font-bold text-brown-900 uppercase tracking-widest leading-none mb-1">Percentage</span>
                            <span className="text-xl font-serif font-bold text-brown-900">{pct ? `${pct}%` : "—"}</span>
                          </div>
@@ -1109,7 +1109,7 @@ export default function StudentProfilePage() {
                  })}
                
                {semesterResults.filter(r => { const min = formData.studentType === "Lateral Entry" ? 3 : 1; return r.semester >= min && r.semester < (parseInt(formData.currentSemester) || 9); }).length === 0 && (
-                 <div className="p-20 border border-dashed rounded-2xl text-center bg-muted/10 space-y-4">
+                 <div className="p-20 border border-dashed rounded-md text-center bg-muted/10 space-y-4">
                    <div className="h-16 w-16 bg-muted/20 rounded-full flex items-center justify-center mx-auto">
                      <GraduationCap className="h-8 w-8 text-muted-foreground/40" />
                    </div>
@@ -1130,7 +1130,7 @@ export default function StudentProfilePage() {
            <div className="space-y-8">
              <div className="flex flex-row items-end justify-between border-b border-border/40 pb-6">
                 <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-brown-900/[0.08] border border-brown-900/10 flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
                     <Phone className="h-5 w-5 text-brown-900/70" />
                   </div>
                   <div>
@@ -1141,30 +1141,30 @@ export default function StudentProfilePage() {
                <div className="flex gap-3">
                  {isEditingPersonal && !isLocked && (
                    <>
-                     <Button variant="ghost" size="sm" onClick={() => setIsEditingPersonal(false)} className="h-10 px-6 rounded-xl font-semibold">Cancel</Button>
-                     <Button size="sm" onClick={savePersonalInfo} disabled={!!saving} className="h-10 px-6 bg-brown-900 hover:bg-brown-800 text-white rounded-xl shadow-lg shadow-brown-900/10">
+                     <Button variant="ghost" size="sm" onClick={() => setIsEditingPersonal(false)} className="h-10 px-6 rounded-sm font-semibold">Cancel</Button>
+                     <Button size="sm" onClick={savePersonalInfo} disabled={!!saving} className="h-10 px-6 bg-brown-900 hover:bg-brown-800 text-white rounded-sm shadow-sm">
                        {saving === "personal" && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                        Save Changes
                      </Button>
                    </>
                  )}
                  {!isEditingPersonal && !isLocked && (
-                   <Button variant="outline" size="sm" onClick={() => setIsEditingPersonal(true)} className="h-10 px-6 border-brown-200 hover:bg-brown-50 text-brown-700 rounded-xl font-semibold transition-all">
+                   <Button variant="outline" size="sm" onClick={() => setIsEditingPersonal(true)} className="h-10 px-6 border-brown-200 hover:bg-brown-50 text-brown-700 rounded-sm font-semibold transition-all">
                      Edit Information
                    </Button>
                  )}
                </div>
              </div>
  
-             <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-2xl border border-border/40 relative overflow-hidden group/card">
+             <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-md border border-border/40 relative overflow-hidden group/card">
                <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover/card:opacity-[0.07] transition-opacity">
                  <Phone className="h-24 w-24 text-brown-900" />
                </div>
                
                <div className="grid gap-8 md:grid-cols-2 relative z-10">
-                 <div className="space-y-6 bg-muted/5 p-8 rounded-2xl border border-border/30">
+                 <div className="space-y-6 bg-muted/5 p-8 rounded-sm border border-border/30">
                    <div className="flex items-center gap-3 mb-2">
-                     <div className="h-10 w-10 rounded-xl bg-brown-900/8 border border-brown-900/10 flex items-center justify-center">
+                     <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
                     <Phone className="h-5 w-5 text-brown-900/70" />
                   </div>
                      <h4 className="font-serif font-bold text-lg text-brown-900">Direct Contact</h4>
@@ -1183,7 +1183,7 @@ export default function StudentProfilePage() {
                    </div>
                  </div>
                  
-                 <div className="flex flex-col justify-center items-center text-center p-8 space-y-4 bg-brown-900/[0.02] border border-brown-900/10 rounded-3xl group/verify">
+                 <div className="flex flex-col justify-center items-center text-center p-8 space-y-4 bg-brown-900/[0.02] border border-brown-900/10 rounded-md group/verify">
                    <div className="h-16 w-16 rounded-full bg-brown-900/10 flex items-center justify-center text-brown-900 group-hover/verify:scale-110 transition-transform"><CheckCircle2 className="h-8 w-8" /></div>
                    <div className="space-y-1">
                      <h4 className="font-serif font-bold text-xl text-brown-900">Verified Identity</h4>
@@ -1195,7 +1195,7 @@ export default function StudentProfilePage() {
                </div>
  
                <div className="grid gap-8 md:grid-cols-2 relative z-10 pt-4">
-                 <div className="p-8 rounded-2xl bg-muted/5 border border-border/40 hover:border-brown-900/30 transition-all">
+                 <div className="p-8 rounded-sm bg-muted/5 border border-border/40 hover:border-brown-900/30 transition-all">
                    <div className="flex items-center justify-between pb-6 border-b border-border/40 mb-6">
                      <h4 className="font-serif font-bold text-xl text-brown-900">Father&apos;s Identity</h4>
                      <Badge variant="outline" className="bg-brown-900/10 border-brown-900/20 text-brown-900 text-[10px] font-bold tracking-widest uppercase">Primary</Badge>
@@ -1218,7 +1218,7 @@ export default function StudentProfilePage() {
                    </div>
                  </div>
  
-                 <div className="p-8 rounded-2xl bg-muted/5 border border-border/40 hover:border-brown-900/30 transition-all">
+                 <div className="p-8 rounded-sm bg-muted/5 border border-border/40 hover:border-brown-900/30 transition-all">
                    <div className="flex items-center justify-between pb-6 border-b border-border/40 mb-6">
                      <h4 className="font-serif font-bold text-xl text-brown-900">Mother&apos;s Identity</h4>
                    </div>
@@ -1247,7 +1247,7 @@ export default function StudentProfilePage() {
            <div className="space-y-8">
              <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
                 <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-brown-900/[0.08] border border-brown-900/10 flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
                     <MapPin className="h-5 w-5 text-brown-900/70" />
                   </div>
                   <div>
@@ -1259,10 +1259,10 @@ export default function StudentProfilePage() {
              
              <div className="grid gap-10 md:grid-cols-2">
                {/* Present Address */}
-               <div className="p-10 rounded-2xl bg-brown-900/[0.01] border border-brown-900/10 shadow-sm relative overflow-hidden group/addr">
+               <div className="p-10 rounded-md bg-brown-900/[0.01] border border-brown-900/10 shadow-sm relative overflow-hidden group/addr">
                  <div className="absolute top-0 right-0 p-8 opacity-[0.02] group-hover/addr:opacity-[0.05] transition-opacity"><Home className="h-24 w-24 text-brown-900" /></div>
                  <div className="flex items-center gap-3 pb-6 border-b border-brown-900/10 mb-8">
-                    <div className="h-10 w-10 rounded-xl bg-brown-900/10 flex items-center justify-center text-brown-900"><MapPin className="h-5 w-5" /></div>
+                    <div className="h-10 w-10 rounded-sm bg-brown-900/5 flex items-center justify-center text-brown-900"><MapPin className="h-5 w-5" /></div>
                     <h4 className="font-serif font-bold text-xl text-brown-900">Present Address</h4>
                  </div>
                  <div className="grid grid-cols-2 gap-x-6 gap-y-6 relative z-10">
@@ -1305,15 +1305,15 @@ export default function StudentProfilePage() {
                </div>
  
                {/* Permanent Address */}
-               <div className="p-10 rounded-2xl bg-brown-900/[0.01] border border-brown-900/10 shadow-sm relative overflow-hidden group/perm">
+               <div className="p-10 rounded-md bg-brown-900/[0.01] border border-brown-900/10 shadow-sm relative overflow-hidden group/perm">
                  <div className="absolute top-0 right-0 p-8 opacity-[0.02] group-hover/perm:opacity-[0.05] transition-opacity"><Home className="h-24 w-24 text-brown-900" /></div>
                  <div className="flex items-center justify-between pb-6 border-b border-brown-900/10 mb-8">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-brown-900/10 flex items-center justify-center text-brown-900"><Home className="h-5 w-5" /></div>
+                      <div className="h-10 w-10 rounded-sm bg-brown-900/5 flex items-center justify-center text-brown-900"><Home className="h-5 w-5" /></div>
                       <h4 className="font-serif font-bold text-xl text-brown-900">Permanent Address</h4>
                     </div>
                     {isEditingPersonal && !isLocked && (
-                      <div className="flex items-center space-x-2 bg-brown-900/5 px-4 py-2.5 rounded-xl border border-brown-900/10 shadow-sm transition-all hover:bg-brown-900/10">
+                      <div className="flex items-center space-x-2 bg-brown-900/5 px-4 py-2.5 rounded-sm border border-brown-900/10 shadow-sm transition-all hover:bg-brown-900/10">
                         <Checkbox
                          id="sameAsPresent"
                          checked={formData.sameAsPresent}
@@ -1385,7 +1385,7 @@ export default function StudentProfilePage() {
            <div className="space-y-8">
               <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
                 <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-brown-900/[0.08] border border-brown-900/10 flex items-center justify-center">
+                  <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
                     <Briefcase className="h-5 w-5 text-brown-900/70" />
                   </div>
                   <div>
@@ -1393,13 +1393,13 @@ export default function StudentProfilePage() {
                     <p className="text-sm text-muted-foreground">Professional identity and technical presence</p>
                   </div>
                 </div>
-                <Button onClick={saveCareer} disabled={!!saving} className="h-10 px-6 bg-brown-900 hover:bg-brown-800 text-white rounded-xl shadow-lg shadow-brown-900/10 font-bold text-sm">
+                <Button onClick={saveCareer} disabled={!!saving} className="h-10 px-6 bg-brown-900 hover:bg-brown-800 text-white rounded-sm shadow-sm font-bold text-sm">
                   {saving === "career" && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                   Update Profile
                 </Button>
               </div>
  
-             <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-2xl border border-border/40 relative overflow-hidden group/career">
+             <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-md border border-border/40 relative overflow-hidden group/career">
                <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover/career:opacity-[0.08] transition-opacity">
                  <Briefcase className="h-32 w-32 text-brown-900" />
                </div>
@@ -1415,7 +1415,7 @@ export default function StudentProfilePage() {
                      <FieldRow label="Elevator Pitch / Bio">
                        <Textarea name="bio" value={formData.bio} onChange={handleInputChange} 
                                  placeholder="Craft a compelling summary of your academic journey and professional aspirations..." 
-                                 className="h-32 resize-none bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 transition-all text-base leading-relaxed rounded-2xl p-6" />
+                                 className="h-32 resize-none bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 transition-all text-base leading-relaxed rounded-sm p-6" />
                      </FieldRow>
                    </div>
                  </div>
@@ -1423,23 +1423,23 @@ export default function StudentProfilePage() {
                  {/* Skills Cluster */}
                  <div className="space-y-6">
                    <div className="flex items-center gap-3">
-                     <div className="h-10 w-10 rounded-xl bg-brown-900/10 flex items-center justify-center text-brown-900"><Code2 className="h-5 w-5" /></div>
+                     <div className="h-10 w-10 rounded-sm bg-brown-900/5 flex items-center justify-center text-brown-900"><Code2 className="h-5 w-5" /></div>
                      <h4 className="font-serif font-bold text-xl text-brown-900">Technical Expertise</h4>
                    </div>
                    <div className="space-y-6">
-                     <div className="flex items-center gap-3 max-w-md bg-muted/5 p-2 rounded-2xl border border-border/30">
+                     <div className="flex items-center gap-3 max-w-md bg-muted/5 p-2 rounded-sm border border-border/30">
                        <Input ref={skillInputRef} value={skillInput} onChange={e => setSkillInput(e.target.value)} 
                               onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addSkill())} 
                               placeholder="Add a skill (e.g. Next.js, Python)" 
                               className="bg-transparent border-none shadow-none focus-visible:ring-0 h-12" />
-                       <Button type="button" onClick={addSkill} className="rounded-xl font-bold bg-brown-900 text-white hover:bg-brown-800">Add</Button>
+                       <Button type="button" onClick={addSkill} className="rounded-sm font-bold bg-brown-900 text-white hover:bg-brown-800">Add</Button>
                      </div>
                      
-                     <div className="bg-muted/5 rounded-2xl p-8 border border-border/30 min-h-[140px] flex items-center justify-center">
+                     <div className="bg-muted/5 rounded-sm p-8 border border-border/30 min-h-[140px] flex items-center justify-center">
                        {formData.skills.length > 0 ? (
                          <div className="flex flex-wrap gap-3">
                            {formData.skills.map((skill) => (
-                             <Badge key={skill} variant="secondary" className="px-5 py-2.5 text-sm font-bold bg-white border border-border/40 shadow-sm text-brown-900 rounded-xl group/skill hover:border-brown-900/50 transition-all">
+                             <Badge key={skill} variant="secondary" className="px-5 py-2.5 text-sm font-bold bg-white border border-border/40 shadow-sm text-brown-900 rounded-sm group/skill hover:border-brown-900/50 transition-all">
                                {skill}
                                <button onClick={() => removeSkill(skill)} className="ml-3 text-muted-foreground/40 group-hover/skill:text-destructive transition-colors">
                                  <X className="h-3.5 w-3.5" />
@@ -1461,25 +1461,25 @@ export default function StudentProfilePage() {
                    {/* Digital Presence */}
                    <div className="space-y-6">
                      <div className="flex items-center gap-3">
-                       <div className="h-10 w-10 rounded-xl bg-brown-900/10 flex items-center justify-center text-brown-900"><Link2 className="h-5 w-5" /></div>
+                       <div className="h-10 w-10 rounded-sm bg-brown-900/5 flex items-center justify-center text-brown-900"><Link2 className="h-5 w-5" /></div>
                        <h4 className="font-serif font-bold text-xl text-brown-900">Digital Presence</h4>
                      </div>
-                     <div className="space-y-6 bg-muted/5 p-8 rounded-2xl border border-border/30">
+                     <div className="space-y-6 bg-muted/5 p-8 rounded-sm border border-border/30">
                        <FieldRow label="LinkedIn Profile" icon={Linkedin}>
                          <div className="flex group/link">
-                           <span className="inline-flex items-center px-4 rounded-l-2xl border border-r-0 border-border/40 bg-white text-muted-foreground text-[10px] font-bold uppercase tracking-tighter">linkedin.com/in/</span>
+                           <span className="inline-flex items-center px-4 rounded-l-sm border border-r-0 border-border/40 bg-white text-muted-foreground text-[10px] font-bold uppercase tracking-tighter">linkedin.com/in/</span>
                            <Input name="linkedinId" value={formData.linkedinId} onChange={handleInputChange} placeholder="username" className="rounded-l-none h-12 bg-white border-border/40 focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 font-medium transition-all" />
                          </div>
                        </FieldRow>
                        <FieldRow label="GitHub Archive" icon={Github}>
                          <div className="flex group/link">
-                           <span className="inline-flex items-center px-4 rounded-l-2xl border border-r-0 border-border/40 bg-white text-muted-foreground text-[10px] font-bold uppercase tracking-tighter">github.com/</span>
+                           <span className="inline-flex items-center px-4 rounded-l-sm border border-r-0 border-border/40 bg-white text-muted-foreground text-[10px] font-bold uppercase tracking-tighter">github.com/</span>
                            <Input name="githubId" value={formData.githubId} onChange={handleInputChange} placeholder="username" className="rounded-l-none h-12 bg-white border-border/40 focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 font-medium transition-all" />
                          </div>
                        </FieldRow>
                        <FieldRow label="LeetCode Rank" icon={Code2}>
                          <div className="flex group/link">
-                           <span className="inline-flex items-center px-4 rounded-l-2xl border border-r-0 border-border/40 bg-white text-muted-foreground text-[10px] font-bold uppercase tracking-tighter">leetcode.com/</span>
+                           <span className="inline-flex items-center px-4 rounded-l-sm border border-r-0 border-border/40 bg-white text-muted-foreground text-[10px] font-bold uppercase tracking-tighter">leetcode.com/</span>
                            <Input name="leetcodeId" value={formData.leetcodeId} onChange={handleInputChange} placeholder="username" className="rounded-l-none h-12 bg-white border-border/40 focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 font-medium transition-all" />
                          </div>
                        </FieldRow>
@@ -1489,12 +1489,12 @@ export default function StudentProfilePage() {
                    {/* Resume Repository */}
                    <div className="space-y-6">
                      <div className="flex items-center gap-3">
-                       <div className="h-10 w-10 rounded-xl bg-brown-900/10 flex items-center justify-center text-brown-900"><FileText className="h-5 w-5" /></div>
+                       <div className="h-10 w-10 rounded-sm bg-brown-900/5 flex items-center justify-center text-brown-900"><FileText className="h-5 w-5" /></div>
                        <h4 className="font-serif font-bold text-xl text-brown-900">Career Dossier</h4>
                      </div>
-                     <div className="space-y-6 bg-muted/5 p-8 rounded-2xl border border-border/30 h-full">
+                     <div className="space-y-6 bg-muted/5 p-8 rounded-sm border border-border/30 h-full">
                        <FieldRow label="Resume (Drive Link)">
-                          <Input name="resumeLink" value={formData.resumeLink} onChange={handleInputChange} placeholder="https://drive.google.com/..." className="h-12 bg-white border-border/40 focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 font-medium rounded-2xl transition-all" />
+                          <Input name="resumeLink" value={formData.resumeLink} onChange={handleInputChange} placeholder="https://drive.google.com/..." className="h-12 bg-white border-border/40 focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 font-medium rounded-sm transition-all" />
                          <div className="flex items-start gap-2 mt-3 px-1">
                            <AlertCircle className="h-3.5 w-3.5 text-muted-foreground/60 mt-0.5" />
                            <p className="text-[10px] text-muted-foreground font-medium leading-relaxed">Ensure link sharing is set to public. PDF format is highly recommended for cross-platform compatibility.</p>
@@ -1503,7 +1503,7 @@ export default function StudentProfilePage() {
                        
                        <div className="pt-2">
                          {formData.resumeLink ? (
-                           <div className="p-6 rounded-2xl border border-brown-900/20 bg-brown-900/[0.02] flex items-center justify-between group/res">
+                           <div className="p-6 rounded-sm border border-brown-900/20 bg-brown-900/[0.02] flex items-center justify-between group/res">
                              <div className="flex items-center gap-4">
                                <div className="bg-brown-900/10 p-3 rounded-xl"><CheckCircle2 className="h-5 w-5 text-brown-900" /></div>
                                <div>
@@ -1511,12 +1511,12 @@ export default function StudentProfilePage() {
                                  <p className="text-[10px] text-brown-900/60 font-bold uppercase tracking-widest mt-0.5 underline decoration-brown-900/20 break-all max-w-[140px] truncate">{formData.resumeLink}</p>
                                </div>
                              </div>
-                             <a href={formData.resumeLink} target="_blank" rel="noopener noreferrer" className="h-10 w-10 bg-white border border-brown-900/20 rounded-xl flex items-center justify-center text-brown-900 hover:bg-brown-900 hover:text-white transition-all shadow-sm">
+                             <a href={formData.resumeLink} target="_blank" rel="noopener noreferrer" className="h-10 w-10 bg-white border border-brown-900/20 rounded-sm flex items-center justify-center text-brown-900 hover:bg-brown-900 hover:text-white transition-all shadow-sm">
                                <ExternalLink className="h-4 w-4" />
                              </a>
                            </div>
                          ) : (
-                           <div className="p-8 border border-dashed border-brown-900/30 rounded-2xl text-center bg-brown-900/[0.02] group/missing">
+                           <div className="p-8 border border-dashed border-brown-900/30 rounded-sm text-center bg-brown-900/[0.02] group/missing">
                              <AlertTriangle className="h-8 w-8 text-brown-900 mx-auto mb-3 opacity-30 group-hover/missing:opacity-60 transition-opacity" />
                              <p className="text-sm font-bold text-brown-900 font-serif">Resume Missing</p>
                              <p className="text-xs text-brown-900/50 mt-1 font-medium">Placement eligibility requires a validated resume.</p>
@@ -1589,7 +1589,7 @@ function ConfirmLockModal({ open, title, onClose, onConfirm }: { open: boolean, 
             <span>Are you sure? Once locked, these details become **Read-Only**. You cannot edit them later without contacting the Admin.</span>
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="bg-muted/20 p-2 rounded-b-lg border-t mt-2">
+        <AlertDialogFooter className="bg-muted/20 p-2 rounded-b-sm border-t mt-2">
           <AlertDialogCancel onClick={onClose}>Review Again</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm} className="bg-brown-900 text-white hover:bg-brown-800">
             Yes, Lock & Save

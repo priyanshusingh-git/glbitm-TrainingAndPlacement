@@ -33,15 +33,15 @@ export function AdminOverview({ overview }: AdminOverviewProps) {
         </div>
       ),
       header: (
-        <div className={cn(config.toneClass, "flex h-full min-h-[4rem] md:min-h-[6rem] w-full flex-1 rounded-md border border-border/40 relative overflow-hidden group/header bg-background")}>
+        <div className={cn(config.toneClass, "flex h-full min-h-[4rem] md:min-h-[6rem] w-full flex-1 rounded-sm border relative overflow-hidden group/header")}>
           <div 
             className="absolute inset-0" 
             style={{ background: `radial-gradient(circle at 50% 0%, ${config.gradient}, transparent)` }} 
           />
-          <IconComponent className="absolute -bottom-2 -right-2 h-16 w-16 md:h-24 md:w-24 opacity-10 group-hover/header:scale-110 transition-transform duration-500 text-foreground" />
+          <IconComponent className="absolute -bottom-2 -right-2 h-16 w-16 md:h-24 md:w-24 opacity-10 group-hover/header:scale-110 transition-transform duration-500 text-current" />
         </div>
       ),
-      icon: <IconComponent className="h-4 w-4 opacity-70" />,
+      icon: <IconComponent className={cn(config.toneClass, "h-6 w-6 p-1 rounded-sm border opacity-80")} />,
     };
   });
 

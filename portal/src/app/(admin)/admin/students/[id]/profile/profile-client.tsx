@@ -159,7 +159,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </div>
 
  <Tabs defaultValue="profile" className="w-full">
- <TabsList className="grid grid-cols-2 lg:grid-cols-5 h-auto p-1.5 bg-muted/40 rounded-md border border-border/50 sticky top-4 z-20 backdrop-blur-xl transition-all shadow-lg shadow-black/5">
+ <TabsList className="grid grid-cols-2 lg:grid-cols-5 h-auto p-1.5 bg-muted/40 rounded-md border border-border/50 sticky top-4 z-20 backdrop-blur-xl transition-all shadow-md">
  {[
  { value:"profile", label:"Identity", icon: User },
  { value:"academic", label:"Academics", icon: GraduationCap },
@@ -305,7 +305,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  <div className={cn("h-2 w-full", card.color)} />
  <CardHeader className="flex flex-row items-center justify-between pb-6 pt-8">
  <div className="flex items-center gap-4">
- <div className={cn("h-12 w-12 rounded-md border flex items-center justify-center shadow-lg shadow-black/5", card.light, card.accent)}>
+ <div className={cn("h-12 w-12 rounded-md border flex items-center justify-center shadow-md", card.light, card.accent)}>
  <Award className="h-6 w-6" />
  </div>
  <CardTitle className="text-2xl font-bold tracking-tight">{card.title}</CardTitle>
@@ -453,7 +453,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  <div className="space-y-4">
  {student.certifications?.length > 0 ? (
  student.certifications.map((cert: any) => (
- <div key={cert.id} className="flex gap-4 p-5 rounded-md border border-border/60 bg-card hover:shadow-xl hover:shadow-black/5 transition-all">
+ <div key={cert.id} className="flex gap-4 p-5 rounded-md border border-border/60 bg-card hover:shadow-md transition-all">
  <div className="h-12 w-12 rounded-md bg-muted flex items-center justify-center shrink-0">
  <Award className="h-6 w-6 text-muted-foreground/50" />
  </div>
@@ -506,8 +506,8 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  { label:"GitHub", key:"githubId", icon:"G", color:"text-[#181717]", bg:"bg-[#181717]/10", border:"border-[#181717]/30", url: (id: string) => `https://github.com/${id}` },
  { label:"CodeChef", key:"codechefId", icon:"C", color:"text-[#5B4638]", bg:"bg-[#5B4638]/10", border:"border-[#5B4638]/30", url: (id: string) => `https://codechef.com/users/${id}` }
  ].map((plat) => (
- <div key={plat.label} className={cn("relative p-8 rounded-md border-2 bg-card transition-all hover:shadow-2xl hover:-translate-y-2 flex flex-col items-center text-center group", plat.border)}>
- <div className={cn("h-20 w-20 rounded-md flex items-center justify-center text-3xl font-bold mb-6 shadow-lg shadow-black/5 transition-all group-hover:rotate-6", plat.bg)}>
+ <div key={plat.label} className={cn("relative p-8 rounded-md border-2 bg-card transition-all hover:shadow-md hover:-translate-y-2 flex flex-col items-center text-center group", plat.border)}>
+ <div className={cn("h-20 w-20 rounded-md flex items-center justify-center text-3xl font-bold mb-6 shadow-md transition-all group-hover:rotate-6", plat.bg)}>
  <span className={plat.color}>{plat.icon}</span>
  </div>
  <Label className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60 mb-2">{plat.label}</Label>
@@ -518,7 +518,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  href={plat.url(student[plat.key])}
  target="_blank"
  rel="noreferrer"
- className="mt-6 font-bold text-[10px] uppercase tracking-widest text-brown-800 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all hover:scale-105 active:scale-95 px-4 py-2 rounded-full border border-brown-800/20 bg-brown-800/5"
+ className="mt-6 font-bold text-[10px] uppercase tracking-widest text-brown-800 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all hover:scale-105 active:scale-95 px-4 py-2 rounded-sm border border-brown-800/20 bg-brown-800/5"
  >
  Audit Profile <ExternalLink className="h-3 w-3" />
  </a>
@@ -597,7 +597,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </div>
 
  <div className="mt-12 flex flex-col items-center gap-4">
- <div className="text-[10px] font-bold text-brown-800 bg-brown-800/10 border border-brown-800/20 px-6 py-2.5 rounded-full uppercase tracking-[0.2em] shadow-lg shadow-primary/5">
+ <div className="text-[10px] font-bold text-brown-800 bg-brown-800/10 border border-brown-800/20 px-6 py-2.5 rounded-sm uppercase tracking-[0.2em] shadow-sm">
  {student.attendances?.length || 0} COMPLETED SESSIONS
  </div>
  <p className="text-[10px] font-bold text-muted-foreground italic">Aggregate calculated across all active modules</p>

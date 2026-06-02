@@ -5,30 +5,13 @@ import {
   placementMiniStats,
   placementStats,
   placementTable,
-  tickerItems,
 } from "@/data/landing"
 import { AnimatedSection } from "@/components/ui/AnimatedSection"
 import { cn } from "@/lib/utils"
 
 export default function NumbersBar() {
-  const tickerTrack = [...tickerItems, ...tickerItems]
-
   return (
     <>
-      <div className="overflow-hidden border-y border-brown-900/10 bg-brown-100 py-3" aria-hidden="true">
-        <div className="flex animate-ticker whitespace-nowrap">
-          {tickerTrack.map((item, index) => (
-            <div
-              key={`${item.value}-${item.label}-${index}`}
-              className="inline-flex items-center gap-2.5 border-r border-brown-900/12 px-7 text-xs font-semibold text-brown-800"
-            >
-              <strong className="font-display text-[22px] font-bold tracking-[-0.02em] text-brown-900">{item.value}</strong>
-              <span>{item.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
       <section id="placements" className="bg-brown-900 px-4 py-14 text-white sm:px-5 md:px-8 md:py-16 lg:px-[clamp(28px,5vw,80px)] lg:py-20 xl:px-[clamp(40px,6vw,80px)]">
         <div className="mx-auto max-w-[1200px]">
           <div className="mx-auto mb-10 max-w-[40rem] text-center lg:mb-12">

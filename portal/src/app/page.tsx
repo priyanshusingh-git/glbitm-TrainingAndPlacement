@@ -14,9 +14,11 @@ import Guidance from "@/components/sections/Guidance"
 import Testimonials from "@/components/sections/Testimonials"
 import TrustStrip from "@/components/sections/TrustStrip"
 import CTABand from "@/components/sections/CTABand"
-import { heroContent, heroHighlights } from "@/data/landing"
+import { heroContent, heroHighlights, tickerItems } from "@/data/landing"
 
 export default function Home() {
+  const tickerTrack = [...tickerItems, ...tickerItems]
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-brown-50 font-body text-foreground selection:bg-amber-500/20">
       <Navbar />
@@ -32,10 +34,6 @@ export default function Home() {
 
         <div className="relative z-10 mx-auto grid w-full max-w-[1200px] gap-7 lg:grid-cols-[1fr_370px] lg:gap-16">
           <div className="animate-in fade-in slide-in-from-bottom-2 duration-700">
-            <div className="hero-badge mb-5">
-              <div className="live-dot" />
-              <span className="text-[10.5px] font-semibold uppercase tracking-[0.15em] text-amber-400">{heroContent.eyebrow}</span>
-            </div>
 
             <h1 className="hero-display-inverse max-w-[12ch]">
               Where <span className="text-amber-400 italic">{heroContent.emphasis}</span>
@@ -82,6 +80,20 @@ export default function Home() {
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 overflow-hidden border-t border-white/10 bg-white/5 py-3 backdrop-blur-[5px] z-20" aria-hidden="true">
+          <div className="flex animate-ticker whitespace-nowrap">
+            {tickerTrack.map((item, index) => (
+              <div
+                key={`${item.value}-${item.label}-${index}`}
+                className="inline-flex items-center gap-2.5 border-r border-white/10 px-7 text-xs font-semibold text-white/80"
+              >
+                <strong className="font-display text-[22px] font-bold tracking-[-0.02em] text-amber-400">{item.value}</strong>
+                <span className="text-white/60">{item.label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>

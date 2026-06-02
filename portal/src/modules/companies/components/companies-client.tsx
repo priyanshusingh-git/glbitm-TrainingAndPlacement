@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState } from"react"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from"@/components/ui/badge"
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
@@ -53,6 +54,7 @@ import { Company } from"@/types/training"
 import { PageHeader } from"@/components/layout/page-header"
 
 export default function CompaniesPage() {
+ const searchParams = useSearchParams()
  const [companies, setCompanies] = useState<Company[]>([])
  const [loading, setLoading] = useState(true)
  const [searchQuery, setSearchQuery] = useState("")
@@ -78,9 +80,15 @@ export default function CompaniesPage() {
 
  const isCreateFormDirty = formData.name !=="";
 
- useEffect(() => {
- fetchCompanies()
- }, [])
+  useEffect(() => {
+    if (searchParams?.get("action") === "new") {
+      setIsDialogOpen(true)
+    }
+  }, [searchParams])
+
+  useEffect(() => {
+  fetchCompanies()
+  }, [])
 
  const fetchCompanies = async () => {
  try {
@@ -270,7 +278,7 @@ export default function CompaniesPage() {
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-brown-800/10">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-sm bg-brown-800/10">
                       <Building2 className="h-5 w-5 text-brown-800" />
                     </div>
                     <div>

@@ -30,8 +30,10 @@ export interface AdminDashboardData {
  placedStudents: string;
  avgScore: string;
  activeCompanies: number;
+ placementRate?: number;
  };
  placementAnalytics: any[];
+ branchDistribution?: any[];
  recentActivity: any[];
  companies: any[];
 }

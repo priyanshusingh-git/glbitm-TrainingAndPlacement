@@ -13,9 +13,13 @@ interface PlacementPipelineProps {
   company: string;
   role: string;
   stages: Stage[];
+  nextEvent?: {
+    label: string;
+    highlight: string;
+  } | null;
 }
 
-export function PlacementPipeline({ company, role, stages }: PlacementPipelineProps) {
+export function PlacementPipeline({ company, role, stages, nextEvent }: PlacementPipelineProps) {
   const completedRatio =
     stages.length > 1
       ? (stages.filter((stage) => stage.status === "completed").length / (stages.length - 1)) * 100
@@ -29,7 +33,7 @@ export function PlacementPipeline({ company, role, stages }: PlacementPipelinePr
           <p className="text-sm text-muted-foreground">{role}</p>
         </div>
         <span className="rounded-full bg-amber-500/10 px-3 py-1 text-[10px] font-bold text-amber-600 ring-1 ring-amber-500/20 uppercase tracking-wider">
-          In Progress
+          {stages.length > 0 ? "In Progress" : "Inactive"}
         </span>
       </div>
 
@@ -71,14 +75,26 @@ export function PlacementPipeline({ company, role, stages }: PlacementPipelinePr
         ))}
       </div>
 
-      <div className="flex items-center gap-2 rounded-md bg-muted/40 p-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-white shadow-sm">
-          <CalendarIcon className="h-4 w-4 text-amber-600" />
+      {nextEvent ? (
+        <div className="flex items-center gap-2 rounded-sm bg-muted/40 p-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-white shadow-sm">
+            <CalendarIcon className="h-4 w-4 text-amber-600" />
+          </div>
+          <p className="text-xs font-medium text-muted-foreground">
+            {nextEvent.label} <span className="font-bold text-foreground">{nextEvent.highlight}</span>
+          </p>
         </div>
-        <p className="text-xs font-medium text-muted-foreground">
-          Aptitude test scheduled for <span className="font-bold text-foreground">Dec 15, 2024 — 10:00 AM</span>
-        </p>
-      </div>
+      ) : (
+        <div className="flex items-center gap-2 rounded-sm bg-muted/40 p-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-sm bg-white shadow-sm">
+            <CalendarIcon className="h-4 w-4 text-amber-600" />
+          </div>
+          <p className="text-xs font-medium text-muted-foreground">
+            {stages.length > 0 ? "No upcoming events scheduled." : "Apply to upcoming drives to start your placement process."}
+          </p>
+        </div>
+      )}
+
     </div>
   )
 }

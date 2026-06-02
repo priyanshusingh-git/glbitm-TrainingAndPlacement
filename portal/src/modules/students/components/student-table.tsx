@@ -99,7 +99,7 @@ export function StudentTable() {
  <Card className="overflow-hidden border-border/50 bg-card">
  <CardHeader className="flex flex-col gap-4 border-b border-border/50 bg-muted/10 pb-4 sm:flex-row sm:items-center sm:justify-between">
   <CardTitle className="flex items-center gap-2 text-lg font-bold tracking-tight">
-    <div className="rounded-md bg-primary/10 p-2">
+    <div className="rounded-sm bg-primary/10 p-2">
       <Users className="h-5 w-5 text-primary" />
     </div>
     Student Management
@@ -196,7 +196,7 @@ export function StudentTable() {
  </div>
  </TableCell>
   <TableCell>
-    <code className="text-xs font-mono bg-muted px-1.5 py-0.5 rounded text-primary">
+    <code className="text-xs font-mono bg-muted px-1.5 py-0.5 rounded-sm text-primary">
       {student.admissionId ||"N/A"}
     </code>
   </TableCell>

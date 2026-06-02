@@ -23,12 +23,12 @@ export const studentNavItems = [
   { label: "Overview", href: "/student", icon: LayoutDashboard, bottomNav: true, bottomNavLabel: "Home" },
 
   { type: "header", label: "TRAINING" },
-  { label: "CDC Training", href: "/student/training", icon: BookOpen, count: 3, bottomNav: true, bottomNavLabel: "Training" },
+  { label: "CDC Training", href: "/student/training", icon: BookOpen, bottomNav: true, bottomNavLabel: "Training" },
   { label: "Bootcamps", href: "/student/bootcamps", icon: Award },
   { label: "Tests & Results", href: "/student/tests", icon: FileText, bottomNav: true, bottomNavLabel: "Tests" },
 
   { type: "header", label: "PLACEMENT" },
-  { label: "Placements", href: "/student/placements", icon: Briefcase, count: 2, bottomNav: true, bottomNavLabel: "Drives" },
+  { label: "Placements", href: "/student/placements", icon: Briefcase, bottomNav: true, bottomNavLabel: "Drives" },
 
   { type: "header", label: "PROFILE", hideInSidebar: true },
   { label: "My Profile", href: "/student/profile", icon: User, bottomNav: true, bottomNavLabel: "Profile", hideInSidebar: true },

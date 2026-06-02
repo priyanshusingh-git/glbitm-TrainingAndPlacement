@@ -8,7 +8,6 @@ export const authBrandStats = [
 ]
 
 export const authBrandContent = {
-  eyebrow: "Placement Season 2024–25",
   title: (
     <>
       Your Career
@@ -22,7 +21,6 @@ export const authBrandContent = {
 }
 
 export const forgotPasswordBrandContent = {
-  eyebrow: "Secure Account Recovery",
   title: (
     <>
       Back in minutes,

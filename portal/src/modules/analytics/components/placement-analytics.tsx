@@ -19,19 +19,22 @@ import {
  ChartLegendContent,
 } from"@/components/ui/chart"
 import {
- Bar,
- BarChart,
- Line,
- XAxis,
- YAxis,
- CartesianGrid,
- Area,
- AreaChart,
-} from"recharts"
+  Bar,
+  BarChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Area,
+  AreaChart,
+  ComposedChart,
+} from "recharts"
 import { placementData, departmentData } from "@/data/stats"
 
 interface PlacementAnalyticsProps {
  analytics?: any[];
+ placementRate?: number;
+ branchDistribution?: any[];
 }
 
 const placementChartConfig = {
@@ -56,8 +59,9 @@ const departmentChartConfig = {
  },
 }
 
-export function PlacementAnalytics({ analytics }: PlacementAnalyticsProps) {
+export function PlacementAnalytics({ analytics, placementRate = 0, branchDistribution }: PlacementAnalyticsProps) {
  const currentData = analytics || placementData;
+ const currentBranchData = branchDistribution || departmentData;
  const suffix ="2025-26"
 
  const handleExport = () => {
@@ -73,7 +77,7 @@ export function PlacementAnalytics({ analytics }: PlacementAnalyticsProps) {
  <CardHeader className="flex flex-col justify-between gap-4 border-b border-border/60 bg-muted/10 pb-4 sm:flex-row sm:items-center">
  <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
  <CardTitle className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-    <div className="rounded-md border border-border/60 bg-primary/10 p-2 shadow-sm">
+    <div className="rounded-sm border border-border/60 bg-primary/10 p-2 shadow-sm">
       <BarChart3 className="h-5 w-5 text-primary" />
     </div>
  Analytics
@@ -110,7 +114,7 @@ export function PlacementAnalytics({ analytics }: PlacementAnalyticsProps) {
         </div>
         <div className="overflow-hidden w-full">
           <ChartContainer config={placementChartConfig} className="h-48 w-full md:h-64">
-            <AreaChart data={currentData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+            <ComposedChart data={currentData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
               <defs>
                 <linearGradient id="placedGradient" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
@@ -148,7 +152,7 @@ export function PlacementAnalytics({ analytics }: PlacementAnalyticsProps) {
                 strokeDasharray="4 4"
                 dot={false}
               />
-            </AreaChart>
+            </ComposedChart>
           </ChartContainer>
         </div>
       </div>
@@ -160,7 +164,7 @@ export function PlacementAnalytics({ analytics }: PlacementAnalyticsProps) {
     Branch Distribution
   </h4>
  <ChartContainer config={departmentChartConfig} className="h-48 w-full">
- <BarChart data={departmentData} layout="vertical" margin={{ left: -10 }}>
+ <BarChart data={currentBranchData} layout="vertical" margin={{ left: -10 }}>
  <XAxis type="number" hide />
  <YAxis
  type="category"
@@ -190,13 +194,13 @@ export function PlacementAnalytics({ analytics }: PlacementAnalyticsProps) {
 
  <div className="premium-tint flex flex-col justify-center space-y-3 rounded-md border border-brown-800/15 p-5 text-center">
  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brown-800/70">Milestone Reached</p>
- <h3 className="text-3xl font-semibold text-foreground">92%</h3>
+ <h3 className="text-3xl font-semibold text-foreground">{placementRate}%</h3>
  <p className="text-sm text-muted-foreground leading-relaxed">
  Overall placement percentage reached for the current graduating batch.
  </p>
   <div className="pt-2">
     <div className="h-2 w-full overflow-hidden rounded-sm bg-primary/10">
-      <div className="h-full w-[92%] bg-primary" />
+      <div className="h-full bg-primary transition-all duration-500" style={{ width: `${placementRate}%` }} />
     </div>
   </div>
  </div>

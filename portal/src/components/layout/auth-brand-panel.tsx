@@ -6,7 +6,7 @@ import type { ReactNode } from "react"
 import { cn } from "@/lib/utils"
 
 interface AuthBrandPanelProps {
-  eyebrow: string
+  eyebrow?: string
   title: ReactNode
   description: string
   bottom: ReactNode
@@ -55,10 +55,7 @@ export function AuthBrandPanel({
 
       {/* Hero Content */}
       <div className="relative z-10 max-w-[25rem]">
-        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 animate-fade-up stagger-2">
-          <div className="h-1.5 w-1.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(232,160,32,0.8)] animate-pulse" />
-          <span className="text-[11px] font-bold tracking-wider text-amber-400 uppercase">{eyebrow}</span>
-        </div>
+
         
         <h1 className="mb-4 animate-fade-up stagger-3 font-display text-[clamp(2rem,3.5vw,3.25rem)] font-bold leading-[1.05] tracking-tight text-white [font-variation-settings:'opsz'_64,'SOFT'_0,'WONK'_0]">
           {title}

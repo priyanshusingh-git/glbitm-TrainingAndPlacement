@@ -322,8 +322,6 @@ export function Header({ role, user, headerAction }: HeaderProps) {
  </Button>
  </DropdownMenuTrigger>
  <DropdownMenuContent align="end" className="w-56 rounded-md border-border/70">
- <DropdownMenuLabel>My Account</DropdownMenuLabel>
- <DropdownMenuSeparator />
  <DropdownMenuItem asChild>
  <Link href={role ==="student" ?"/student/profile" : role ==="admin" ?"/admin/settings" : role === "trainer" ? "/trainer/profile" : "/recruiter"}>Profile</Link>
  </DropdownMenuItem>

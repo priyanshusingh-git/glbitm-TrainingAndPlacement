@@ -459,7 +459,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  <TableCell className="py-5 px-8 font-mono text-xs font-bold text-muted-foreground group-hover/row:text-brown-800 transition-colors">{student.admissionId}</TableCell>
  <TableCell className="py-5">
  <div className="flex items-center gap-3">
- <div className="tone-primary flex h-8 w-8 items-center justify-center rounded-lg border text-[10px] font-semibold">
+ <div className="tone-primary flex h-8 w-8 items-center justify-center rounded-sm border text-[10px] font-semibold">
  {(student.name ||"S")[0]}
  </div>
  <span className="text-xs font-semibold uppercase tracking-tight">{student.name}</span>
@@ -823,7 +823,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  )}
  >
  <div className="flex items-center gap-3">
- <div className="h-8 w-8 rounded-lg bg-background border border-border flex items-center justify-center font-black text-[10px]">
+ <div className="h-8 w-8 rounded-sm bg-background border border-border flex items-center justify-center font-black text-[10px]">
  {(student.name ||"S")[0]}
  </div>
  <div className="flex flex-col">
@@ -866,7 +866,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  {student?.name || id}
  <button
  onClick={() => setSelectedStudentIds(prev => prev.filter(sid => sid !== id))}
- className="flex h-4 w-4 items-center justify-center rounded-lg bg-background/35 transition-colors hover:bg-background/55"
+ className="flex h-4 w-4 items-center justify-center rounded-sm bg-background/35 transition-colors hover:bg-background/55"
  >
  <X className="h-2.5 w-2.5" />
  </button>
@@ -904,13 +904,13 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  }
  }}>
  <DialogContent className="sm:max-w-[480px] rounded-md border-border bg-card/95 p-0 overflow-hidden shadow-2xl">
- <DialogHeader className="p-8 bg-violet-500/5 border-b border-border">
- <div className="p-4 w-fit rounded-[1.25rem] bg-violet-500/10 border border-violet-500/20 mb-6 transition-transform duration-500">
- <UserPlus className="h-7 w-7 text-violet-500" />
+ <DialogHeader className="p-8 bg-brown-800/5 border-b border-border">
+ <div className="p-3 w-fit rounded-sm bg-brown-800/10 border border-brown-800/20 mb-4 transition-transform duration-500">
+ <UserPlus className="h-7 w-7 text-brown-800" />
  </div>
  <DialogTitle className="text-3xl font-black tracking-tight flex items-center gap-3">
  <span className="uppercase tracking-widest text-foreground/40 text-xs font-black absolute -top-2">Assignment</span>
- Assign <span className="text-violet-500 italic">Trainer</span>
+ Assign <span className="text-brown-800 italic">Trainer</span>
  </DialogTitle>
  <DialogDescription className="text-sm font-medium text-muted-foreground mt-2">Designate an expert trainer to lead a specific cohort module.</DialogDescription>
  </DialogHeader>
@@ -953,10 +953,10 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  setSelectedTrainerId(null); // Reset trainer when type changes
  }}
  className={cn(
-"h-12 rounded-md border font-semibold text-sm transition-all duration-300",
+"h-12 rounded-sm border font-semibold text-sm transition-all duration-300",
  selectedTrainerType === type
- ?"bg-violet-600 border-violet-600 text-white shadow-lg shadow-violet-500/20 scale-[1.02]"
- :"bg-background/50 border-border text-muted-foreground hover:border-violet-500/30 hover:bg-violet-500/5"
+ ?"bg-brown-900 border-brown-900 text-brown-50 shadow-md shadow-amber-500/20 scale-[1.02]"
+ :"bg-background/50 border-border text-muted-foreground hover:border-brown-800/30 hover:bg-brown-800/5"
  )}
  >
  {type}
@@ -1007,17 +1007,17 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  onSelect={() => setSelectedTrainerId(trainer.id)}
  className={cn(
 "flex items-center justify-between p-3 rounded-md cursor-pointer transition-all mb-1 mx-1",
- selectedTrainerId === trainer.id ?"bg-violet-500/10 text-violet-600 scale-[0.98]" :"hover:bg-muted/50"
+ selectedTrainerId === trainer.id ?"bg-brown-800/10 text-brown-800 scale-[0.98]" :"hover:bg-muted/50"
  )}
  >
  <div className="flex items-center gap-4">
- <div className="h-10 w-10 rounded-[0.9rem] bg-violet-500/10 border border-violet-500/20 flex items-center justify-center font-black text-xs text-violet-600">
+ <div className="h-10 w-10 rounded-sm bg-brown-800/10 border border-brown-800/20 flex items-center justify-center font-black text-xs text-brown-800">
  {(trainer.name ||"T")[0]}
  </div>
  <div className="flex flex-col">
  <span className="font-bold text-xs uppercase tracking-tight">{trainer.name}</span>
  <div className="flex items-center gap-2 mt-0.5">
- <Badge variant="outline" className="text-[8px] uppercase tracking-tighter py-0 px-1 border-violet-500/20 text-violet-500/70">
+ <Badge variant="outline" className="text-[8px] uppercase tracking-tighter py-0 px-1 border-brown-800/20 text-brown-800/70">
  {trainer.trainerProfile?.trainerType ||"General"}
  </Badge>
  <span className="text-[9px] text-muted-foreground/60 font-medium italic">{trainer.trainerProfile?.specialization ||"Expert"}</span>
@@ -1025,7 +1025,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  </div>
  </div>
  {selectedTrainerId === trainer.id && (
- <div className="h-6 w-6 rounded-full bg-violet-600 flex items-center justify-center animate-in zoom-in duration-300">
+ <div className="h-6 w-6 rounded-full bg-brown-800 flex items-center justify-center animate-in zoom-in duration-300">
  <Check className="h-3 w-3 text-white" />
  </div>
  )}
@@ -1036,20 +1036,20 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  </Command>
  </div>
 
- <div className="flex gap-4 p-5 rounded-md bg-violet-500/5 border border-violet-500/10 items-start">
- <Settings2 className="h-5 w-5 text-violet-500 shrink-0 mt-0.5" />
- <p className="text-[10px] font-bold text-violet-500/80 uppercase tracking-widest leading-relaxed">
+ <div className="flex gap-4 p-5 rounded-md bg-brown-800/5 border border-brown-800/10 items-start">
+ <Settings2 className="h-5 w-5 text-brown-800 shrink-0 mt-0.5" />
+ <p className="text-[10px] font-bold text-brown-800/80 uppercase tracking-widest leading-relaxed">
  The selected trainer will be granted administrative access to this cohort's performance metrics and session logs.
  </p>
  </div>
  </div>
 
  <div className="pt-2 flex gap-4">
- <Button type="button" variant="ghost" onClick={() => setAssignTrainerOpen(false)} className="flex-1 h-14 rounded-md font-semibold text-sm hover:bg-muted/50 transition-colors">Abort</Button>
+ <Button type="button" variant="ghost" onClick={() => setAssignTrainerOpen(false)} className="flex-1 h-14 rounded-sm font-semibold text-sm hover:bg-muted/50 transition-colors">Abort</Button>
  <Button
  type="submit"
  disabled={isSubmitting || !selectedTrainerId}
- className="flex-[2] h-14 rounded-md bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-500/30 font-black uppercase tracking-widest text-[11px] transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+ className="flex-[2] h-14 rounded-sm bg-brown-900 hover:bg-brown-800 text-brown-50 shadow-md shadow-amber-500/20 font-black uppercase tracking-widest text-[11px] transition-all transform hover:scale-[1.02] active:scale-[0.98]"
  >
  {isSubmitting ?"Synchronizing..." :"Finalize Assignment"}
  </Button>

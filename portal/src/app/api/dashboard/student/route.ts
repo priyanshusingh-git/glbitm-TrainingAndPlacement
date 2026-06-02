@@ -117,47 +117,123 @@ export async function GET(req: NextRequest) {
  };
  });
 
- // Activity data — coding profiles provide total stats;
- // per-day breakdown is not tracked in the database.
- const codingActivity: { day: string; problems: number }[] = [];
+  // Activity data — coding profiles provide total stats;
+  // per-day breakdown is not tracked in the database.
+  const codingActivity: { day: string; problems: number }[] = [];
 
- return NextResponse.json({
- overview: {
- trainingLevel:"Level" + (student.currentSemester || 1),
- avgTestScore,
- problemsSolved: totalProblemsSolved,
- eligibleDrives: eligibleDrivesCount
- },
- training: {
- batches: trainingData,
- upcomingSessions: []
- },
- tests: {
- recent: recentResults,
- upcoming: upcomingTests.map((t: any) => ({
- id: t.id,
- name: t.title,
- date: new Date(t.date).toLocaleDateString(),
- duration: t.duration +" mins"
- }))
- },
- placements: placementOpportunities,
- activity: {
- coding: codingActivity,
- projects: student.projects.map((p: any) => ({
- id: p.id,
- name: p.title,
- tech: p.techStack,
- status: p.status
- })),
- certifications: student.certifications.map((c: any) => ({
- id: c.id,
- name: c.title,
- issuer: c.issuer,
- date: new Date(c.issueDate).toLocaleDateString()
- }))
- }
- });
+  // Determine active placement pipeline application
+  const getStatusWeight = (status: string) => {
+    const s = status.toLowerCase();
+    if (s === 'shortlisted') return 100;
+    if (s === 'interview') return 90;
+    if (s === 'applied') return 80;
+    if (s === 'offered' || s === 'placed') return 70;
+    return 10; // rejected, etc.
+  };
+
+  const sortedApps = [...applications].sort((a, b) => {
+    const weightA = getStatusWeight(a.status);
+    const weightB = getStatusWeight(b.status);
+    if (weightA !== weightB) {
+      return weightB - weightA;
+    }
+    return new Date(b.appliedAt).getTime() - new Date(a.appliedAt).getTime();
+  });
+
+  const activeApp = sortedApps[0];
+  let currentPipeline = null;
+
+  if (activeApp) {
+    const status = activeApp.status.toLowerCase();
+    const stages: { label: string; status: 'completed' | 'current' | 'pending' }[] = [
+      { label: "Applied", status: "completed" },
+      { label: "Shortlisted", status: "pending" },
+      { label: "Interview", status: "pending" },
+      { label: "Offer", status: "pending" }
+    ];
+
+    if (status === 'applied') {
+      stages[0].status = 'current';
+    } else if (status === 'shortlisted') {
+      stages[0].status = 'completed';
+      stages[1].status = 'current';
+    } else if (status === 'interview') {
+      stages[0].status = 'completed';
+      stages[1].status = 'completed';
+      stages[2].status = 'current';
+    } else if (status === 'offered' || status === 'placed') {
+      stages[0].status = 'completed';
+      stages[1].status = 'completed';
+      stages[2].status = 'completed';
+      stages[3].status = 'completed';
+    } else if (status === 'rejected') {
+      stages[0].status = 'completed';
+      stages[1].status = 'completed';
+      stages[2].status = 'completed';
+      stages[3] = { label: "Rejected", status: "completed" };
+    }
+
+    let nextEvent = null;
+    if (new Date(activeApp.drive.date) > new Date()) {
+      nextEvent = {
+        label: "Drive date:",
+        highlight: new Date(activeApp.drive.date).toLocaleDateString('en-IN', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        })
+      };
+    }
+
+    currentPipeline = {
+      company: activeApp.drive.company.name,
+      role: activeApp.drive.role,
+      stages,
+      nextEvent
+    };
+  }
+
+  return NextResponse.json({
+    overview: {
+      trainingLevel: "Level " + (student.currentSemester || 1),
+      avgTestScore,
+      problemsSolved: totalProblemsSolved,
+      eligibleDrives: applications.length, // Display applied drives count in Drives Applied card
+      appliedDrives: applications.length,  // Display applied drives count in Applied hero metric
+      cgpa: (student as any).cgpa !== null ? (student as any).cgpa.toFixed(2) : "0.00",
+      attendancePercentage: (student as any).attendancePercentage !== null ? Math.round((student as any).attendancePercentage) : 0
+    },
+    currentPipeline,
+    training: {
+      batches: trainingData,
+      upcomingSessions: []
+    },
+    tests: {
+      recent: recentResults,
+      upcoming: upcomingTests.map((t: any) => ({
+        id: t.id,
+        name: t.title,
+        date: new Date(t.date).toLocaleDateString(),
+        duration: t.duration + " mins"
+      }))
+    },
+    placements: placementOpportunities,
+    activity: {
+      coding: codingActivity,
+      projects: student.projects.map((p: any) => ({
+        id: p.id,
+        name: p.title,
+        tech: p.techStack,
+        status: p.status
+      })),
+      certifications: student.certifications.map((c: any) => ({
+        id: c.id,
+        name: c.title,
+        issuer: c.issuer,
+        date: new Date(c.issueDate).toLocaleDateString()
+      }))
+    }
+  });
 
 
  } catch (error) {

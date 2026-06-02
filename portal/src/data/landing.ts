@@ -8,7 +8,6 @@ export const navLinks = [
 ]
 
 export const heroContent = {
-  eyebrow: "AY 2024-25 · Placements Underway",
   title: "Where Excellence Meets Opportunity",
   emphasis: "Excellence",
   subtitle:

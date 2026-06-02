@@ -330,7 +330,6 @@ export default function AdminSessionsPage() {
  {todaySession ? (
  <div className="space-y-3">
  <div className="flex items-center gap-2">
- <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
  <span className="text-[10px] font-bold text-emerald-500 uppercase">Live Today</span>
  </div>
  <h5 className="text-sm font-bold leading-tight line-clamp-2">{todaySession.title}</h5>

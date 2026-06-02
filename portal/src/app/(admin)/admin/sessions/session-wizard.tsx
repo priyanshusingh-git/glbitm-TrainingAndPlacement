@@ -240,12 +240,12 @@ export function SessionWizard({ isOpen, onClose, onSuccess, groups }: SessionWiz
  <div className="grid grid-cols-2 gap-2 bg-muted/50 p-1.5 rounded-md border-2">
  <Button
  variant={formData.sessionType ==="single" ?"default" :"ghost"}
- className={cn("h-10 font-bold text-sm rounded-lg", formData.sessionType ==="single" &&"shadow-md")}
+ className={cn("h-10 font-bold text-sm rounded-sm", formData.sessionType ==="single" &&"shadow-sm")}
  onClick={() => setFormData({ ...formData, sessionType:"single" })}
  > Single Event </Button>
  <Button
  variant={formData.sessionType ==="group" ?"default" :"ghost"}
- className={cn("h-10 font-bold text-sm rounded-lg", formData.sessionType ==="group" &&"shadow-md")}
+ className={cn("h-10 font-bold text-sm rounded-sm", formData.sessionType ==="group" &&"shadow-sm")}
  onClick={() => setFormData({ ...formData, sessionType:"group" })}
  > Group Series </Button>
  </div>
@@ -437,7 +437,7 @@ export function SessionWizard({ isOpen, onClose, onSuccess, groups }: SessionWiz
  return (
  <div key={id} className="flex items-center justify-between p-4 bg-background rounded-md border-2">
  <div className="flex items-center gap-3">
- <div className="h-8 w-8 rounded-lg bg-brown-800/10 flex items-center justify-center font-bold text-xs text-brown-800">{group?.name.slice(0, 2)}</div>
+ <div className="h-8 w-8 rounded-sm bg-brown-800/10 flex items-center justify-center font-bold text-xs text-brown-800">{group?.name.slice(0, 2)}</div>
  <span className="font-bold text-sm">{group?.name} <span className="italic text-brown-800">({group?.branch})</span></span>
  </div>
  <Select

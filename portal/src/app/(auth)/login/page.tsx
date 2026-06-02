@@ -371,6 +371,7 @@ function LoginContent() {
                   type="email"
                   autoComplete="email"
                   autoFocus
+                  disabled={loading}
                   value={email}
                   onChange={(event) => handleEmailChange(event.target.value)}
                   onBlur={handleEmailBlur}
@@ -405,6 +406,7 @@ function LoginContent() {
                   ref={passwordRef}
                   id="password"
                   autoComplete="current-password"
+                  disabled={loading}
                   value={password}
                   onChange={(event) => handlePasswordChange(event.target.value)}
                   onBlur={handlePasswordBlur}
@@ -429,8 +431,9 @@ function LoginContent() {
                   <input
                     type="checkbox"
                     checked={rememberMe}
+                    disabled={loading}
                     onChange={(event) => setRememberMe(event.target.checked)}
-                    className="peer appearance-none h-4.5 w-4.5 cursor-pointer rounded border border-brown-200 bg-white shadow-sm transition-all checked:bg-brown-800 checked:border-brown-800 focus:outline-none"
+                    className="peer appearance-none h-4.5 w-4.5 cursor-pointer rounded border border-brown-200 bg-white shadow-sm transition-all checked:bg-brown-800 checked:border-brown-800 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                   />
                   <ShieldCheck className="absolute h-3 w-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
                 </div>

@@ -40,7 +40,7 @@ export function SectionHeader({ title, description, icon, className }: SectionHe
     <div data-slot="section-header" className={cn("flex flex-col gap-2 mb-6", className)}>
       <div className="flex items-center gap-2.5">
         {icon && (
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-brown-800/10 text-brown-800 border border-brown-800/20">
+          <div className="flex items-center justify-center w-8 h-8 rounded-sm bg-brown-900/5 text-brown-900 border border-brown-900/10">
             {React.cloneElement(icon as React.ReactElement<any>, { className: 'h-4 w-4' })}
           </div>
         )}

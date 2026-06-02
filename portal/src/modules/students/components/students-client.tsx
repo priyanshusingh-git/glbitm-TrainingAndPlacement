@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useMemo } from"react"
-import { useRouter } from"next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
 import { Badge } from"@/components/ui/badge"
 import { Button } from"@/components/ui/button"
@@ -93,6 +93,7 @@ const getSemesterOptions = () => Array.from({ length: 8 }, (_, i) => i + 1)
 
 export default function StudentsClient() {
  const router = useRouter()
+ const searchParams = useSearchParams()
  const [students, setStudents] = useState<any[]>([])
  const [itemsPerPage, setItemsPerPage] = useState<number |"all">(8)
  const [currentPage, setCurrentPage] = useState(1)
@@ -118,8 +119,20 @@ export default function StudentsClient() {
 
  // Create student state
  const [createOpen, setCreateOpen] = useState(false)
+ const [createTab, setCreateTab] = useState("single")
  const [createLoading, setCreateLoading] = useState(false)
  const [formData, setFormData] = useState({ email: "" })
+
+ useEffect(() => {
+   const action = searchParams?.get("action")
+   if (action === "new") {
+     setCreateOpen(true)
+     setCreateTab("single")
+   } else if (action === "import") {
+     setCreateOpen(true)
+     setCreateTab("bulk")
+   }
+ }, [searchParams])
 
  // Edit student state
  const [editingStudentId, setEditingStudentId] = useState<string | null>(null)
@@ -641,7 +654,7 @@ export default function StudentsClient() {
                                   <DialogTitle>Add Students</DialogTitle>
                                   <DialogDescription>Create a new student account or import from XLSX.</DialogDescription>
                                 </DialogHeader>
-                                <Tabs defaultValue="single" className="w-full">
+                                <Tabs value={createTab} onValueChange={setCreateTab} className="w-full">
                                   <TabsList className="grid w-full grid-cols-2">
                                     <TabsTrigger value="single">Single Student</TabsTrigger>
                                     <TabsTrigger value="bulk">Bulk Import</TabsTrigger>

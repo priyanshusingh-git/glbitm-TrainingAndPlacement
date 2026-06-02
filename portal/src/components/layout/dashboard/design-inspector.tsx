@@ -66,6 +66,8 @@ export function DesignInspector() {
   const [structureAudit, setStructureAudit] = useState(false)
   const [showPalette, setShowPalette] = useState(false)
   const [activeTheme, setActiveTheme] = useState<keyof typeof THEMES>("prestige")
+  const [playgroundStyle, setPlaygroundStyle] = useState<"underline" | "pill" | "tags" | "dot">("underline")
+  const [selectedTab, setSelectedTab] = useState("technical")
   const { toast } = useToast()
 
   // Toggle on Ctrl + Shift + P
@@ -326,6 +328,132 @@ export function DesignInspector() {
               </div>
             </div>
           )}
+
+          {/* ── TABS STYLE PLAYGROUND ── */}
+          <div className="space-y-2 pt-2 border-t border-white/5">
+            <span className="text-[10px] font-bold uppercase text-white/60">Tabs Style Playground</span>
+            <div className="flex flex-col gap-3 bg-white/5 p-3 rounded-md border border-white/10 mt-1">
+              <div className="grid grid-cols-4 gap-1">
+                {(["underline", "pill", "tags", "dot"] as const).map((style) => (
+                  <button
+                    key={style}
+                    onClick={() => setPlaygroundStyle(style)}
+                    className={cn(
+                      "py-1 rounded-sm text-[8px] font-bold uppercase tracking-wider text-center transition-all",
+                      playgroundStyle === style
+                        ? "bg-amber-500 text-brown-950 font-black"
+                        : "bg-white/5 text-white/50 hover:bg-white/10 hover:text-white"
+                    )}
+                  >
+                    {style}
+                  </button>
+                ))}
+              </div>
+
+              {/* Interactive Demo Area */}
+              <div className="flex flex-col gap-2 p-3 bg-[#120A05] rounded-sm border border-white/5 min-h-[50px] justify-center items-center">
+                {/* 1. Underline Style */}
+                {playgroundStyle === "underline" && (
+                  <div className="flex w-full border-b border-white/10 justify-center gap-4">
+                    {["Technical", "Aptitude", "Verbal"].map((tab) => {
+                      const value = tab.toLowerCase();
+                      const isActive = selectedTab === value;
+                      return (
+                        <button
+                          key={tab}
+                          onClick={() => setSelectedTab(value)}
+                          className={cn(
+                            "pb-2 text-[11px] font-bold transition-all relative",
+                            isActive 
+                              ? "text-amber-500 border-b-2 border-amber-500" 
+                              : "text-white/40 hover:text-white/70"
+                          )}
+                        >
+                          {tab}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* 2. Pill Switcher Style */}
+                {playgroundStyle === "pill" && (
+                  <div className="inline-flex bg-white/5 p-1 rounded-sm border border-white/10 gap-1">
+                    {["Technical", "Aptitude", "Verbal"].map((tab) => {
+                      const value = tab.toLowerCase();
+                      const isActive = selectedTab === value;
+                      return (
+                        <button
+                          key={tab}
+                          onClick={() => setSelectedTab(value)}
+                          className={cn(
+                            "px-2.5 py-1 text-[10px] font-bold rounded-sm transition-all",
+                            isActive 
+                              ? "bg-amber-500 text-brown-950 shadow-sm font-black" 
+                              : "text-white/60 hover:text-white"
+                          )}
+                        >
+                          {tab}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* 3. Floating Tags Style */}
+                {playgroundStyle === "tags" && (
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {["Technical", "Aptitude", "Verbal"].map((tab) => {
+                      const value = tab.toLowerCase();
+                      const isActive = selectedTab === value;
+                      return (
+                        <button
+                          key={tab}
+                          onClick={() => setSelectedTab(value)}
+                          className={cn(
+                            "px-2.5 py-1 text-[10px] font-bold rounded-sm transition-all",
+                            isActive 
+                              ? "bg-amber-500/15 text-amber-500 ring-1 ring-amber-500/30" 
+                              : "bg-white/5 text-white/40 border border-white/5 hover:text-white/70"
+                          )}
+                        >
+                          {tab}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* 4. Accent Dot Style */}
+                {playgroundStyle === "dot" && (
+                  <div className="flex justify-center gap-5">
+                    {["Technical", "Aptitude", "Verbal"].map((tab) => {
+                      const value = tab.toLowerCase();
+                      const isActive = selectedTab === value;
+                      return (
+                        <button
+                          key={tab}
+                          onClick={() => setSelectedTab(value)}
+                          className="flex flex-col items-center gap-0.5 group"
+                        >
+                          <span className={cn(
+                            "text-[11px] font-bold transition-colors",
+                            isActive ? "text-amber-500" : "text-white/40 group-hover:text-white/70"
+                          )}>
+                            {tab}
+                          </span>
+                          <span className={cn(
+                            "h-1.5 w-1.5 rounded-full bg-amber-500 transition-all duration-200 transform scale-0",
+                            isActive && "scale-100"
+                          )} />
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
 
           {/* ── DESIGN HEALTH ── */}
           <div className="bg-amber-500/10 border border-amber-500/20 rounded-md p-3 space-y-2 mt-2">

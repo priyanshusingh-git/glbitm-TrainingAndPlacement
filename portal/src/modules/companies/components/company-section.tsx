@@ -1,9 +1,10 @@
 "use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
-import { Button } from"@/components/ui/button"
-import { Badge } from"@/components/ui/badge"
-import { Building2, Plus, MapPin, Users, IndianRupee, Calendar } from"lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Building2, Plus, MapPin, Users, IndianRupee, Calendar, Briefcase } from "lucide-react"
+import Link from "next/link"
 
 interface CompanySectionProps {
  companies?: any[];
@@ -28,18 +29,20 @@ export function CompanySection({ companies }: CompanySectionProps) {
 
  return (
  <Card className="overflow-hidden border-border/50 bg-card">
- <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 bg-muted/10 pb-4">
-  <CardTitle className="flex items-center gap-2 text-lg font-bold tracking-tight">
-    <div className="rounded-md border border-border/60 bg-primary/10 p-2 shadow-sm">
-      <Building2 className="h-5 w-5 text-primary" />
-    </div>
-    Company Management
-  </CardTitle>
- <Button size="sm">
- <Plus className="mr-2 h-4 w-4" />
- Add Company
- </Button>
- </CardHeader>
+  <CardHeader className="flex flex-row items-center justify-between border-b border-border/50 bg-muted/10 pb-4">
+   <CardTitle className="flex items-center gap-2 text-lg font-bold tracking-tight">
+     <div className="rounded-sm border border-border/60 bg-primary/10 p-2 shadow-sm">
+       <Building2 className="h-5 w-5 text-primary" />
+     </div>
+     Company Management
+   </CardTitle>
+  <Button size="sm" asChild className="cursor-pointer">
+    <Link href="/admin/companies?action=new">
+      <Plus className="mr-2 h-4 w-4" />
+      Add Company
+    </Link>
+  </Button>
+  </CardHeader>
  <CardContent className="p-5">
  <div className="grid gap-5 sm:grid-cols-2">
  {displayCompanies.length === 0 ? (
@@ -73,10 +76,10 @@ export function CompanySection({ companies }: CompanySectionProps) {
  <MapPin className="h-3.5 w-3.5" />
  <span>{company.location}</span>
  </div>
- <div className="flex items-center gap-1.5 text-muted-foreground">
- <Users className="h-3.5 w-3.5" />
- <span>{company.positions} positions</span>
- </div>
+  <div className="flex items-center gap-1.5 text-muted-foreground">
+  <Briefcase className="h-3.5 w-3.5" />
+  <span>{company.positions} {company.positions === 1 ? 'drive' : 'drives'}</span>
+  </div>
  <div className="flex items-center gap-1.5 text-muted-foreground">
  <IndianRupee className="h-3.5 w-3.5" />
  <span>{company.package}</span>
