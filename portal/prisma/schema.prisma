@@ -393,6 +393,7 @@ model TestResult {
   test          Test           @relation(fields: [testId], references: [id])
 
   @@unique([testId, studentId])
+  @@index([studentId])
 }
 
 model Question {
@@ -474,6 +475,7 @@ model Application {
   student   StudentProfile @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([driveId, studentId])
+  @@index([studentId])
 }
 
 model Notification {

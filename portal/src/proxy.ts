@@ -64,34 +64,6 @@ export async function proxy(request: NextRequest) {
   const path = url.pathname
   const requestId = request.headers.get("x-request-id") ?? crypto.randomUUID()
 
-  try {
-    const isRateLimitExempt =
-      path.startsWith("/api/auth/") ||
-      path === "/api/auth/csrf" ||
-      path === "/api/ably/auth" ||
-      path.startsWith("/api/ably/");
-
-    if (path.startsWith("/api") && !isRateLimitExempt) {
-      const result = await generalApiLimiter.limit(getIpAddress(request))
-      if (!result.success) {
-        const retryAfter = Math.max(
-          1,
-          Math.ceil((Number(result.reset ?? Date.now()) - Date.now()) / 1000)
-        )
-        const response = NextResponse.json(
-          { error: "Too Many Requests", retryAfter },
-          { status: 429 }
-        )
-        applyRateLimitHeaders(response, result, retryAfter)
-        return finalizeResponse(response, requestId)
-      }
-    }
-  } catch (error) {
-    // Rate limiter unavailable — allow request through, log for monitoring
-    console.error("[middleware] Rate limiter unavailable:", error)
-    // Do NOT return 429 — fall through to continue processing
-  }
-
   const protectedRoutes = [
     { prefix: "/student", role: "STUDENT" },
     { prefix: "/admin", role: "ADMIN" },
@@ -143,6 +115,34 @@ export async function proxy(request: NextRequest) {
       clearSessionCookies(response)
       return finalizeResponse(response, requestId)
     }
+  }
+
+  // Session-aware API rate limiting to support campus Wi-Fi NAT
+  try {
+    const isRateLimitExempt =
+      path.startsWith("/api/auth/") ||
+      path === "/api/auth/csrf" ||
+      path === "/api/ably/auth" ||
+      path.startsWith("/api/ably/")
+
+    if (path.startsWith("/api") && !isRateLimitExempt) {
+      const rateLimitKey = session ? `user:${session.uid}` : `ip:${getIpAddress(request)}`
+      const result = await generalApiLimiter.limit(rateLimitKey)
+      if (!result.success) {
+        const retryAfter = Math.max(
+          1,
+          Math.ceil((Number(result.reset ?? Date.now()) - Date.now()) / 1000)
+        )
+        const response = NextResponse.json(
+          { error: "Too Many Requests", retryAfter },
+          { status: 429 }
+        )
+        applyRateLimitHeaders(response, result, retryAfter)
+        return finalizeResponse(response, requestId)
+      }
+    }
+  } catch (error) {
+    console.error("[middleware] Rate limiter unavailable:", error)
   }
 
   if (session && (path === "/" || path === "/login")) {

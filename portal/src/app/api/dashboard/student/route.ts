@@ -3,6 +3,60 @@ import { authorize } from '@/lib/auth-middleware';
 import prisma from '@/lib/db';
 import { logger } from '@/lib/logger';
 
+// Local L1 Cache for Student Dashboard Global (user-independent) Queries
+interface CacheEntry<T> {
+  data: T;
+  expiresAt: number;
+}
+
+const dashboardCache = {
+  eligibleDrivesCount: null as CacheEntry<number> | null,
+  upcomingTests: null as CacheEntry<any[]> | null,
+  openDrives: null as CacheEntry<any[]> | null,
+};
+
+const CACHE_TTL_MS = 30000; // 30 seconds cache
+
+async function getCachedEligibleDrivesCount() {
+  const now = Date.now();
+  if (dashboardCache.eligibleDrivesCount && dashboardCache.eligibleDrivesCount.expiresAt > now) {
+    return dashboardCache.eligibleDrivesCount.data;
+  }
+  const data = await prisma.placementDrive.count({
+    where: { status: 'scheduled' }
+  });
+  dashboardCache.eligibleDrivesCount = { data, expiresAt: now + CACHE_TTL_MS };
+  return data;
+}
+
+async function getCachedUpcomingTests() {
+  const now = Date.now();
+  if (dashboardCache.upcomingTests && dashboardCache.upcomingTests.expiresAt > now) {
+    return dashboardCache.upcomingTests.data;
+  }
+  const data = await prisma.test.findMany({
+    where: { date: { gt: new Date() } },
+    orderBy: { date: 'asc' },
+    take: 1
+  });
+  dashboardCache.upcomingTests = { data, expiresAt: now + CACHE_TTL_MS };
+  return data;
+}
+
+async function getCachedOpenDrives() {
+  const now = Date.now();
+  if (dashboardCache.openDrives && dashboardCache.openDrives.expiresAt > now) {
+    return dashboardCache.openDrives.data;
+  }
+  const data = await prisma.placementDrive.findMany({
+    where: { status: 'scheduled' },
+    include: { company: true },
+    take: 3
+  });
+  dashboardCache.openDrives = { data, expiresAt: now + CACHE_TTL_MS };
+  return data;
+}
+
 export async function GET(req: NextRequest) {
  const authResult = await authorize(req, ['STUDENT']);
  if (authResult instanceof NextResponse) return authResult;
@@ -60,9 +114,7 @@ export async function GET(req: NextRequest) {
  });
  if (totalProblemsSolved === 0 && (student as any).leetcodeId) totalProblemsSolved = 42;
 
- const eligibleDrivesCount = await prisma.placementDrive.count({
- where: { status: 'scheduled' }
- });
+  const eligibleDrivesCount = await getCachedEligibleDrivesCount();
 
  // 2. Training Section Data
  const trainingData = trainingBatches.map((batch: any) => {
@@ -91,18 +143,10 @@ export async function GET(req: NextRequest) {
  status: r.marksObtained >= (r.test.totalMarks * 0.4) ?"passed" :"failed"
  }));
 
- const upcomingTests = await prisma.test.findMany({
- where: { date: { gt: new Date() } },
- orderBy: { date: 'asc' },
- take: 1
- });
+  const upcomingTests = await getCachedUpcomingTests();
 
- // 4. Placement Section Data
- const openDrives = await prisma.placementDrive.findMany({
- where: { status: 'scheduled' },
- include: { company: true },
- take: 3
- });
+  // 4. Placement Section Data
+  const openDrives = await getCachedOpenDrives();
 
  const placementOpportunities = openDrives.map((drive: any) => {
  const isApplied = applications.some((app: any) => app.driveId === drive.id);

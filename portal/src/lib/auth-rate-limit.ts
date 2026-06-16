@@ -1,6 +1,10 @@
 import { Ratelimit } from "@upstash/ratelimit"
 import { redis } from "@/lib/redis"
 
+// L1 in-memory cache to bypass Upstash Redis network latency for clean users under high traffic
+const ipFailureCache = new Map<string, { count: number; expiresAt: number }>()
+const L1_CACHE_TTL_MS = 10000 // 10 seconds
+
 export const loginIpLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(20, "1 h"),
@@ -95,6 +99,9 @@ export async function recordLoginFailure(params: {
   email: string
   fingerprint?: string | null
 }) {
+  // Invalidate local L1 cache
+  ipFailureCache.delete(params.ip)
+
   const [emailFailureCount, ipFailureCount, fingerprintFailureCount] =
     await Promise.all([
       recordPasswordFailure(params.email),
@@ -117,6 +124,9 @@ export async function clearLoginFailures(params: {
   email: string
   fingerprint?: string | null
 }) {
+  // Invalidate local L1 cache
+  ipFailureCache.delete(params.ip)
+
   await Promise.all([
     clearPasswordFailures(params.email),
     redis.del(getIpFailureKey(params.ip)),
@@ -127,8 +137,15 @@ export async function clearLoginFailures(params: {
 }
 
 export async function getIpFailureCount(ip: string) {
-  const count = await redis.get<number>(getIpFailureKey(ip))
-  return Number(count ?? 0)
+  const now = Date.now()
+  const cached = ipFailureCache.get(ip)
+  if (cached && cached.expiresAt > now) {
+    return cached.count
+  }
+
+  const count = Number((await redis.get<number>(getIpFailureKey(ip))) ?? 0)
+  ipFailureCache.set(ip, { count, expiresAt: now + L1_CACHE_TTL_MS })
+  return count
 }
 
 export async function isCaptchaRequired(ip: string) {
