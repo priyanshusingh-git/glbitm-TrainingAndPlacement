@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from"react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Heading } from "@/components/ui/heading";
 import { Badge } from"@/components/ui/badge";
 import { Button } from"@/components/ui/button";
 import { Input } from"@/components/ui/input";
@@ -49,6 +50,7 @@ import {
 } from"@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs";
 import { PageHeader } from"@/components/layout/page-header";
+import { LoadingGrid } from "@/components/ui/loading-states";
 import { fetchTests, createTest } from"@/services/training.client";
 import { Test } from"@/types/training";
 import { format, isAfter, isBefore, addMinutes } from"date-fns";
@@ -255,7 +257,7 @@ export default function AdminTestsPage() {
  </div>
  <div>
  <p className="text-xs font-medium text-muted-foreground uppercase">Total Tests</p>
- <h3 className="text-xl font-bold">{stats.total}</h3>
+ <div className="text-xl font-bold tabular-nums">{stats.total}</div>
  </div>
  </CardContent>
  </Card>
@@ -266,7 +268,7 @@ export default function AdminTestsPage() {
  </div>
  <div>
  <p className="text-xs font-medium text-muted-foreground uppercase">Scheduled</p>
- <h3 className="text-xl font-bold">{stats.upcoming}</h3>
+ <div className="text-xl font-bold tabular-nums">{stats.upcoming}</div>
  </div>
  </CardContent>
  </Card>
@@ -277,7 +279,7 @@ export default function AdminTestsPage() {
  </div>
  <div>
  <p className="text-xs font-medium text-muted-foreground uppercase">Active Now</p>
- <h3 className="text-xl font-bold">{stats.ongoing}</h3>
+ <div className="text-xl font-bold tabular-nums">{stats.ongoing}</div>
  </div>
  </CardContent>
  </Card>
@@ -288,55 +290,63 @@ export default function AdminTestsPage() {
  </div>
  <div>
  <p className="text-xs font-medium text-muted-foreground uppercase">Completed</p>
- <h3 className="text-xl font-bold">{stats.completed}</h3>
+ <div className="text-xl font-bold tabular-nums">{stats.completed}</div>
  </div>
  </CardContent>
  </Card>
  </div>
 
  <Tabs defaultValue="all" className="space-y-4">
- <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between bg-muted/30 p-2 rounded-md border">
- <TabsList className="bg-transparent h-9 p-0">
- <TabsTrigger value="all" className="data-[state=active]:bg-background data-[state=active]:shadow-sm">All Tests</TabsTrigger>
- <TabsTrigger value="scheduled" className="data-[state=active]:bg-background">Scheduled</TabsTrigger>
- <TabsTrigger value="active" className="data-[state=active]:bg-background text-amber-500">Active</TabsTrigger>
- <TabsTrigger value="completed" className="data-[state=active]:bg-background">Completed</TabsTrigger>
- </TabsList>
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-4">
+        <TabsList className="w-full sm:w-auto h-auto min-h-0 justify-start rounded-md border border-border/70 bg-card p-1 flex overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden gap-1 shadow-xs scroll-smooth">
+          <TabsTrigger value="all" className="group h-auto rounded-sm px-3.5 py-2 text-xs font-semibold flex items-center gap-2">
+            <FileText className="h-4 w-4 shrink-0 text-muted-foreground group-data-[state=active]:text-amber-300 transition-colors" />
+            <span>All Tests</span>
+          </TabsTrigger>
+          <TabsTrigger value="scheduled" className="group h-auto rounded-sm px-3.5 py-2 text-xs font-semibold flex items-center gap-2">
+            <Calendar className="h-4 w-4 shrink-0 text-muted-foreground group-data-[state=active]:text-amber-300 transition-colors" />
+            <span>Scheduled</span>
+          </TabsTrigger>
+          <TabsTrigger value="active" className="group h-auto rounded-sm px-3.5 py-2 text-xs font-semibold flex items-center gap-2">
+            <PlayCircle className="h-4 w-4 shrink-0 text-muted-foreground group-data-[state=active]:text-amber-300 transition-colors" />
+            <span>Active</span>
+          </TabsTrigger>
+          <TabsTrigger value="completed" className="group h-auto rounded-sm px-3.5 py-2 text-xs font-semibold flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-muted-foreground group-data-[state=active]:text-amber-300 transition-colors" />
+            <span>Completed</span>
+          </TabsTrigger>
+        </TabsList>
 
- <div className="flex items-center gap-2">
- <div className="relative w-full md:w-64">
- <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
- <Input
- placeholder="Search assessments..."
- className="pl-9 h-9 bg-background focus-visible:ring-amber-500/20 transition-all"
- value={searchQuery}
- onChange={(e) => setSearchQuery(e.target.value)}
- />
- </div>
- <Select value={typeFilter} onValueChange={setTypeFilter}>
- <SelectTrigger className="h-9 w-[130px] bg-background">
- <Filter className="mr-2 h-3 w-3" />
- <SelectValue placeholder="All Types" />
- </SelectTrigger>
- <SelectContent>
- <SelectItem value="all">All Types</SelectItem>
- <SelectItem value="Aptitude">Aptitude</SelectItem>
- <SelectItem value="Technical">Technical</SelectItem>
- <SelectItem value="Coding">Coding</SelectItem>
- <SelectItem value="Verbal">Verbal</SelectItem>
- </SelectContent>
- </Select>
- </div>
- </div>
+        <div className="flex items-center gap-2">
+          <div className="relative w-full md:w-64">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search assessments..."
+              className="pl-9 h-9 bg-background focus-visible:ring-amber-500/20 transition-all"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <SelectTrigger className="h-9 w-[130px] bg-background">
+              <Filter className="mr-2 h-3 w-3" />
+              <SelectValue placeholder="All Types" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="Aptitude">Aptitude</SelectItem>
+              <SelectItem value="Technical">Technical</SelectItem>
+              <SelectItem value="Coding">Coding</SelectItem>
+              <SelectItem value="Verbal">Verbal</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
 
  {["all","scheduled","active","completed"].map((tab) => (
  <TabsContent key={tab} value={tab} className="mt-0">
  {loading ? (
- <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
- {[1, 2, 3].map(i => (
- <div key={i} className="h-[200px] bg-muted/50 animate-pulse rounded-md border border-dashed" />
- ))}
- </div>
+ <LoadingGrid items={6} />
  ) : (
  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
  {filteredTests
@@ -348,7 +358,7 @@ export default function AdminTestsPage() {
  <FileText className="h-8 w-8 text-muted-foreground" />
  </div>
  <div>
- <h3 className="font-semibold text-lg">No assessments found</h3>
+ <Heading variant="card-title" as="h3">No assessments found</Heading>
  <p className="text-muted-foreground max-w-xs mx-auto">
  There are no tests matching your current filters or in this category.
  </p>
@@ -462,7 +472,7 @@ function TestCard({ test, status, onEdit, onDelete, onImport }: { test: Test, st
  </div>
  <div className="flex items-center justify-between text-xs">
  <span className="text-muted-foreground flex items-center gap-1"><AlertCircle className="h-3 w-3" /> Created By</span>
- <span className="font-medium truncate max-w-[120px]">{test.creator?.name ||"CDC Admin"}</span>
+ <span className="font-medium truncate max-w-[120px]">{test.creator?.name || "T&P Admin"}</span>
  </div>
  </div>
 

@@ -6,7 +6,7 @@ import Footer from "@/components/layout/Footer"
 import NumbersBar from "@/components/sections/NumbersBar"
 import ForYou from "@/components/sections/ForYou"
 import Recruiters from "@/components/sections/Recruiters"
-import CDC from "@/components/sections/CDC"
+import TrainingPrograms from "@/components/sections/CDC"
 import Process from "@/components/sections/Process"
 import Policy from "@/components/sections/Policy"
 import Advisory from "@/components/sections/Advisory"
@@ -102,7 +102,7 @@ export default function Home() {
       <Process />
       <Policy />
       <ForYou />
-      <CDC />
+      <TrainingPrograms />
       <Recruiters />
       <Advisory />
       <Guidance />

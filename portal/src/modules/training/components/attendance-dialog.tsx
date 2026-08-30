@@ -101,7 +101,7 @@ export function AttendanceDialog({ open, onOpenChange, session, onSuccess }: Att
  { value:"Present", color:"text-emerald-500", icon: CheckCircle2, bg:"bg-emerald-50" },
  { value:"Absent", color:"text-destructive", icon: XCircle, bg:"bg-red-50" },
  { value:"Late", color:"text-amber-500", icon: Clock, bg:"bg-amber-50" },
- { value:"Excused", color:"text-blue-500", icon: AlertCircle, bg:"bg-blue-50" }
+ { value:"Excused", color:"text-brown-600", icon: AlertCircle, bg:"bg-brown-50" }
  ]
 
  return (

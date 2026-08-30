@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from"react"
-import { Bell, Search, Menu, PanelLeft, Home, ChevronLeft } from"lucide-react"
+import { Bell, BellRing, CheckCheck, Search, Menu, PanelLeft, Home, ChevronLeft, Loader2 } from"lucide-react"
 import { usePathname } from"next/navigation"
 import {
  Breadcrumb,
@@ -37,10 +37,10 @@ import { Avatar, AvatarFallback, AvatarImage } from"@/components/ui/avatar"
 import { Badge } from"@/components/ui/badge"
 import Link from"next/link"
 import { useNotifications } from"@/contexts/notification-context"
-import { formatDistanceToNow } from 'date-fns'
 import { useSidebar } from"@/components/layout/dashboard/dashboard-layout"
 import { useAuth } from"@/contexts/auth-context"
 import { cn } from"@/lib/utils"
+import { NotificationContent } from "@/components/layout/dashboard/notification-content"
 
 import { validateStrongPassword } from"@/lib/validators"
 
@@ -57,8 +57,8 @@ interface HeaderProps {
 
 export function Header({ role, user, headerAction }: HeaderProps) {
  const { setMobileOpen, collapsed, setCollapsed } = useSidebar()
- const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
- const { logout } = useAuth();
+ const { notifications, unreadCount, isLoading: notificationsLoading, markAsRead, markAllAsRead } = useNotifications();
+ const { logout, isLoggingOut } = useAuth();
 
  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
  const [loading, setLoading] = useState(false);
@@ -70,33 +70,38 @@ export function Header({ role, user, headerAction }: HeaderProps) {
  confirmPassword:""
  });
 
- const generateBreadcrumbs = () => {
- const paths = pathname.split('/').filter(Boolean)
- const breadcrumbs = paths.map((path, index) => {
- const href = `/${paths.slice(0, index + 1).join('/')}`
+  const generateBreadcrumbs = () => {
+    const rawPaths = pathname.split('/').filter(Boolean)
+    // Filter out internal grouping segments like 'portfolio' from header navigation
+    const paths = rawPaths.filter((p) => p !== 'portfolio')
+    const breadcrumbs = paths.map((path, index) => {
+      const rawIndex = rawPaths.indexOf(path)
+      const href = `/${rawPaths.slice(0, rawIndex + 1).join('/')}`
 
- // Better label formatting
- let label = path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, ' ')
+      // Better label formatting
+      let label = path.charAt(0).toUpperCase() + path.slice(1).replace(/-/g, ' ')
 
- // Special cases for common ID patterns or tactical terms
- if (path.length > 20 && (path.includes('-') || /^\d+$/.test(path))) {
- label ="Details"
- } else if (label.toLowerCase() ==="training") {
- label ="Training"
- } else if (label.toLowerCase() ==="personnel") {
- label ="Students"
- } else if (label.toLowerCase() ==="mentors") {
- label ="Trainers"
- } else if (label.toLowerCase() ==="intelligence") {
- label ="Overview"
- }
+      // Special cases for common ID patterns or tactical terms
+      if (path.length > 20 && (path.includes('-') || /^\d+$/.test(path))) {
+        label = "Details"
+      } else if (label.toLowerCase() === "training") {
+        label = "Training"
+      } else if (label.toLowerCase() === "personnel") {
+        label = "Students"
+      } else if (label.toLowerCase() === "mentors") {
+        label = "Trainers"
+      } else if (label.toLowerCase() === "intelligence") {
+        label = "Overview"
+      }
 
- return { href, label, isLast: index === paths.length - 1 }
- })
- return breadcrumbs
- }
+      return { href, label, isLast: index === paths.length - 1 }
+    })
+    return breadcrumbs
+  }
 
  const breadcrumbs = generateBreadcrumbs()
+ const recentNotifications = notifications.slice(0, 6)
+ const notificationHistoryHref = role === "student" ? "/student/updates" : role === "admin" ? "/admin/updates" : null
 
  const handleChangePassword = async (e: React.FormEvent) => {
  e.preventDefault();
@@ -238,71 +243,85 @@ export function Header({ role, user, headerAction }: HeaderProps) {
  )}
  <DropdownMenu>
  <DropdownMenuTrigger asChild>
- <Button variant="ghost" size="icon" className="relative">
+ <Button
+ variant="ghost"
+ size="icon"
+ className="relative"
+ aria-label={unreadCount > 0 ? `${unreadCount} unread updates` : "Updates"}
+ >
  <Bell className="h-5 w-5" />
  {unreadCount > 0 && (
  <Badge className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-amber-500 p-0 text-[10px] font-bold text-brown-900 shadow-[0_0_0_2px_hsl(var(--background))]">
  {unreadCount > 9 ? '9+' : unreadCount}
  </Badge>
  )}
- <span className="sr-only">Updates</span>
  </Button>
  </DropdownMenuTrigger>
- <DropdownMenuContent align="end" className="w-[calc(100vw-2rem)] sm:w-80 rounded-md border-border/70">
- <div className="flex items-center justify-between border-b px-4 py-3">
- <span className="font-semibold text-sm">Updates</span>
+ <DropdownMenuContent align="end" className="w-[calc(100vw-2rem)] overflow-hidden rounded-md border-border/70 p-0 sm:w-[25rem]">
+ <div className="flex items-center justify-between border-b border-border/70 bg-brown-50/70 px-4 py-3.5">
+ <div className="flex items-center gap-2.5">
+ <div className="grid h-8 w-8 place-items-center rounded-md bg-brown-800 text-cream">
+ <BellRing className="h-4 w-4" aria-hidden="true" />
+ </div>
+ <div>
+ <p className="text-sm font-semibold text-foreground">Updates</p>
+ <p className="text-[11px] font-medium text-muted-foreground">{unreadCount > 0 ? `${unreadCount} unread notification${unreadCount === 1 ? "" : "s"}` : "You are all caught up"}</p>
+ </div>
+ </div>
  {unreadCount > 0 && (
  <Button
  variant="ghost"
  size="sm"
- className="h-auto p-0 text-xs text-brown-800 hover:bg-transparent hover:underline"
+ className="h-8 gap-1.5 px-2 text-xs text-brown-800 hover:bg-brown-800/5"
  onClick={(e) => {
  e.preventDefault();
  markAllAsRead();
  }}
  >
- Mark all as read
+ <CheckCheck className="h-3.5 w-3.5" />
+ Mark all read
  </Button>
  )}
  </div>
- <div className="max-h-[350px] overflow-y-auto">
- {notifications.length === 0 ? (
- <div className="py-8 text-center text-sm text-muted-foreground">
- No updates yet
+ <div className="max-h-[390px] overflow-y-auto p-2">
+ {notificationsLoading && notifications.length === 0 ? (
+ <div className="space-y-3 p-3" aria-label="Loading updates">
+ {[0, 1, 2].map((item) => <div key={item} className="h-16 animate-pulse rounded-md bg-muted/70" />)}
+ </div>
+ ) : notifications.length === 0 ? (
+ <div className="flex flex-col items-center px-6 py-10 text-center">
+ <div className="grid h-12 w-12 place-items-center rounded-full bg-amber-500/10 text-amber-700">
+ <Bell className="h-5 w-5" aria-hidden="true" />
+ </div>
+ <p className="mt-3 text-sm font-semibold text-foreground">No updates yet</p>
+ <p className="mt-1 text-xs leading-relaxed text-muted-foreground">New placement, training, and account updates will appear here.</p>
  </div>
  ) : (
- notifications.slice(0, 50).map((notification) => (
+ recentNotifications.map((notification) => (
  <DropdownMenuItem
  key={notification.id}
  className={cn(
-"group cursor-pointer flex-col items-start gap-1 border-b px-4 py-3 last:border-0",
- !notification.isRead &&"bg-accent/30"
+ "cursor-pointer rounded-md px-3 last:border-0 focus:bg-brown-800/5",
+ !notification.isRead && "bg-amber-500/7"
  )}
- onClick={() => markAsRead(notification.id)}
+ onSelect={() => {
+ if (!notification.isRead) void markAsRead(notification.id)
+ }}
  >
- <div className="flex justify-between w-full items-start gap-2">
- <span className={cn(
-"text-sm leading-none transition-colors",
- !notification.isRead ?"font-bold text-foreground" :"font-medium text-muted-foreground"
- )}>
- {notification.title}
- </span>
- {!notification.isRead && (
- <span className="h-2 w-2 shrink-0 rounded-full bg-brown-800 mt-1" />
- )}
- </div>
- <span className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{notification.message}</span>
- <span className="text-[10px] text-muted-foreground/60 font-medium">
- {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
- </span>
+ <NotificationContent notification={notification} compact />
  </DropdownMenuItem>
  ))
  )}
  </div>
+ {notifications.length > recentNotifications.length && <div className="border-t border-border/70 px-4 py-2 text-center text-xs text-muted-foreground">Showing the latest {recentNotifications.length} updates</div>}
  <DropdownMenuSeparator className="m-0" />
- <DropdownMenuItem className="justify-center py-2.5 font-medium text-brown-800 transition-colors focus:bg-brown-800/5 focus:text-brown-800" asChild>
- <Link href={role ==="student" ?"/student/updates" : role === "admin" ?"/admin/updates" : role === "trainer" ? "/trainer" : "/recruiter"}>View all updates</Link>
+ {notificationHistoryHref ? (
+ <DropdownMenuItem className="justify-center py-3 font-semibold text-brown-800 transition-colors focus:bg-brown-800/5 focus:text-brown-800" asChild>
+ <Link href={notificationHistoryHref}>View all updates</Link>
  </DropdownMenuItem>
+ ) : (
+ <div className="px-4 py-3 text-center text-xs font-medium text-muted-foreground">The latest updates are shown above.</div>
+ )}
  </DropdownMenuContent>
  </DropdownMenu>
 
@@ -329,8 +348,15 @@ export function Header({ role, user, headerAction }: HeaderProps) {
  Change Password
  </DropdownMenuItem>
  <DropdownMenuSeparator />
- <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-600 focus:text-red-600">
- Sign out
+ <DropdownMenuItem onClick={logout} disabled={isLoggingOut} className="cursor-pointer text-red-600 focus:text-red-600 flex items-center gap-2">
+ {isLoggingOut ? (
+   <>
+     <Loader2 className="h-4 w-4 animate-spin text-amber-500" />
+     <span>Signing Out...</span>
+   </>
+ ) : (
+   <span>Sign out</span>
+ )}
  </DropdownMenuItem>
  </DropdownMenuContent>
  </DropdownMenu>

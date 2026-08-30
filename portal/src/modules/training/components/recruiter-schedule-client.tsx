@@ -11,6 +11,9 @@ import { format, isPast } from"date-fns"
 import { cn } from"@/lib/utils"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs"
 import { useAuth } from"@/contexts/auth-context"
+import { Heading } from "@/components/ui/heading"
+import { PageHeader } from "@/components/layout/page-header"
+import { LoadingGrid } from "@/components/ui/loading-states"
 
 export default function TrainerSchedulePage() {
  const { user } = useAuth()
@@ -47,7 +50,17 @@ export default function TrainerSchedulePage() {
  fetchSchedule()
  }, [user])
 
- if (loading) return <div className="flex h-[50vh] items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>
+  if (loading) {
+    return (
+      <div className="space-y-6 animate-fade-up">
+        <PageHeader
+          title="My Schedule"
+          description="View upcoming training sessions and timetable."
+        />
+        <LoadingGrid items={6} />
+      </div>
+    );
+  }
  if (error) {
  return (
  <div className="rounded-md border border-destructive/20 bg-destructive/5 p-6 text-center">
@@ -69,8 +82,7 @@ export default function TrainerSchedulePage() {
       <Link href="/trainer"><ArrowLeft className="h-4 w-4" /></Link>
     </Button>
     <div className="flex flex-col gap-1">
-      <h1 className="section-h2">My Schedule</h1>
-      <p className="text-sm text-muted-foreground font-medium">Manage your training sessions.</p>
+        <Heading variant="page-title">My Schedule</Heading>
     </div>
   </div>
 

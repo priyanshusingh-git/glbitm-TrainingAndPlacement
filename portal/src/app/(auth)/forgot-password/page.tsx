@@ -11,6 +11,7 @@ import { validateStrongPassword } from "@/lib/validators"
 import { AuthBrandPanel } from "@/components/layout/auth-brand-panel"
 import { MobileAuthHeader } from "@/components/layout/mobile-auth-header"
 import { forgotPasswordBrandContent } from "@/data/auth"
+import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -360,13 +361,13 @@ function ForgotPasswordContent() {
 
           {/* Header & Step Indicator */}
           <div className="mb-8 animate-fade-up stagger-1 lg:mt-0">
-            <h2 className="mb-2 font-display text-[48px] font-bold leading-[1.05] tracking-tight text-brown-900 [font-variation-settings:'opsz'_48,'SOFT'_0,'WONK'_0]">
+            <Heading variant="display-section" className="mb-2">
               {step === 3 ? (
                 <>Reset <span className="text-amber-700 italic">password</span></>
               ) : (
                 <>Recover <span className="text-amber-700 italic">access</span></>
               )}
-            </h2>
+            </Heading>
             <p className="text-[15px] font-medium text-muted-foreground/80 leading-relaxed">
               {step === 1 && "Verify your identity through your registered institutional email."}
               {step === 2 && "Enter the verification code sent to your email address."}
@@ -401,6 +402,7 @@ function ForgotPasswordContent() {
                     <Input
                       id="email"
                       type="email"
+                      autoComplete="email"
                       value={email}
                       onChange={(e) => {
                         setEmail(e.target.value)
@@ -412,7 +414,9 @@ function ForgotPasswordContent() {
                       aria-invalid={emailTouched && !!emailError}
                     />
                   </div>
-                  <FieldError message={emailTouched ? emailError : null} />
+                  <div id="recovery-email-error" aria-live="polite">
+                    <FieldError message={emailTouched ? emailError : null} />
+                  </div>
                 </div>
 
                 <Button
@@ -421,7 +425,7 @@ function ForgotPasswordContent() {
                   className={cn(
                     "group relative w-full h-[54px] rounded-md overflow-hidden font-bold transition-all duration-400 active:scale-[0.98]",
                     isEmailValid
-                      ? "bg-brown-900 text-brown-50 hover:bg-brown-800 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
+                      ? "bg-brown-800 text-brown-50 hover:bg-brown-900 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
                       : "bg-brown-100/50 text-brown-400 border border-brown-200/60 cursor-not-allowed shadow-none"
                   )}
                   disabled={loading || !isEmailValid}
@@ -457,6 +461,8 @@ function ForgotPasswordContent() {
                       ref={(node) => { otpRefs.current[index] = node }}
                       type="text"
                       inputMode="numeric"
+                      autoComplete={index === 0 ? "one-time-code" : "off"}
+                      aria-label={`Verification code digit ${index + 1} of 6`}
                       maxLength={1}
                       value={digit}
                       onChange={(e) => handleOtpChange(index, e.target.value)}
@@ -473,7 +479,7 @@ function ForgotPasswordContent() {
                   className={cn(
                     "group relative w-full h-[54px] rounded-md overflow-hidden font-bold transition-all duration-400 active:scale-[0.98]",
                     otpValue.length === 6
-                      ? "bg-brown-900 text-brown-50 hover:bg-brown-800 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
+                      ? "bg-brown-800 text-brown-50 hover:bg-brown-900 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
                       : "bg-brown-100/50 text-brown-400 border border-brown-200/60 cursor-not-allowed shadow-none"
                   )}
                   disabled={loading || otpValue.length !== 6}
@@ -505,8 +511,10 @@ function ForgotPasswordContent() {
             <section className="animate-fade-up stagger-3">
               <form onSubmit={handleResetPassword} className="space-y-6">
                 <div className="space-y-1.5">
-                  <Label className="auth-label text-[13px] font-semibold text-brown-800/80">NEW PASSWORD</Label>
+                  <Label htmlFor="new-password" className="auth-label text-[13px] font-semibold text-brown-800/80">NEW PASSWORD</Label>
                   <PasswordInput
+                    id="new-password"
+                    autoComplete="new-password"
                     value={newPassword}
                     onChange={(e) => {
                       setNewPassword(e.target.value)
@@ -521,8 +529,10 @@ function ForgotPasswordContent() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="auth-label text-[13px] font-semibold text-brown-800/80">CONFIRM PASSWORD</Label>
+                  <Label htmlFor="confirm-password" className="auth-label text-[13px] font-semibold text-brown-800/80">CONFIRM PASSWORD</Label>
                   <PasswordInput
+                    id="confirm-password"
+                    autoComplete="new-password"
                     value={confirmPassword}
                     onChange={(e) => {
                       setConfirmPassword(e.target.value)
@@ -540,10 +550,10 @@ function ForgotPasswordContent() {
                   className={cn(
                     "group relative w-full h-[54px] rounded-md overflow-hidden font-bold transition-all duration-400 active:scale-[0.98]",
                     (newPassword && confirmPassword && !pwErrors.new && !pwErrors.confirm)
-                      ? "bg-brown-900 text-brown-50 hover:bg-brown-800 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
+                      ? "bg-brown-800 text-brown-50 hover:bg-brown-900 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
                       : "bg-brown-100/50 text-brown-400 border border-brown-200/60 cursor-not-allowed shadow-none"
                   )}
-                  disabled={loading}
+                  disabled={loading || !newPassword || !confirmPassword || !!validateNewPw(newPassword) || !!validateConfirmPw(newPassword, confirmPassword)}
                 >
                   {loading ? <div className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /><span>Saving…</span></div> : (
                     <>
@@ -563,9 +573,9 @@ function ForgotPasswordContent() {
                   <CheckCircle2 className="h-12 w-12" />
                 </div>
               </div>
-              <h2 className="mb-3 font-display text-[32px] font-bold text-brown-900 [font-variation-settings:'opsz'_48,'SOFT'_0,'WONK'_0]">
+              <Heading variant="display-section" className="mb-3">
                 Password updated
-              </h2>
+              </Heading>
               <p className="mb-7 text-[15px] leading-relaxed text-muted-foreground">
                 Your password has been updated successfully.
                 <br />

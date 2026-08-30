@@ -25,6 +25,7 @@ import { EnhancedEmpty } from"@/components/ui/enhanced-empty"
 import { api } from"@/lib/api"
 import { format } from"date-fns"
 import { cn } from"@/lib/utils"
+import { Heading } from "@/components/ui/heading"
 
 interface AuditLog {
  id: string
@@ -67,11 +68,11 @@ export default function ActivityClient() {
 
  const getActionIcon = (action: string) => {
  switch (action) {
- case 'CREATE': return <CheckCircle2 className="h-4 w-4 text-green-500" />
- case 'UPDATE': return <Info className="h-4 w-4 text-blue-500" />
+ case 'CREATE': return <CheckCircle2 className="h-4 w-4 text-success" />
+ case 'UPDATE': return <Info className="h-4 w-4 text-brown-600" />
  case 'DELETE': return <XCircle className="h-4 w-4 text-red-500" />
- case 'LOCK': return <ShieldAlert className="h-4 w-4 text-orange-500" />
- case 'UNLOCK': return <ShieldAlert className="h-4 w-4 text-green-500" />
+ case 'LOCK': return <ShieldAlert className="h-4 w-4 text-warning" />
+ case 'UNLOCK': return <ShieldAlert className="h-4 w-4 text-success" />
  default: return <Activity className="h-4 w-4 text-muted-foreground" />
  }
  }
@@ -90,10 +91,7 @@ export default function ActivityClient() {
  <div className="space-y-6">
  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
  <div>
- <h1 className="text-2xl font-bold tracking-tight">Activity Log</h1>
- <p className="text-muted-foreground">
- Track administrative actions and system updates.
- </p>
+ <Heading variant="page-title">Activity Log</Heading>
  </div>
  </div>
 

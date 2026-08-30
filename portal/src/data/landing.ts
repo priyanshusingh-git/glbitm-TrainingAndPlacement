@@ -1,7 +1,7 @@
 export const navLinks = [
   { name: "Placements", href: "#placements", section: "placements" },
   { name: "Training", href: "#training", section: "training" },
-  { name: "CDC", href: "#cdc", section: "cdc" },
+  { name: "Programs", href: "#cdc", section: "cdc" },
   { name: "Recruiters", href: "#recruiters", section: "recruiters" },
   { name: "Alumni", href: "#alumni", section: "alumni" },
   { name: "Team", href: "#team", section: "team" },
@@ -11,7 +11,7 @@ export const heroContent = {
   title: "Where Excellence Meets Opportunity",
   emphasis: "Excellence",
   subtitle:
-    "GL Bajaj Institute's Training & Placement Cell and Career Development Centre prepare 2,800+ students annually for India's most competitive careers - ₹58 LPA highest package, 600+ recruiters, and a deeply industry-linked training ecosystem.",
+    "GL Bajaj Institute's Training & Placement Cell prepares 2,800+ students annually for India's most competitive opportunities - ₹58 LPA highest package, 600+ recruiters, and a deeply industry-linked training ecosystem.",
   primaryCta: { label: "Partner With Us ->", href: "#contact" },
   secondaryCta: { label: "View Placement Record", href: "#placements" },
 }
@@ -398,9 +398,9 @@ export const advisoryMembers = [
 export const guidanceFeatures = [
   {
     icon: "🎯",
-    title: "Career Counselling",
+    title: "Placement Counselling",
     description:
-      "One-on-one sessions to identify career paths aligned with strengths and market demand. Faculty mentors guide each student across all four years.",
+      "One-on-one sessions to identify suitable placement paths aligned with strengths and market demand. Faculty mentors guide each student across all four years.",
   },
   {
     icon: "🌐",
@@ -441,7 +441,7 @@ export const landingTestimonials = [
     company: "Meesho",
     tag: "Product",
     quote:
-      "The CDC's AI/ML bootcamp changed my trajectory completely. Meesho hired me for a project I built during the programme - before placement season officially started.",
+      "The AI/ML bootcamp changed my trajectory completely. Meesho hired me for a project I built during the programme - before placement season officially started.",
     name: "Dev Priya Gupta",
     meta: "ML Engineer - Meesho - CSE 2025",
     initial: "DG",
@@ -459,15 +459,15 @@ export const landingTestimonials = [
     accent: "from-brown-900 to-brown-800",
   },
   {
-    package: "₹22 LPA",
+    package: "₹44 LPA",
     company: "Amazon",
     tag: "Product",
     quote:
-      "Mock interviews and recruiter-specific drills made the real process feel familiar. The team prepared me for both the technical depth and the pressure.",
-    name: "Sneha Reddy",
-    meta: "SDE - Amazon - CSE 2024",
-    initial: "SR",
-    accent: "from-brown-800 to-brown-700",
+      "DSA bootcamps, mock bar-raiser interviews, and continuous placement cell coaching made the Amazon process feel completely familiar when the real rounds started.",
+    name: "Aarav Sharma",
+    meta: "SDE - Amazon - IT 2024",
+    initial: "AS",
+    accent: "from-brown-800 to-amber-500",
   },
   {
     package: "₹7 LPA",
@@ -515,18 +515,18 @@ export const landingTestimonials = [
   },
 ]
 
-export const teamMembers = [
+export const placementTeam = [
   {
-    role: "Training & Placement Director",
+    role: "Director - T&P",
     name: "Dr. Manju Khatri",
-    detail: "Training & Placement",
-    phone: "+91 99999 08292",
+    detail: "Leadership & Corporate Partnerships",
+    phone: "+91 98115 54591",
     initial: "MK",
   },
   {
-    role: "General Manager",
-    name: "Sunil Chaurasia",
-    detail: "Placements & Industry Relations",
+    role: "GM - Placements",
+    name: "Sanjay Kumar",
+    detail: "Corporate Connect & Drives",
     phone: "+91 93507 53651",
     initial: "SC",
   },
@@ -538,9 +538,9 @@ export const teamMembers = [
     initial: "AA",
   },
   {
-    role: "CDC Dean",
+    role: "Dean - Placements",
     name: "V.R. Mishra",
-    detail: "Career Development Centre",
+    detail: "Corporate Relations & Training",
     phone: "+91 99530 77590",
     initial: "VRM",
   },
@@ -553,6 +553,8 @@ export const teamMembers = [
   },
 ]
 
+export const teamMembers = placementTeam;
+
 export const campusCard = {
   role: "Campus Address",
   name: "Greater Noida HQ",
@@ -564,7 +566,7 @@ export const ctaContent = {
   eyebrow: "Recruiter Connect",
   title: "Ready to Hire GL Bajaj Talent?",
   subtitle:
-    "Connect with the placement office to schedule a campus drive, request the recruiter brochure, or start an internship collaboration with the CDC.",
+    "Connect with the placement office to schedule a campus drive, request the recruiter brochure, or start an internship collaboration with our training cell.",
   contacts: [
     {
       icon: "✉️",
@@ -601,14 +603,14 @@ export const ctaContent = {
 
 export const footerLinks = {
   overview:
-    "UP's first UGC-autonomous private engineering institute with a training and placement ecosystem built around recruiter readiness, CDC upskilling, and year-round student support.",
+    "UP's first UGC-autonomous private engineering institute with a training and placement ecosystem built around recruiter readiness, structured upskilling, and year-round student support.",
   quick: [
     { name: "Placement Record", href: "#placements" },
     { name: "Placement Process", href: "#process" },
     { name: "Training Modules", href: "#training" },
     { name: "Recruiters", href: "#recruiters" },
   ],
-  cdc: [
+  training: [
     { name: "Skill Enhancement", href: "#cdc" },
     { name: "Alumni Stories", href: "#alumni" },
     { name: "Meet the Team", href: "#team" },

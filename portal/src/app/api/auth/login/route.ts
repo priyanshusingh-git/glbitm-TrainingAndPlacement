@@ -28,7 +28,7 @@ const loginSchema = z.object({
   password: z.string().min(8).max(128),
   role: z.enum(["STUDENT", "ADMIN", "TRAINER", "RECRUITER"]).optional(), // Auto-detected from DB
   rememberMe: z.boolean().optional().default(false),
-  username: z.string().optional(),
+  website: z.string().optional(),
   fingerprint: z.string().min(8).max(64).optional(),
   hcaptchaToken: z.string().min(1).optional(),
   csrfToken: z.string().length(64).optional(),
@@ -52,10 +52,10 @@ export async function POST(req: NextRequest) {
 
   const csrfToken = parsed.data.csrfToken ?? req.headers.get("x-csrf-token");
   const fingerprint = parsed.data.fingerprint?.trim().slice(0, 64) || null;
-  const { email, password, rememberMe, username, hcaptchaToken } = parsed.data;
+  const { email, password, rememberMe, website, hcaptchaToken } = parsed.data;
 
   // Bot honeypot
-  if (username) {
+  if (website) {
     await logAuthEvent({
       action: "BOT_HONEYPOT",
       ip, email, userAgent, fingerprint,
@@ -159,55 +159,46 @@ export async function POST(req: NextRequest) {
         isSuspended: true,
         suspendedReason: true,
         mustChangePassword: true,
+        sessionVersion: true,
         studentProfile: {
           select: { name: true, photoUrl: true },
         },
       },
     });
 
-    // Check generic Auth Failure
-    if (!user || (!user.password && !user.mustChangePassword)) {
-      const failure = await recordLoginFailure({ ip, email, fingerprint });
-      await logAuthEvent({ action: "LOGIN_FAILED", ip, email, userAgent, fingerprint, metadata: { reason: "user_not_found_or_no_password" } });
-      await applyProgressiveDelay(failure.emailFailureCount);
-      return createProblemResponse(req, { status: 401, code: "AUTH_FAILED", title: "Authentication failed", detail: "Invalid email or password.", extensions: { captchaRequired: failure.captchaRequired } });
-    }
+    // Compare password hash (or run dummy bcrypt compare if user/password is missing to normalize timing)
+    const DUMMY_HASH = "$2a$10$wT8e1S5fJ/qYyJ9kG8/7e.Z7k3j9v4m5n6o7p8q9r0s1t2u3v4w5x"
+    const passwordMatch = user?.password
+      ? await bcrypt.compare(password, user.password)
+      : await bcrypt.compare(password, DUMMY_HASH).then(() => false)
 
-    // Special Case: Induction Pending (New Student)
-    // If they have mustChangePassword=true, they should be guided to their induction link
-    // unless they happen to know the temporary password (unlikely).
-    if (user.mustChangePassword && (!user.password || user.password === "FIREBASE_AUTH")) {
-      return createProblemResponse(req, { 
-        status: 401, 
-        code: "INDUCTION_PENDING", 
-        title: "Setup Required", 
-        detail: "It looks like you haven't finished your account setup. Please check your email for your induction link." 
-      });
-    }
+    if (!user || !user.password || !passwordMatch) {
+      const failure = await recordLoginFailure({ ip, email, fingerprint })
+      await logAuthEvent({
+        action: "LOGIN_FAILED",
+        ip, email, userAgent, fingerprint,
+        metadata: { reason: !user ? "user_not_found" : !user.password ? "no_password" : "invalid_password" }
+      })
+      await applyProgressiveDelay(failure.emailFailureCount)
 
-    // Mathematically compare password logic (replaces Firebase API)
-    const passwordMatch = user.password ? await bcrypt.compare(password, user.password) : false;
-    
-    // If it's a new student (mustChangePassword) and they fail the password check, 
-    // we clearly identify them as needing induction help.
-    if (!passwordMatch && user.mustChangePassword) {
-      return createProblemResponse(req, { 
-        status: 401, 
-        code: "INDUCTION_PENDING", 
-        title: "Setup Required", 
-        detail: "It looks like you haven't finished your account setup. Please check your email for your induction link." 
-      });
-    }
-    
-    // For local dev convenience if they imported legacy users lacking hash via FIREBASE_AUTH placeholder
-    if (!passwordMatch && user.password !== "FIREBASE_AUTH") {
-      const failure = await recordLoginFailure({ ip, email, fingerprint });
-      await logAuthEvent({ action: "LOGIN_FAILED", ip, email, userAgent, fingerprint, metadata: { reason: "invalid_password" } });
-      await applyProgressiveDelay(failure.emailFailureCount);
-      return createProblemResponse(req, { status: 401, code: "AUTH_FAILED", title: "Authentication failed", detail: "Invalid email or password.", extensions: { captchaRequired: failure.captchaRequired } });
-    } else if (user.password === "FIREBASE_AUTH") {
-        // Technically a zombie Firebase user trying to login - cannot happen since we established zero users exist.
-        return createProblemResponse(req, { status: 401, code: "AUTH_FAILED", title: "Authentication failed", detail: "Account has been migrated forcefully. Please reset your password." });
+      // If user exists and is pending induction, return setup guidance after recording failure
+      if (user && user.mustChangePassword) {
+        return createProblemResponse(req, {
+          status: 401,
+          code: "INDUCTION_PENDING",
+          title: "Setup Required",
+          detail: "It looks like you haven't finished your account setup. Please check your email for your induction link.",
+          extensions: { captchaRequired: failure.captchaRequired }
+        })
+      }
+
+      return createProblemResponse(req, {
+        status: 401,
+        code: "AUTH_FAILED",
+        title: "Authentication failed",
+        detail: "Invalid email or password.",
+        extensions: { captchaRequired: failure.captchaRequired }
+      })
     }
 
     if (user.isSuspended) {
@@ -225,6 +216,7 @@ export async function POST(req: NextRequest) {
       email: user.email,
       role: user.role,
       mustChangePassword: user.mustChangePassword,
+      sessionVersion: user.sessionVersion,
       rememberMe,
     });
 

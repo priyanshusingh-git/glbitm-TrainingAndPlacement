@@ -22,7 +22,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from"@/
 import { Loader2, Search, Mail, User, CheckCircle2, XCircle, Clock } from"lucide-react"
 import { Input } from"@/components/ui/input"
 import { api } from"@/lib/api"
-import { useToast } from"@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast"
+import { LoadingTable } from "@/components/ui/loading-states"
+import { EnhancedEmpty } from "@/components/ui/enhanced-empty"
+import { Users } from "lucide-react"
 import { Avatar, AvatarFallback } from"@/components/ui/avatar"
 
 interface ApplicantsViewProps {
@@ -86,8 +89,8 @@ export function ApplicantsView({ driveId, driveRole, companyName, isOpen, onClos
 
  const getStatusBadge = (status: string) => {
  switch (status.toLowerCase()) {
- case 'applied': return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200 uppercase text-[10px] font-bold px-2 py-0.5"><Clock className="w-3 h-3 mr-1" /> Applied</Badge>
- case 'shortlisted': return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 uppercase text-[10px] font-bold px-2 py-0.5">Shortlisted</Badge>
+ case 'applied': return <Badge variant="outline" className="border-brown-800/20 bg-brown-800/5 text-brown-800 uppercase text-[10px] font-bold px-2 py-0.5"><Clock className="w-3 h-3 mr-1" /> Applied</Badge>
+ case 'shortlisted': return <Badge variant="outline" className="border-amber-500/30 bg-amber-500/10 text-amber-700 uppercase text-[10px] font-bold px-2 py-0.5">Shortlisted</Badge>
  case 'offered':
  case 'placed': return <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200 uppercase text-[10px] font-bold px-2 py-0.5"><CheckCircle2 className="w-3 h-3 mr-1" /> Offered</Badge>
  case 'rejected': return <Badge variant="outline" className="bg-rose-50 text-rose-700 border-rose-200 uppercase text-[10px] font-bold px-2 py-0.5"><XCircle className="w-3 h-3 mr-1" /> Rejected</Badge>
@@ -124,18 +127,14 @@ export function ApplicantsView({ driveId, driveRole, companyName, isOpen, onClos
 
  <div className="flex-1 overflow-y-auto min-h-[300px]">
  {loading ? (
- <div className="flex flex-col items-center justify-center h-full gap-2 py-20">
- <Loader2 className="w-8 h-8 animate-spin text-brown-800" />
- <p className="text-sm text-muted-foreground">Loading applicants...</p>
- </div>
+ <LoadingTable rows={5} cols={4} />
  ) : filteredApplicants.length === 0 ? (
- <div className="flex flex-col items-center justify-center h-full py-20 text-center">
- <div className="bg-muted rounded-full p-4 mb-4">
- <User className="w-8 h-8 text-muted-foreground" />
- </div>
- <h3 className="font-semibold text-lg">No applicants found</h3>
- <p className="text-sm text-muted-foreground">Try a different search or wait for students to apply.</p>
- </div>
+ <EnhancedEmpty
+ icon={Users}
+ title="No applicants found"
+ description="Try a different search query or wait for students to submit applications."
+ variant="minimal"
+ />
  ) : (
  <Table>
  <TableHeader className="bg-muted/50 sticky top-0 z-10">

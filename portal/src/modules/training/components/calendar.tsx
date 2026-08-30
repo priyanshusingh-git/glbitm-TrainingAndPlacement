@@ -8,6 +8,7 @@ import {
 } from"date-fns"
 import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
 import { Button } from"@/components/ui/button"
+import { Heading } from "@/components/ui/heading"
 import { Badge } from"@/components/ui/badge"
 import {
  ChevronLeft, ChevronRight, Calendar as CalendarIcon,
@@ -34,7 +35,7 @@ export function TrainingCalendar({ sessions }: TrainingCalendarProps) {
  <CalendarIcon className="h-7 w-7 text-brown-800" />
  </div>
  <div>
- <h2 className="text-3xl font-black tracking-tighter uppercase">{format(currentMonth,"MMMM yyyy")}</h2>
+ <Heading variant="page-title" as="h2" className="uppercase tracking-tighter">{format(currentMonth,"MMMM yyyy")}</Heading>
  <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em] mt-1">Operational Timeline & Logistics</p>
  </div>
  </div>
@@ -110,7 +111,7 @@ export function TrainingCalendar({ sessions }: TrainingCalendarProps) {
  key={s.id}
  className={cn(
 "text-[9px] p-2 rounded-md border-l-2 font-black uppercase tracking-tight truncate leading-none shadow-sm",
- s.type === 'Technical' ?"bg-indigo-500/10 border-indigo-500/40 text-indigo-500" :
+ s.type === 'Technical' ?"bg-brown-800/5 border-brown-800/20 text-brown-800" :
  s.type === 'Aptitude' ?"bg-amber-500/10 border-amber-500/40 text-amber-500" :
 "bg-emerald-500/10 border-emerald-500/40 text-emerald-500"
  )}

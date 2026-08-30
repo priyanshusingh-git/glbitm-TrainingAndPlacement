@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { logAuthEvent } from "@/lib/auth-audit"
 import { validateCsrfToken } from "@/lib/csrf"
-// Removed Firebase import
 import { attachRequestContextHeaders, getIpAddress, getUserAgent } from "@/lib/request-context"
 import { createProblemResponse, handleApiError } from "@/lib/problem-details"
 import { SESSION_COOKIE_NAME } from "@/lib/role-cookie"

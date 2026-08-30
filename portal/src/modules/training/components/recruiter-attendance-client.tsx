@@ -8,7 +8,8 @@ import { Button } from"@/components/ui/button"
 import { Badge } from"@/components/ui/badge"
 import { Avatar, AvatarFallback } from"@/components/ui/avatar"
 import { ArrowLeft, Check, X, Clock, Calendar, Users, Save } from"lucide-react"
-import { useToast } from"@/components/ui/use-toast"
+import { Heading } from "@/components/ui/heading";
+import { useToast } from "@/components/ui/use-toast"
 import { format } from"date-fns"
 import { Loader2 } from"lucide-react"
 
@@ -93,7 +94,21 @@ export default function AttendancePage() {
  }
  };
 
- if (loading) return <div className="flex h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>;
+  if (loading) {
+    return (
+      <div className="space-y-6 container mx-auto py-8 max-w-4xl animate-fade-up">
+        <div className="flex flex-col gap-2 mb-4">
+          <div className="h-8 w-48 animate-pulse rounded bg-muted" />
+          <div className="h-4 w-72 animate-pulse rounded bg-muted/60" />
+        </div>
+        <div className="space-y-2">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="h-16 w-full animate-pulse rounded bg-muted/40" />
+          ))}
+        </div>
+      </div>
+    );
+  }
  if (!session) return <div className="p-8 text-center text-muted-foreground">Session not found</div>;
  const primaryGroup = session.group ?? session.sessionGroups?.[0] ?? null;
  const canSubmitAttendance = Boolean(primaryGroup) && students.length > 0;
@@ -108,11 +123,7 @@ export default function AttendancePage() {
  <ArrowLeft className="h-4 w-4" />
  </Button>
  <div>
- <h1 className="text-2xl font-bold tracking-tight">Mark Attendance</h1>
- <p className="text-muted-foreground flex items-center gap-2 text-sm">
- <Calendar className="h-3 w-3" /> {format(new Date(session.date),"PPP")} •
- <Clock className="h-3 w-3" /> {session.startTime ? format(new Date(session.startTime),"p") :"TBD"}
- </p>
+ <Heading variant="page-title">Mark Attendance</Heading>
  </div>
  <div className="ml-auto flex items-center gap-2">
  <Badge variant="outline" className="px-3 py-1 text-base">
@@ -159,7 +170,7 @@ export default function AttendancePage() {
  size="sm"
  variant={attendance[student.id] === 'Present' ? 'default' : 'outline'}
  onClick={() => handleMark(student.id, 'Present')}
- className={attendance[student.id] === 'Present' ? 'bg-green-600 hover:bg-green-700' : ''}
+ className={attendance[student.id] === 'Present' ? 'bg-success hover:bg-success/90' : ''}
  >
  <Check className="h-4 w-4 mr-1" /> Present
  </Button>

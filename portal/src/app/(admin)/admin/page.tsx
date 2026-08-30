@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { PageHeader, SectionHeader } from "@/components/layout/page-header"
-import { Users, Building2, UserPlus, FileSpreadsheet, Send } from "lucide-react";
+import { PageHeader } from "@/components/layout/page-header"
+import { Users, Building2, UserPlus, FileSpreadsheet, Send, Search } from "lucide-react";
 import { getAdminDashboardStats, AdminDashboardData } from "@/services/dashboard.service";
 import { AdminOverview } from "@/modules/analytics/components/admin-overview";
 import { PlacementAnalytics } from "@/modules/analytics/components/placement-analytics";
@@ -10,24 +10,24 @@ import { RecentActivity } from "@/modules/analytics/components/recent-activity";
 import { StudentTable } from "@/modules/students/components/student-table";
 import { CompanySection } from "@/modules/companies/components/company-section";
 import { Button } from "@/components/ui/button";
-import { Loader2, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { adminQuickActions } from "@/data/dashboard";
 import { getAblyClient } from "@/contexts/ably-context";
+import { LoadingGrid } from "@/components/ui/loading-states";
 import Link from "next/link";
 
 const iconMap: Record<string, any> = { UserPlus, Building2, FileSpreadsheet, Send };
 
-export default function AdminDashboard() {
+export default function AdminDashboardPage() {
   const [data, setData] = useState<AdminDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
     try {
-      const stats = await getAdminDashboardStats();
-      setData(stats);
-    } catch (error) {
-      console.error("Failed to fetch admin stats", error);
+      const res = await getAdminDashboardStats();
+      setData(res);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -35,7 +35,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   // Listen for real-time student updates to refresh data instantly
   useEffect(() => {
@@ -48,14 +48,6 @@ export default function AdminDashboard() {
       channel.unsubscribe("student-update", fetchData);
     };
   }, [fetchData]);
-
-  if (loading) {
-    return (
-      <div className="flex h-[50vh] w-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
-      </div>
-    )
-  }
 
   return (
     <div className="flex flex-col gap-6 pb-10">
@@ -101,39 +93,36 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Main Stats Grid */}
-      <div className="xl:col-span-4 space-y-8 mt-2 animate-fade-up stagger-2">
-        <AdminOverview overview={data?.overview} />
-
-        <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <PlacementAnalytics 
-              analytics={data?.placementAnalytics} 
-              placementRate={data?.overview?.placementRate} 
-              branchDistribution={data?.branchDistribution} 
-            />
+      {loading ? (
+        <LoadingGrid items={4} />
+      ) : (
+        <>
+          {/* Top Level Metric Cards */}
+          <div className="animate-fade-up stagger-2">
+            <AdminOverview overview={data?.overview} />
           </div>
-          <RecentActivity activities={data?.recentActivity} />
-        </div>
-      </div>
 
-      <div className="space-y-8 pt-4 animate-fade-up stagger-3">
-        <SectionHeader
-          title="Active Directory"
-          description="Manage registered student profiles"
-          icon={<Users />}
-        />
-        <StudentTable />
-      </div>
+          {/* Core Analytics Grid */}
+          <div className="animate-fade-up stagger-3">
+            <PlacementAnalytics analytics={data?.placementAnalytics} />
+          </div>
 
-      <div className="space-y-8 animate-fade-up stagger-4">
-        <SectionHeader
-          title="Corporate Hub"
-          description="Registered placement partners"
-          icon={<Building2 />}
-        />
-        <CompanySection companies={data?.companies} />
-      </div>
+          {/* Activity Timeline */}
+          <div className="animate-fade-up stagger-4">
+            <RecentActivity activities={data?.recentActivity || []} />
+          </div>
+
+          {/* Interactive Company Management Section */}
+          <div className="animate-fade-up stagger-5">
+            <CompanySection />
+          </div>
+
+          {/* Primary Student Management Directory Table */}
+          <div className="animate-fade-up stagger-6">
+            <StudentTable />
+          </div>
+        </>
+      )}
     </div>
-  )
+  );
 }

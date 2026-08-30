@@ -5,7 +5,7 @@ import { authenticate } from "@/lib/auth-middleware";
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: Promise<{ path: string[] }> | { path: string[] } }
+    { params }: { params: Promise<{ path: string[] }> }
 ) {
     // 0. Handle potentially asynchronous params (Next.js 15+)
     const resolvedParams = await params;

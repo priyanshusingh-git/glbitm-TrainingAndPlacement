@@ -29,7 +29,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       data: {
         magicToken,
         magicTokenExpires,
-        mustChangePassword: true
+        mustChangePassword: true,
+        // Prevent existing sessions from remaining usable after an admin reset.
+        sessionVersion: { increment: 1 },
       }
     });
 

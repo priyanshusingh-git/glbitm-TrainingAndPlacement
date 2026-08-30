@@ -5,6 +5,7 @@ import { api } from "@/lib/api"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { PageHeader } from "@/components/layout/page-header"
+import { Heading } from "@/components/ui/heading"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -79,10 +80,12 @@ export default function RecruiterDashboardClient() {
 
   if (loading) {
     return (
-      <div className="space-y-6 animate-in fade-in duration-300">
-        <div className="h-20 w-1/3 bg-muted/20 animate-pulse rounded-md" />
+      <div className="space-y-6 animate-fade-up">
+        <PageHeader
+          title="Company Dashboard"
+          description="Welcome back to your recruitment workspace."
+        />
         <LoadingGrid items={4} />
-        <div className="h-64 bg-muted/20 animate-pulse rounded-md mt-6" />
       </div>
     )
   }
@@ -96,7 +99,7 @@ export default function RecruiterDashboardClient() {
             <div className="rounded-md bg-amber-500/10 p-4 mb-4">
               <SearchX className="h-8 w-8 text-amber-600" />
             </div>
-            <h2 className="text-xl font-bold mb-2">No Company Linked</h2>
+            <Heading variant="section-title" className="mb-2">No Company Linked</Heading>
             <p className="max-w-md text-sm text-muted-foreground">
               Your account has not been linked to a specific company profile yet. 
               Please contact the placement cell admin to link your email ({data?.company !== undefined ? 'verified' : 'pending'}) to your organization.

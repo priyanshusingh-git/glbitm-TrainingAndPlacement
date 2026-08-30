@@ -11,8 +11,9 @@ import { Separator } from"@/components/ui/separator"
 import { Bell, Shield, User, Globe, Mail, Save, Server, MessageSquare, Loader2, Database, Download, Upload } from"lucide-react"
 import { useSidebar } from"@/components/layout/dashboard/dashboard-layout"
 import { api } from"@/lib/api"
-import { useToast } from"@/hooks/use-toast"
-import { PageHeader } from"@/components/layout/page-header"
+import { useToast } from "@/components/ui/use-toast"
+import { PageHeader } from "@/components/layout/page-header"
+import { LoadingGrid } from "@/components/ui/loading-states"
 
 export default function SettingsPage() {
  const { expandOnHover, setExpandOnHover } = useSidebar()
@@ -70,12 +71,16 @@ export default function SettingsPage() {
  }
 
  if (loading) {
- return (
- <div className="flex h-[400px] items-center justify-center">
- <Loader2 className="h-8 w-8 animate-spin text-brown-800" />
- </div>
- )
- }
+    return (
+      <div className="space-y-6 animate-fade-up">
+        <PageHeader
+          title="Account Settings"
+          description="Manage your profile, security options, notifications, and portal preferences."
+        />
+        <LoadingGrid items={4} />
+      </div>
+    )
+  }
 
  return (
  <div className="space-y-6">
@@ -101,35 +106,35 @@ export default function SettingsPage() {
  <CardTitle className="flex items-center gap-2">
  <Globe className="h-5 w-5" /> Platform Information
  </CardTitle>
- <CardDescription>
- General details about the CDC portal instance.
- </CardDescription>
- </CardHeader>
- <CardContent className="space-y-4">
- <div className="grid gap-2">
- <Label htmlFor="inst-name">Institution Name</Label>
- <Input
- id="inst-name"
- value={getSettingValue("inst_name","Institute of Technology & Science")}
- onChange={(e) => updateSettingLocal("inst_name", e.target.value,"General")}
- />
- </div>
- <div className="grid gap-2">
- <Label htmlFor="portal-email">Support Email</Label>
- <Input
- id="portal-email"
- value={getSettingValue("support_email","cdc-support@college.edu")}
- onChange={(e) => updateSettingLocal("support_email", e.target.value,"General")}
- />
- </div>
- <div className="grid gap-2">
- <Label htmlFor="website">Website URL</Label>
- <Input
- id="website"
- value={getSettingValue("site_url","https://cdc.college.edu")}
- onChange={(e) => updateSettingLocal("site_url", e.target.value,"General")}
- />
- </div>
+        <CardDescription>
+          General details about the Training & Placement portal instance.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="grid gap-2">
+          <Label htmlFor="inst-name">Institution Name</Label>
+          <Input
+            id="inst-name"
+            value={getSettingValue("inst_name", "GL Bajaj Institute of Technology & Management")}
+            onChange={(e) => updateSettingLocal("inst_name", e.target.value, "General")}
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="portal-email">Support Email</Label>
+          <Input
+            id="portal-email"
+            value={getSettingValue("support_email", "placement@glbitm.org")}
+            onChange={(e) => updateSettingLocal("support_email", e.target.value, "General")}
+          />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="website">Website URL</Label>
+          <Input
+            id="website"
+            value={getSettingValue("site_url", "https://www.glbitm.org/placements")}
+            onChange={(e) => updateSettingLocal("site_url", e.target.value, "General")}
+          />
+        </div>
  </CardContent>
  <CardFooter className="border-t p-4 flex justify-end">
  <Button onClick={() => handleSave("General")} disabled={saving}>
@@ -212,7 +217,7 @@ export default function SettingsPage() {
  <div className="grid gap-2">
  <Label>Sender Name</Label>
  <Input
- placeholder="CDC Platform"
+ placeholder="Training & Placement Portal"
  value={getSettingValue("smtp_from_name")}
  onChange={(e) => updateSettingLocal("smtp_from_name", e.target.value,"Communications")}
  />

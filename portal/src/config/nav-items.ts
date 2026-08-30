@@ -23,7 +23,7 @@ export const studentNavItems = [
   { label: "Overview", href: "/student", icon: LayoutDashboard, bottomNav: true, bottomNavLabel: "Home" },
 
   { type: "header", label: "TRAINING" },
-  { label: "CDC Training", href: "/student/training", icon: BookOpen, bottomNav: true, bottomNavLabel: "Training" },
+  { label: "Training", href: "/student/training", icon: BookOpen, bottomNav: true, bottomNavLabel: "Training" },
   { label: "Bootcamps", href: "/student/bootcamps", icon: Award },
   { label: "Tests & Results", href: "/student/tests", icon: FileText, bottomNav: true, bottomNavLabel: "Tests" },
 

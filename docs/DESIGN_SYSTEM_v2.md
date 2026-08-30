@@ -80,7 +80,7 @@ Reference Tailwind's standard `space-x / p-x / m-x` classes (multiples of 4px):
 ### 4.2 Border Radius
 - **6px (rounded-sm)**: Buttons, Input fields.
 - **14px (rounded-md)**: Standard cards, panel overlays.
-- **22px (rounded-lg)**: Large hero sections, CDC info components.
+- **22px (rounded-lg)**: Large hero sections, Training info components.
 
 ### 4.3 Shadow System
 > [!TIP]
@@ -162,7 +162,7 @@ The portal is built strictly on a **Mobile-First** responsive pattern.
 To prevent mobile pages from becoming excessively tall (the "scroll debt" problem), strictly follow these 5 structural patterns on mobile screens:
 
 ### 1. 2-Col Compact Grid
-- **Use for**: Feature grids (Process, Guidance, CDC Skills).
+- **Use for**: Feature grids (Process, Guidance, Training Skills).
 - **Rule**: Never stack 6 full cards in 1 column. Use `grid-cols-2`. Show only the icon and title. Hide the body text (`hidden md:block`) and implement an expand/collapse toggle via React state to view the text on mobile.
 
 ### 2. 2×2 Stat Grid
@@ -177,10 +177,85 @@ To prevent mobile pages from becoming excessively tall (the "scroll debt" proble
 - **Use for**: Text-heavy policy lists, terms, or FAQs.
 - **Rule**: Show only the section heading. Hide the heavy text inside a collapsible container that opens on tap. Do not force users to scroll past entire policy blocks.
 
-### 5. 3-Col Logo Grid
-- **Use for**: Recruiter grids and small square icons.
-- **Rule**: Logo squares are compact. A 1-col or 2-col stack on mobile wastes horizontal space. Use `grid-cols-3` minimum for standard mobile screens.
+---
+
+## 10. Skeleton Loaders & Loading State System
+
+To deliver an instantaneous, high-prestige user experience without layout shifts (Cumulative Layout Shift - CLS), all asynchronous loading states throughout the portal follow strict design system guidelines.
+
+### 10.1 The 4 Core Skeleton Principles
+1. **Zero Raw Spinners Rule**: Never use raw, unstyled circular spinners (`<Loader2 className="animate-spin" />`) as full-page or full-card loading placeholders. Raw spinners create visual disorientation and jarring layout shifts.
+2. **Layout-Matched Geometry**: Skeleton loaders must mirror the exact spatial layout, card count, aspect ratios, and column structure of the loaded state (e.g. 4 stat cards + 2 charts for Analytics).
+3. **Synchronized Route Metadata (0ms Perception)**: Section headers (`PageHeader`) and titles must remain 100% synchronized between `navigatingPath`, `loading.tsx` boundary, and the rendered client component to prevent title hopping.
+4. **Brand-Tuned Pulse Animation**: Skeletons use subtle pulse animation with warm muted tints (`bg-muted/60` and `border-border/60`), and the Overview Hero uses the deep espresso theme (`bg-brown-900 bg-hero-gradient`) with gold metric bubbles.
+
+### 10.2 Standard Skeleton Component Registry (`@/components/ui/loading-states`)
+| Skeleton Component | Layout & Geometry | Applied Routes |
+| :--- | :--- | :--- |
+| **`<HeroBannerSkeleton />`** | Deep espresso brown banner + gold metric bubbles + `<LoadingGrid items={4} />` | `/student` (Overview Dashboard) |
+| **`<AnalyticsSkeleton />`** | 4 Stat Cards row + 2 Chart Container boxes | `/admin/analytics` |
+| **`<LoadingTable />`** | Header bar + staggered avatar, text & badge row placeholders | `/admin/students`, `/admin/trainers`, `/admin/recruiters`, `/admin/activity`, `/admin/bootcamps`, `/trainer/attendance` |
+| **`<LoadingProfile />`** | Header cover card + 96px avatar + metadata tags + tab content grid | `/student/profile`, `/admin/students/[id]/profile`, `/trainer/profile` |
+| **`<LoadingGrid />`** | Responsive 2/3 column card grid with header & body line skeletons | `/student/training`, `/student/bootcamps`, `/student/tests`, `/student/placements`, `/student/portfolio/*`, `/admin/companies`, `/admin/placements`, `/trainer/groups`, `/trainer/schedule` |
+| **`<TestTakerSkeleton />`** | Top timer/progress bar + question title + 4 radio option rows | `/student/tests/[id]` |
+| **`<DetailHeaderSkeleton />`** | Back button + title & badge bar + tabs strip + card grid | `/admin/training/groups/[id]` |
+| **`<GLBajajReloadLoader />`** | Enlarged 128px GL Bajaj shield logo + dual radar rings + gold progress stream | Initial page reload / session verification splash |
+| **`<SignOutAnimationOverlay />`** | Frosted glass backdrop + glowing shield logo + signing-out progress bar | Sign Out transition |
+
+### 10.3 Implementation Pattern
+```tsx
+import { PageHeader } from "@/components/layout/page-header"
+import { LoadingGrid, LoadingTable, LoadingProfile, AnalyticsSkeleton } from "@/components/ui/loading-states"
+
+if (loading) {
+  return (
+    <div className="space-y-6 animate-fade-up">
+      <PageHeader
+        title="Exact Section Title"
+        description="Exact section description matching loaded state."
+      />
+      <LoadingGrid items={6} />
+    </div>
+  );
+}
+```
 
 ---
-**Document Status**: PRODUCTION READY (v2.1)
-**Last Update**: 2026-03-31
+
+## 11. Sidebar Architecture & 0ms Instant Navigation Mechanism
+
+The navigation system provides desktop precision and zero-delay feedback across all roles.
+
+### 11.1 Sidebar Layout Specifications
+| Property | Expanded State | Collapsed State | Mobile Drawer |
+| :--- | :--- | :--- | :--- |
+| **Width** | `w-64` (256px) | `w-[68px]` (68px) | Full-height slide-over drawer (`w-72`) |
+| **Branding Header** | Shield Logo + `"GL Bajaj"` text | Shield Logo only (centered) | Shield Logo + `"GL Bajaj"` + Close button |
+| **Hover Expansion** | Optional (`sidebar-expand-on-hover` cookie) | Expands temporarily on hover if enabled in Settings | N/A |
+| **State Persistence** | Cookie (`sidebar-collapsed=true/false`) | Max age 1 year; prevents page flash on reload | N/A |
+
+### 11.2 The 0ms Click-to-Skeleton Mechanism
+To eliminate perceived latency during client-side navigation:
+```
+[User clicks Sidebar Link]
+         │
+         ├──▶ Frame 0: `setNavigatingPath(item.href)` in SidebarContext
+         │      ├── 1. Sidebar instantly moves active pill to target link
+         │      └── 2. DashboardLayout instantly unmounts old page
+         │             and renders Target Route Header + Layout-Matched Skeleton
+         │
+[Next.js compiles/fetches route chunks]
+         │
+         └──▶ Target Page Mounts (`pathname` updates)
+                ├── 3. `useEffect` in DashboardLayout clears `navigatingPath`
+                └── 4. Real interactive page content replaces skeleton seamlessly
+```
+
+### 11.3 Active Link Styling
+- **Active Tab Pill**: `bg-brown-800 text-brown-50 font-semibold shadow-sm` with gold accent left bar or glowing icon.
+- **Hover Inactive Pill**: `hover:bg-brown-800/10 hover:text-brown-800 transition-colors`.
+- **Sign Out Button**: Displays inline `<Loader2 className="animate-spin" />` with `"Signing Out..."` while triggering the `SignOutAnimationOverlay`.
+
+---
+**Document Status**: PRODUCTION READY (v2.3)
+**Last Update**: 2026-08-30

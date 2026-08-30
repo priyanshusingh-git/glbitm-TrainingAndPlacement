@@ -10,12 +10,12 @@ export default function CDC() {
         <div className="mx-auto mb-10 max-w-[40rem] text-center lg:mb-12">
           <div className="mb-3 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.28em] text-amber-400">
             <span className="h-0.5 w-5 rounded-full bg-gradient-to-r from-amber-700 to-amber-400" />
-            Career Development Centre
+            Training &amp; Placement Cell
           </div>
           <h2 className="section-display-inverse">
             Skill Enhancement &amp;
             <br />
-            <span className="text-amber-400 italic">CDC Programmes</span>
+            <span className="text-amber-400 italic">Training Programmes</span>
           </h2>
           <p className="mx-auto mt-4 max-w-[32rem] text-sm leading-[1.85] text-white/46">
             Hackathons, live industry projects, and certification bootcamps - the kind of work that increasingly converts into internships and pre-placement offers.

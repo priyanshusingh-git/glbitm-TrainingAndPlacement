@@ -8,34 +8,36 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from"@/components/ui/chart"
 import { Download, TrendingUp, Users, Building2, Award, Loader2 } from"lucide-react"
 import { Button } from"@/components/ui/button"
-import { api } from"@/lib/api"
-import { useToast } from"@/hooks/use-toast"
-import { AnalyticsDetailed } from"@/types/training"
-import { PageHeader } from"@/components/layout/page-header"
+import { api } from "@/lib/api"
+import { useToast } from "@/components/ui/use-toast"
+import { AnalyticsDetailed } from "@/types/training"
+import { PageHeader } from "@/components/layout/page-header"
+import { LoadingGrid, AnalyticsSkeleton } from "@/components/ui/loading-states"
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+const COLORS = ['var(--primary)', 'var(--accent)', 'var(--color-primary-700)', 'var(--color-accent-700)', 'var(--muted-foreground)'];
 
 const chartConfig = {
  placed: { label:"Placed", color:"var(--primary)" },
- total: { label:"Total Students", color:"#93c5fd" },
+ total: { label:"Total Students", color:"var(--accent)" },
  count: { label:"Students", color:"var(--primary)" },
  percentage: { label:"Placement %", color:"var(--primary)" },
- avgPackage: { label:"Avg Package (LPA)", color:"#93c5fd" },
+ avgPackage: { label:"Avg Package (LPA)", color:"var(--accent)" },
 }
 
 export default function AnalyticsPage() {
  const [data, setData] = useState<AnalyticsDetailed | null>(null)
  const [loading, setLoading] = useState(true)
+ const [selectedYear, setSelectedYear] = useState<string>("2026")
  const { toast } = useToast()
 
  useEffect(() => {
  fetchAnalytics()
- }, [])
+ }, [selectedYear])
 
  const fetchAnalytics = async () => {
  try {
  setLoading(true)
- const result = await api.get('/analytics/detailed')
+ const result = await api.get(`/analytics/detailed?year=${selectedYear}`)
  setData(result)
  } catch (error) {
  console.error("Failed to fetch analytics:", error)
@@ -50,8 +52,16 @@ export default function AnalyticsPage() {
  }
 
  if (loading) {
- return <div className="flex justify-center items-center h-screen"><Loader2 className="h-8 w-8 animate-spin" /></div>
- }
+    return (
+      <div className="space-y-6 animate-fade-up">
+        <PageHeader
+          title="Analytics & Reports"
+          description="Data-driven insights into placement performance and student progress."
+        />
+        <AnalyticsSkeleton />
+      </div>
+    );
+  }
 
  if (!data) return <div>No data available</div>
 
@@ -156,7 +166,7 @@ export default function AnalyticsPage() {
  <ChartTooltip content={<ChartTooltipContent />} />
  <Legend />
  <Line yAxisId="left" type="monotone" dataKey="percentage" stroke="var(--primary)" strokeWidth={2} name="Placement %" />
- <Line yAxisId="right" type="monotone" dataKey="avgPackage" stroke="#93c5fd" strokeWidth={2} name="Avg Package" />
+ <Line yAxisId="right" type="monotone" dataKey="avgPackage" stroke="var(--accent)" strokeWidth={2} name="Avg Package" />
  </LineChart>
  </ChartContainer>
  </CardContent>
@@ -197,7 +207,7 @@ export default function AnalyticsPage() {
  <ChartTooltip content={<ChartTooltipContent />} />
  <Legend />
  <Bar dataKey="placed" fill="var(--primary)" name="Placed" radius={[4, 4, 0, 0]} />
- <Bar dataKey="total" fill="#93c5fd" name="Total Students" radius={[4, 4, 0, 0]} />
+ <Bar dataKey="total" fill="var(--accent)" name="Total Students" radius={[4, 4, 0, 0]} />
  </BarChart>
  </ChartContainer>
  </CardContent>

@@ -9,7 +9,7 @@ export function toTokenRoleClaim(role: AppRole): TokenRoleClaim {
   return "student"
 }
 
-export function fromFirebaseRoleClaim(role: unknown): AppRole | null {
+export function parseRoleClaim(role: unknown): AppRole | null {
   if (role === "admin") return "ADMIN"
   if (role === "trainer") return "TRAINER"
   if (role === "recruiter") return "RECRUITER"

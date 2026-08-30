@@ -9,7 +9,8 @@
  * - Never hardcode a color, spacing, or font — always reference a token
  */
 
-@import"tailwindcss";
+@import "https://fonts.googleapis.com/css2?family=Fira+Code:wght@400&family=Fraunces:ital,opsz,wght@0,9..144,400..800;1,9..144,400..800&family=Inter:wght@300;400;500;600;700&display=swap";
+@import "tailwindcss";
 
 @theme {
  /* ── COLORS ── all wired to CSS variables ── */
@@ -140,7 +141,7 @@
 
  /* Primary — GL Bajaj Brown */
  --color-primary-950: 18 10 5; /* #120A05 warm near-black (deep cocoa) */
- --color-primary-900: 35 15 6; /* #230F06 ← FINALIZED ELITE MIDNIGHT COCOA */
+ --color-primary-900: 61 30 14; /* #3D1E0E — TEMPORARY PREVIEW: WARM WALNUT COCOA */
  --color-primary-800: 81 41 18; /* #512912 ← MAIN BRAND COLOR */
  --color-primary-700: 107 58 31; /* #6B3A1F */
  --color-primary-600: 140 82 48; /* #8C5230 */
@@ -802,8 +803,7 @@
  box-shadow: var(--shadow-sm);
  }
  .card-base:hover {
- transform: translateY(-4px);
- box-shadow: var(--shadow-lg);
+ box-shadow: var(--shadow-md);
  border-color: rgb(var(--color-primary-600) / 0.3);
  }
 

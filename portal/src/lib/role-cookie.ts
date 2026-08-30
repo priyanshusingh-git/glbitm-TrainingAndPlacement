@@ -1,4 +1,5 @@
 import { SignJWT, jwtVerify } from "jose"
+import { getAuthSecret } from "@/lib/auth-secrets"
 
 export const SESSION_COOKIE_NAME = "__session"
 export const ROLE_COOKIE_NAME = "__role"
@@ -16,7 +17,7 @@ const SESSION_TTL_SECONDS = 12 * 60 * 60
 const REMEMBER_ME_TTL_SECONDS = 14 * 24 * 60 * 60
 
 function getRoleCookieSecret() {
-  return new TextEncoder().encode(process.env.CSRF_SECRET)
+  return new TextEncoder().encode(getAuthSecret("CSRF_SECRET"))
 }
 
 export function getCookieTtlSeconds(rememberMe: boolean) {

@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create User natively in Postgres (Firebase removed)
+    // Create User natively in Postgres
     let trainer = await prisma.user.create({
       data: {
         name,

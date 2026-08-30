@@ -6,8 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/comp
 import { Badge } from"@/components/ui/badge"
 import { Calendar, Users, Clock, ArrowRight, Video, MapPin, Loader2 } from"lucide-react"
 import { Button } from"@/components/ui/button"
-import Link from"next/link"
-import { format } from"date-fns"
+import Link from "next/link"
+import { format } from "date-fns"
+import { PageHeader } from "@/components/layout/page-header"
+import { Heading } from "@/components/ui/heading"
+import { LoadingGrid } from "@/components/ui/loading-states"
 
 interface DashboardData {
  assignments: any[]
@@ -40,8 +43,12 @@ export default function TrainerDashboardPage() {
 
  if (loading) {
  return (
-    <div className="flex h-[50vh] items-center justify-center">
-      <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+    <div className="space-y-6 animate-fade-up">
+      <PageHeader
+        title="Trainer Dashboard"
+        description="Manage your training groups and sessions."
+      />
+      <LoadingGrid items={4} />
     </div>
  )
  }
@@ -62,8 +69,7 @@ export default function TrainerDashboardPage() {
  return (
  <div className="space-y-6">
   <div className="flex flex-col gap-2">
-    <h1 className="section-h2">Trainer Dashboard</h1>
-    <p className="text-sm text-muted-foreground">Manage your training groups and sessions.</p>
+     <Heading variant="page-title">Trainer Dashboard</Heading>
   </div>
 
  {/* Stats Overview */}

@@ -1,6 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from"@/components/ui/card"
+import { Heading } from "@/components/ui/heading"
 import { BarChart3, TrendingUp, Info, Download } from"lucide-react"
 import { Button } from"@/components/ui/button"
 import { exportToCSV } from"@/lib/export-utils"
@@ -194,7 +195,7 @@ export function PlacementAnalytics({ analytics, placementRate = 0, branchDistrib
 
  <div className="premium-tint flex flex-col justify-center space-y-3 rounded-md border border-brown-800/15 p-5 text-center">
  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brown-800/70">Milestone Reached</p>
- <h3 className="text-3xl font-semibold text-foreground">{placementRate}%</h3>
+      <Heading variant="page-title" as="div" className="tabular-nums">{placementRate}%</Heading>
  <p className="text-sm text-muted-foreground leading-relaxed">
  Overall placement percentage reached for the current graduating batch.
  </p>

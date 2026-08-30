@@ -2,6 +2,7 @@ import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyMedia, EmptyCont
 import { Button } from"@/components/ui/button"
 import { LucideIcon } from"lucide-react"
 import { cn } from"@/lib/utils"
+import { Heading } from"@/components/ui/heading"
 
 interface EnhancedEmptyProps {
  icon?: LucideIcon
@@ -31,7 +32,7 @@ export function EnhancedEmpty({
  <Icon className="h-6 w-6 text-muted-foreground" />
  </div>
  )}
- <h3 className="text-lg font-semibold mb-2">{title}</h3>
+ <Heading variant="card-title" as="h3" className="mb-2">{title}</Heading>
  <p className="text-sm text-muted-foreground mb-4 max-w-md">{description}</p>
  {action && (
  <Button variant="outline" onClick={action.onClick}>

@@ -3,6 +3,7 @@
 import * as React from"react"
 import { LucideIcon } from"lucide-react"
 import { cn } from"@/lib/utils"
+import { Heading } from"@/components/ui/heading"
 import { Button } from"@/components/ui/button"
 
 interface EmptyStateProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -52,9 +53,9 @@ export function EmptyState({
  </div>
 
  <div className="max-w-md space-y-2">
- <h3 className="text-xl font-bold tracking-tight text-foreground/90">
+ <Heading variant="section-title" as="h3" className="text-foreground/90">
  {title}
- </h3>
+ </Heading>
  <p className="text-sm text-muted-foreground leading-relaxed">
  {description}
  </p>

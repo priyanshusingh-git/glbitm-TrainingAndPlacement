@@ -100,21 +100,62 @@ export async function GET(req: NextRequest) {
  include: { instructor: true }
  });
 
- // 1. Overview Stats
- const totalMarks = results.reduce((sum: number, r: any) => sum + r.marksObtained, 0);
- const avgTestScore = results.length > 0 ? Math.round(totalMarks / results.length) : 0;
+    // 1. Overview Stats
+    // 1.1 CGPA Calculation (Profile CGPA or Semester Results Average)
+    let cgpaValue = (student as any).cgpa;
+    if ((!cgpaValue || cgpaValue === 0) && student.semesterResults && student.semesterResults.length > 0) {
+      const validSgpas = student.semesterResults
+        .map((r) => r.sgpa)
+        .filter((s): s is number => typeof s === 'number' && s > 0);
+      if (validSgpas.length > 0) {
+        cgpaValue = validSgpas.reduce((a, b) => a + b, 0) / validSgpas.length;
+      }
+    }
+    const formattedCgpa = cgpaValue && cgpaValue > 0 ? cgpaValue.toFixed(2) : "0.00";
 
- let totalProblemsSolved = 0;
- student.codingProfiles.forEach((p: any) => {
- try {
- const stats = JSON.parse(p.statsJSON);
- if (stats.totalSolved) totalProblemsSolved += Number(stats.totalSolved);
- else if (stats.solved) totalProblemsSolved += Number(stats.solved);
- } catch (e) { }
- });
- if (totalProblemsSolved === 0 && (student as any).leetcodeId) totalProblemsSolved = 42;
+    // 1.2 Attendance Percentage (From attendance logs or stored percentage)
+    let attendancePct: number | null = null;
+    if (student.attendances && student.attendances.length > 0) {
+      const presentCount = student.attendances.filter(
+        (a: any) => a.status?.toLowerCase() === 'present'
+      ).length;
+      attendancePct = Math.round((presentCount / student.attendances.length) * 100);
+    } else if ((student as any).attendancePercentage !== null && (student as any).attendancePercentage !== undefined) {
+      attendancePct = Math.round((student as any).attendancePercentage);
+    }
 
-  const eligibleDrivesCount = await getCachedEligibleDrivesCount();
+    // 1.3 Test Scores (Accurate aggregate percentage)
+    const totalMarksObtained = results.reduce((sum: number, r: any) => sum + (r.marksObtained || 0), 0);
+    const totalMaxMarks = results.reduce((sum: number, r: any) => sum + (r.test?.totalMarks || 100), 0);
+    const avgTestScore = results.length > 0 && totalMaxMarks > 0
+      ? Math.round((totalMarksObtained / totalMaxMarks) * 100)
+      : 0;
+
+    // 1.4 Coding Problems Solved (Sum from all linked coding profiles)
+    let totalProblemsSolved = 0;
+    student.codingProfiles.forEach((p: any) => {
+      try {
+        const stats = typeof p.statsJSON === 'string' ? JSON.parse(p.statsJSON) : p.statsJSON;
+        if (stats?.totalSolved) totalProblemsSolved += Number(stats.totalSolved) || 0;
+        else if (stats?.solved) totalProblemsSolved += Number(stats.solved) || 0;
+        else if (stats?.publicRepos) totalProblemsSolved += Number(stats.publicRepos) || 0;
+      } catch (e) { }
+    });
+
+    // 1.5 Profile Completeness Score Calculation
+    let completedPoints = 0;
+    const totalPoints = 8;
+    if (student.name && (student as any).branch) completedPoints++;
+    if ((student as any).resumeLink) completedPoints++;
+    if ((student as any).class10Percentage && (student as any).class12Percentage) completedPoints++;
+    if (cgpaValue && cgpaValue > 0) completedPoints++;
+    if (student.projects && student.projects.length > 0) completedPoints++;
+    if (student.certifications && student.certifications.length > 0) completedPoints++;
+    if (student.codingProfiles && student.codingProfiles.length > 0) completedPoints++;
+    if ((student as any).skills && (student as any).skills.length > 0) completedPoints++;
+    const profileCompleteness = Math.round((completedPoints / totalPoints) * 100);
+
+    const eligibleDrivesCount = await getCachedEligibleDrivesCount();
 
  // 2. Training Section Data
  const trainingData = trainingBatches.map((batch: any) => {
@@ -239,13 +280,17 @@ export async function GET(req: NextRequest) {
 
   return NextResponse.json({
     overview: {
-      trainingLevel: "Level " + (student.currentSemester || 1),
+      trainingLevel: student.currentSemester ? "Semester " + student.currentSemester : "Level 1",
       avgTestScore,
       problemsSolved: totalProblemsSolved,
       eligibleDrives: applications.length, // Display applied drives count in Drives Applied card
       appliedDrives: applications.length,  // Display applied drives count in Applied hero metric
-      cgpa: (student as any).cgpa !== null ? (student as any).cgpa.toFixed(2) : "0.00",
-      attendancePercentage: (student as any).attendancePercentage !== null ? Math.round((student as any).attendancePercentage) : 0
+      openDrivesCount: eligibleDrivesCount,
+      cgpa: formattedCgpa,
+      attendancePercentage: attendancePct,
+      profileCompleteness,
+      projectsCount: student.projects.length,
+      certificationsCount: student.certifications.length,
     },
     currentPipeline,
     training: {

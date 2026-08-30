@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from"react";
+import { PageHeader } from "@/components/layout/page-header";
+import { Heading } from "@/components/ui/heading";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card";
 import { Badge } from"@/components/ui/badge";
 import { Button } from"@/components/ui/button";
@@ -8,7 +10,8 @@ import { fetchMyResults, fetchTests } from"@/services/training.client";
 import { Test, TestResult } from"@/types/training";
 import { Loader2, Calendar, Clock, CheckCircle2, AlertCircle, PlayCircle, ExternalLink } from"lucide-react";
 import { format, isAfter, isBefore, addMinutes } from"date-fns";
-import { useToast } from"@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
+import { LoadingGrid } from "@/components/ui/loading-states";
 
 export default function StudentTestsPage() {
  const [results, setResults] = useState<TestResult[]>([]);
@@ -64,22 +67,16 @@ export default function StudentTestsPage() {
  return"Ongoing";
  };
 
- if (loading) {
- return (
- <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
- <Loader2 className="h-8 w-8 animate-spin text-brown-800" />
- <p className="text-sm text-muted-foreground animate-pulse">Loading assessments...</p>
- </div>
- );
- }
-
  return (
  <div className="space-y-6 animate-in fade-in duration-500">
- <div>
- <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">Tests & Results</h1>
- <p className="text-muted-foreground">View your performance and upcoming assessments.</p>
- </div>
+      <PageHeader
+        title="Tests & Results"
+        description="View your performance and upcoming assessments."
+      />
 
+ {loading ? (
+ <LoadingGrid items={6} />
+ ) : (
  <div className="grid gap-6 lg:grid-cols-3">
  {/* UPCOMING & ONGOING TESTS */}
  <div className="lg:col-span-1 space-y-6">
@@ -178,7 +175,7 @@ export default function StudentTestsPage() {
  {results.length === 0 ? (
  <div className="text-center py-12 border border-dashed rounded-md bg-muted/5">
  <CheckCircle2 className="h-10 w-10 text-muted-foreground mx-auto mb-3 opacity-30" />
- <h3 className="font-semibold text-lg">No results yet</h3>
+ <Heading variant="card-title" as="h3">No results yet</Heading>
  <p className="text-muted-foreground max-w-xs mx-auto text-sm">
  As you complete assessments, your results and performance metrics will appear here.
  </p>
@@ -231,6 +228,7 @@ export default function StudentTestsPage() {
  </Card>
  </div>
  </div>
+ )}
  </div>
  );
 }

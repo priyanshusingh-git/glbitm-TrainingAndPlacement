@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { api } from "@/lib/api";
 import { getAuthErrorMessage } from "@/lib/auth-ui-messages";
 import { AuthBrandPanel } from "@/components/layout/auth-brand-panel";
+import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -114,9 +115,9 @@ export default function ChangePasswordPage() {
         <div className="w-full max-w-[400px]">
           {/* Header */}
           <div className="mb-6 animate-fade-up stagger-1">
-            <h2 className="mb-2 font-display text-[42px] font-bold leading-[1.05] tracking-tight text-brown-900">
+            <Heading variant="display-section" className="mb-2">
               Update <span className="text-amber-700 italic">password</span>
-            </h2>
+            </Heading>
             <p className="text-[15px] font-medium text-muted-foreground/80 leading-relaxed">
               Choose a secure password to unlock your portal access.
             </p>
@@ -184,7 +185,7 @@ export default function ChangePasswordPage() {
                   success
                     ? "bg-emerald-600 text-white"
                     : isFormValid
-                      ? "bg-brown-900 text-brown-50 hover:bg-brown-800 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
+                      ? "bg-brown-800 text-brown-50 hover:bg-brown-900 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
                       : "bg-brown-100/50 text-brown-400 border border-brown-200/60 cursor-not-allowed shadow-none"
                 )}
                 disabled={loading || !!success}

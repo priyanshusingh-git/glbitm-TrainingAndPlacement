@@ -1,5 +1,6 @@
 import crypto from "crypto"
 import { SignJWT, jwtVerify } from "jose"
+import { getAuthSecret } from "@/lib/auth-secrets"
 
 export function generateOtp(length = 6) {
   let otp = ""
@@ -26,11 +27,11 @@ export function generateOtpSalt(): string {
 export function hashOtp(otp: string, salt: string): string {
   return crypto
     .createHash("sha256")
-    .update(`${otp}${salt}${process.env.OTP_HASH_SECRET}`)
+    .update(`${otp}${salt}${getAuthSecret("OTP_HASH_SECRET")}`)
     .digest("hex")
 }
 
-const resetSecret = () => new TextEncoder().encode(process.env.RESET_TOKEN_SECRET)
+const resetSecret = () => new TextEncoder().encode(getAuthSecret("RESET_TOKEN_SECRET"))
 
 export async function createPasswordResetToken(payload: {
   uid: string

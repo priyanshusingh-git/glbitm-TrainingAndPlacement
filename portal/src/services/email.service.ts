@@ -114,7 +114,7 @@ const brandShell = (content: string, previewText = '') => `
                         </td>
                         <td style="padding-left:13px;vertical-align:middle;">
                           <div style="color:#ffffff;font-family:Arial,sans-serif;font-size:14px;font-weight:600;line-height:1.2;">GL Bajaj Institute</div>
-                          <div style="color:rgba(232,160,32,0.65);font-family:Arial,sans-serif;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;margin-top:2px;">Training &amp; Placement · CDC</div>
+                          <div style="color:rgba(232,160,32,0.65);font-family:Arial,sans-serif;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;margin-top:2px;">Training &amp; Placement</div>
                         </td>
                       </tr>
                     </table>
@@ -282,7 +282,7 @@ export const sendWelcomeEmail = async (email: string, name: string, password: st
 
  const content = `
  ${emailH2(`Welcome, ${name.split(' ')[0]}!`)}
- ${emailP(`Your GL Bajaj T&P Portal account has been created. You now have access to placement drives, CDC training programmes, and your full academic profile.`)}
+  ${emailP(`Your GL Bajaj T&P Portal account has been created. You now have access to placement drives, training programmes, and your full academic profile.`)}
 
   ${credBox([
   { label: 'Email', value: email },

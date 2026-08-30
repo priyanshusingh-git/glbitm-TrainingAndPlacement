@@ -1,6 +1,7 @@
 import crypto from "crypto"
 import { SignJWT, jwtVerify } from "jose"
 import type { NextRequest, NextResponse } from "next/server"
+import { getAuthSecret } from "@/lib/auth-secrets"
 
 const isProduction = process.env.NODE_ENV === "production"
 export const CSRF_COOKIE_NAME = isProduction
@@ -8,7 +9,7 @@ export const CSRF_COOKIE_NAME = isProduction
   : "glbitm-csrf"
 
 function getCsrfSecret() {
-  return new TextEncoder().encode(process.env.CSRF_SECRET)
+  return new TextEncoder().encode(getAuthSecret("CSRF_SECRET"))
 }
 
 function safeEqual(left: string, right: string) {

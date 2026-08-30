@@ -112,9 +112,7 @@ export async function DELETE(
  where: { id: id, role: 'TRAINER' }
  });
 
- // Firebase removed — Prisma is sole authority
-
- // 3. Audit Log
+ // 2. Audit Log
  const ipAddress = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || undefined;
  const userAgent = req.headers.get('user-agent') || undefined;
  await logAudit({

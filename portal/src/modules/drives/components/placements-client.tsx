@@ -176,95 +176,192 @@ export default function AdminPlacementsPage() {
  <PageHeader
  title="Placement Drives"
  description="Schedule and manage recruitment drives."
- action={
- <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
- <DialogTrigger asChild>
- <Button>
- <Plus className="mr-2 h-4 w-4" /> Schedule New Drive
- </Button>
- </DialogTrigger>
- <DialogContent className="sm:max-w-[425px]">
- <DialogHeader>
- <DialogTitle>Schedule Placement Drive</DialogTitle>
- </DialogHeader>
-            <form onSubmit={handleSubmit} className="space-y-4 pt-2">
-              <div className="space-y-2">
-                <Label>Company <span className="text-destructive">*</span></Label>
-                <Select
-                  value={formData.companyId}
-                  onValueChange={(val) => handleSelectChange('companyId', val)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select company" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {companies.map(c => (
-                      <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Role / Position <span className="text-destructive">*</span></Label>
-                <Input name="role" value={formData.role} onChange={handleInputChange} placeholder="e.g. Software Engineer" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>CTC</Label>
-                  <Input name="ctc" value={formData.ctc} onChange={handleInputChange} placeholder="e.g. 12 LPA" />
+        action={
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="flex items-center gap-2 shadow-sm font-semibold cursor-pointer">
+                <Plus className="h-4 w-4" /> Schedule New Drive
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[540px] max-h-[90vh] overflow-y-auto p-0 gap-0 border-border/80 shadow-xl">
+              <DialogHeader className="p-6 pb-4 border-b border-border/50 bg-muted/20">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-sm bg-brown-800/10 text-brown-800 border border-brown-800/20">
+                    <Building2 className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <DialogTitle className="text-xl font-bold font-display text-foreground">
+                      Schedule Placement Drive
+                    </DialogTitle>
+                    <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                      Configure recruitment drive dates, eligibility parameters, and compensation details.
+                    </DialogDescription>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label>Location</Label>
-                  <Input name="location" value={formData.location} onChange={handleInputChange} placeholder="e.g. Bengaluru" />
+              </DialogHeader>
+
+              <form onSubmit={handleSubmit} className="p-6 space-y-5">
+                {/* 1. Company & Role */}
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-foreground">
+                      Hiring Company <span className="text-destructive">*</span>
+                    </Label>
+                    <Select
+                      value={formData.companyId}
+                      onValueChange={(val) => handleSelectChange('companyId', val)}
+                    >
+                      <SelectTrigger className="h-10 rounded-sm bg-card border-border/80">
+                        <SelectValue placeholder="Select registered company" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {companies.map((c) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-foreground">
+                      Role / Position Title <span className="text-destructive">*</span>
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        name="role"
+                        value={formData.role}
+                        onChange={handleInputChange}
+                        placeholder="e.g. Associate Software Engineer (SDE-1)"
+                        required
+                        className="h-10 rounded-sm bg-card border-border/80"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="space-y-2">
-                <Label>Drive Date <span className="text-destructive">*</span></Label>
-                <Input
-                  name="date"
-                  type="datetime-local"
-                  value={formData.date}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Eligibility Criteria</Label>
-                <Input
-                  name="eligibilityCriteria"
-                  value={formData.eligibilityCriteria}
-                  onChange={handleInputChange}
-                  placeholder="e.g. CGPA ≥ 7.0, No active backlogs"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Status</Label>
-                <Select
-                  value={formData.status}
-                  onValueChange={(val) => handleSelectChange('status', val)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="scheduled">Scheduled</SelectItem>
-                    <SelectItem value="ongoing">Ongoing</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex justify-end gap-3 pt-2">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={submitting}>
-                  {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Schedule Drive
-                </Button>
-              </div>
-            </form>
- </DialogContent>
- </Dialog>
- }
+
+                {/* 2. Compensation & Location */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-foreground">
+                      Annual Package (CTC)
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        name="ctc"
+                        value={formData.ctc}
+                        onChange={handleInputChange}
+                        placeholder="e.g. 12.5 LPA"
+                        className="h-10 rounded-sm bg-card border-border/80"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-bold uppercase tracking-wider text-foreground">
+                      Job Location
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        name="location"
+                        value={formData.location}
+                        onChange={handleInputChange}
+                        placeholder="e.g. Noida / Bengaluru"
+                        className="h-10 rounded-sm bg-card border-border/80"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Date & Time */}
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold uppercase tracking-wider text-foreground">
+                    Drive Date & Time <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    name="date"
+                    type="datetime-local"
+                    value={formData.date}
+                    onChange={handleInputChange}
+                    required
+                    className="h-10 rounded-sm bg-card border-border/80"
+                  />
+                </div>
+
+                {/* 4. Eligibility Criteria */}
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-bold uppercase tracking-wider text-foreground">
+                    Eligibility Criteria & Cutoff
+                  </Label>
+                  <Input
+                    name="eligibilityCriteria"
+                    value={formData.eligibilityCriteria}
+                    onChange={handleInputChange}
+                    placeholder="e.g. B.Tech (CSE/IT), CGPA ≥ 7.0, No active backlogs"
+                    className="h-10 rounded-sm bg-card border-border/80"
+                  />
+                </div>
+
+                {/* 5. Drive Status */}
+                <div className="space-y-1.5 pt-1 border-t border-border/50">
+                  <Label className="text-xs font-bold uppercase tracking-wider text-foreground">
+                    Drive Status
+                  </Label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { id: 'scheduled', label: 'Scheduled', icon: Clock },
+                      { id: 'ongoing', label: 'Ongoing', icon: Users },
+                      { id: 'completed', label: 'Completed', icon: AlertTriangle },
+                    ].map((s) => {
+                      const isSelected = formData.status === s.id;
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => handleSelectChange('status', s.id)}
+                          className={cn(
+                            "flex items-center justify-center gap-1.5 h-10 rounded-sm border text-xs font-semibold transition-all cursor-pointer",
+                            isSelected
+                              ? "border-brown-800 bg-brown-800/10 text-brown-900 ring-1 ring-brown-800 dark:text-amber-400 dark:ring-amber-500"
+                              : "border-border/70 bg-card text-muted-foreground hover:bg-muted/40"
+                          )}
+                        >
+                          <s.icon className="h-3.5 w-3.5" />
+                          <span>{s.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <DialogFooter className="pt-4 border-t border-border/50 flex items-center justify-end gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                    disabled={submitting}
+                    className="cursor-pointer"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={submitting || !formData.companyId || !formData.role.trim() || !formData.date}
+                    className="min-w-[140px] font-semibold cursor-pointer"
+                  >
+                    {submitting ? (
+                      <span className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" /> Scheduling...
+                      </span>
+                    ) : (
+                      "Schedule Drive"
+                    )}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        }
  />
 
  <DataTableToolbar
@@ -296,7 +393,7 @@ export default function AdminPlacementsPage() {
                         ? "border-amber-500/30 bg-amber-500/10 text-amber-700"
                         : drive.status === 'completed'
                         ? "border-muted text-muted-foreground"
-                        : "border-blue-500/30 bg-blue-500/10 text-blue-700"
+                        : "border-brown-800/20 bg-brown-800/5 text-brown-800"
                     )}
                   >
                     {drive.status}

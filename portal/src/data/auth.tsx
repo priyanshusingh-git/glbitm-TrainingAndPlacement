@@ -10,14 +10,14 @@ export const authBrandStats = [
 export const authBrandContent = {
   title: (
     <>
-      Your Career
+      Your
       <br />
       Journey Starts
       <br />
       <span className="text-amber-500 italic">Right Here.</span>
     </>
   ),
-  description: "Access the GL Bajaj CDC portal for campus placements, training schedules, and recruiter networking.",
+  description: "Access the GL Bajaj Training & Placement portal for campus placements, training schedules, and recruiter networking.",
 }
 
 export const forgotPasswordBrandContent = {

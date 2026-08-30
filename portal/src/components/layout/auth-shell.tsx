@@ -3,6 +3,7 @@
 import NextLink from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Heading } from "@/components/ui/heading"
 import { AuthBrandPanel } from "@/components/layout/auth-brand-panel"
 import { MobileAuthHeader } from "@/components/layout/mobile-auth-header"
 
@@ -38,7 +39,7 @@ export function AuthShell({
   description,
   children,
   asideTitle = "Secure Access",
-  asideDescription = "Access the GL Bajaj Training & Placement and CDC portal with the same brand and security system used across the platform.",
+  asideDescription = "Access the GL Bajaj Training & Placement portal with the same brand and security system used across the platform.",
   className,
 }: AuthShellProps) {
   return (
@@ -87,9 +88,9 @@ export function AuthShell({
           </NextLink>
 
           <div className="mb-7">
-            <h1 className="mb-1 font-display text-[34px] font-bold leading-[1.1] tracking-[-0.025em] text-brown-900 [font-variation-settings:'opsz'_48,'SOFT'_0,'WONK'_0]">
+            <Heading variant="display-section" className="mb-1">
               {title}
-            </h1>
+            </Heading>
             <p className="text-sm font-light leading-[1.65] text-muted-foreground">{description}</p>
           </div>
 

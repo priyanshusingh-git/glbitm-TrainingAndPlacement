@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Check, ChevronRight, ChevronLeft, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Heading } from '@/components/ui/heading'
 
 export interface WizardStep {
  id: string;
@@ -97,7 +98,7 @@ export function FormWizard({
  })}
  </div>
  <div className="mt-4 text-center">
- <h3 className="font-semibold text-lg">{steps[currentStep].title}</h3>
+ <Heading variant="card-title" as="h3">{steps[currentStep].title}</Heading>
  {steps[currentStep].description && (
  <p className="text-sm text-muted-foreground">{steps[currentStep].description}</p>
  )}

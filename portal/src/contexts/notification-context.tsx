@@ -92,11 +92,14 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
 
     const channel = ablyClient.channels.get(`user-${user.id}`);
 
-    const onNotification = () => {
+    const onNotification = (event: { data?: unknown }) => {
       fetchNotifications();
+      const notification = event.data && typeof event.data === "object"
+        ? event.data as Partial<Notification>
+        : null;
       toast({
-        title: "New Notification",
-        description: "You have a new update in your dashboard.",
+        title: notification?.title || "New update",
+        description: notification?.message || "You have a new update in your dashboard.",
       });
     };
 

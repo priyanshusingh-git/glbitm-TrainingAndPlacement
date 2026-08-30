@@ -11,8 +11,8 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
- title: 'GLBITM CDC - Career Development Centre',
- description: 'Official Career Development Centre Platform of GL Bajaj Institute of Technology & Management for Training and Placements',
+  title: 'GLBITM - Training & Placement Portal',
+  description: 'Official Training & Placement Platform of GL Bajaj Institute of Technology & Management',
  generator: 'v0.app',
  icons: {
  icon: [

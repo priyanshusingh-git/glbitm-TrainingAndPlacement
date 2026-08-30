@@ -26,7 +26,7 @@ const mockPlacements: PlacementStudent[] = [
  role: 'SDE-1',
  package: '46.38 LPA',
  image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Abhishek',
- quote:"The CDC's guidance was instrumental in my journey to Amazon.",
+ quote: "The Training & Placement team's guidance was instrumental in my journey to Amazon.",
  },
  {
  id: '2',

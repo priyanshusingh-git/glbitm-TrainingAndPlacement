@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
         email: true,
         role: true,
         mustChangePassword: true,
+        sessionVersion: true,
       },
     });
 
@@ -63,6 +64,7 @@ export async function GET(req: NextRequest) {
       email: user.email,
       role: user.role,
       mustChangePassword: user.mustChangePassword,
+      sessionVersion: user.sessionVersion,
       rememberMe: false, // Magic links are usually session-bound for security
     });
 

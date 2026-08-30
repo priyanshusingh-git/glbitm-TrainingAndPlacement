@@ -81,7 +81,7 @@ export default function Navbar() {
           </div>
           <div>
             <div className="text-[13px] font-semibold leading-[1.2] text-white">GL Bajaj Institute</div>
-            <div className="mt-0.5 text-[9px] font-medium uppercase tracking-[0.25em] text-amber-300/90">Training &amp; Placement · CDC</div>
+            <div className="mt-0.5 text-[9px] font-medium uppercase tracking-[0.25em] text-amber-300/90">Training &amp; Placement</div>
           </div>
         </Link>
 

@@ -7,19 +7,19 @@ const L1_CACHE_TTL_MS = 10000 // 10 seconds
 
 export const loginIpLimiter = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(20, "1 h"),
+  limiter: Ratelimit.slidingWindow(50, "1 h"),
   prefix: "rl:ip:login",
 })
 
 export const loginComboLimiter = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(5, "10 m"),
+  limiter: Ratelimit.slidingWindow(15, "5 m"),
   prefix: "rl:ip-email:login",
 })
 
 export const loginFingerprintLimiter = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(10, "1 h"),
+  limiter: Ratelimit.slidingWindow(30, "1 h"),
   prefix: "rl:fingerprint:login",
 })
 
@@ -33,6 +33,12 @@ export const passwordResetLimiter = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(3, "1 h"),
   prefix: "rl:ip:password-reset",
+})
+
+export const inductionResendLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(3, "1 h"),
+  prefix: "rl:ip:induction-resend",
 })
 
 export const generalApiLimiter = new Ratelimit({

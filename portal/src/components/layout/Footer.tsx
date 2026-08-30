@@ -20,7 +20,7 @@ export default function Footer() {
               </div>
               <div>
                 <div className="text-[14px] font-semibold leading-[1.15] text-white">GL Bajaj Institute</div>
-                <div className="mt-0.5 text-[8.5px] uppercase tracking-[0.24em] text-amber-500/50">Training &amp; Placement · CDC</div>
+                <div className="mt-0.5 text-[8.5px] uppercase tracking-[0.24em] text-amber-500/50">Training &amp; Placement</div>
               </div>
             </Link>
 
@@ -56,9 +56,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-3 text-[9px] font-bold uppercase tracking-[0.2em] text-white/28">CDC</h4>
+            <h4 className="mb-3 text-[9px] font-bold uppercase tracking-[0.2em] text-white/28">Training</h4>
             <div className="flex flex-col gap-1.5">
-              {footerLinks.cdc.map((link) =>
+              {footerLinks.training.map((link) =>
                 link.external ? (
                   <a
                     key={link.name}

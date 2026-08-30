@@ -6,7 +6,8 @@ import {
   Dialog, DialogContent, DialogDescription,
   DialogFooter, DialogHeader, DialogTitle
 } from"@/components/ui/dialog"
-import { Button } from"@/components/ui/button"
+import { Button } from "@/components/ui/button"
+import { Heading } from "@/components/ui/heading"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from"@/components/ui/table"
 import { Badge } from"@/components/ui/badge"
 import { Loader2, Upload, AlertCircle, CheckCircle2, FileSpreadsheet, X } from"lucide-react"
@@ -116,7 +117,7 @@ export function TestResultImport({ testId, testTitle, isOpen, onClose, onSuccess
               <div className="h-12 w-12 rounded-full bg-brown-800/10 flex items-center justify-center mb-4">
                 {parsing ? <Loader2 className="h-6 w-6 animate-spin text-brown-800" /> : <Upload className="h-6 w-6 text-brown-800" />}
               </div>
-              <h3 className="font-bold text-lg">Click to upload Excel</h3>
+              <Heading variant="card-title" as="h3">Click to upload Excel</Heading>
               <p className="text-sm text-muted-foreground mt-1 text-center max-w-[280px]">
                 Support .xlsx and .csv formats. Use student Roll Numbers for matching.
               </p>

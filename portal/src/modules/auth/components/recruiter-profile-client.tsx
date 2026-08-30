@@ -6,6 +6,7 @@ import { Button } from"@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from"@/components/ui/avatar"
 import { Badge } from"@/components/ui/badge"
 import { Mail, Shield, User } from"lucide-react"
+import { Heading } from "@/components/ui/heading"
 import { Switch } from"@/components/ui/switch"
 import { Label } from"@/components/ui/label"
 import { useSidebar } from"@/components/layout/dashboard/dashboard-layout"
@@ -18,8 +19,7 @@ export default function TrainerProfilePage() {
  return (
  <div className="space-y-6">
  <div>
- <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
- <p className="text-muted-foreground">Manage your account settings.</p>
+ <Heading variant="page-title">My Profile</Heading>
  </div>
 
  <div className="grid gap-6 md:grid-cols-2">
@@ -37,7 +37,7 @@ export default function TrainerProfilePage() {
  </AvatarFallback>
  </Avatar>
  <div>
- <h3 className="text-xl font-semibold">{user.name}</h3>
+ <Heading variant="section-title" as="h3">{user.name}</Heading>
  <div className="flex items-center gap-2 text-muted-foreground">
  <Badge variant="secondary">{user.role}</Badge>
  </div>
@@ -65,7 +65,7 @@ export default function TrainerProfilePage() {
  <Shield className="h-5 w-5 text-muted-foreground" />
  <div>
  <p className="text-sm font-medium">Account Status</p>
- <p className="text-sm text-green-600 font-medium flex items-center gap-1">
+ <p className="text-sm text-success font-medium flex items-center gap-1">
  Active
  </p>
  </div>

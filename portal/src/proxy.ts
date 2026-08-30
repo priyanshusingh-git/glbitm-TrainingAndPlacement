@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { fromFirebaseRoleClaim } from "@/lib/auth-claims"
+import { parseRoleClaim } from "@/lib/auth-claims"
 import { applyRateLimitHeaders, generalApiLimiter } from "@/lib/auth-rate-limit"
 import { getDashboardPath, SESSION_COOKIE_NAME } from "@/lib/role-cookie"
 import { clearSessionCookies, verifyServerSession } from "@/lib/session"
+import { validateAuthSecrets } from "@/lib/auth-secrets"
 
 function getIpAddress(request: NextRequest) {
   return (request.headers.get("x-forwarded-for") ?? "127.0.0.1")
@@ -29,15 +30,27 @@ function applySecurityHeaders(response: NextResponse) {
 }
 
 function buildContentSecurityPolicy() {
+  const scriptSrc = [
+    "'self'",
+    "'unsafe-inline'",
+    "https://hcaptcha.com",
+    "https://*.hcaptcha.com",
+    "https://va.vercel-scripts.com",
+  ]
+
+  if (process.env.NODE_ENV !== "production") {
+    scriptSrc.push("'unsafe-eval'")
+  }
+
   return [
     "default-src 'self'",
     // Next.js prerendered pages emit inline hydration scripts without a nonce.
     // Requiring one here blocks the entire client bundle in production.
-    "script-src 'self' 'unsafe-inline' https://hcaptcha.com https://*.hcaptcha.com https://va.vercel-scripts.com",
+    `script-src ${scriptSrc.join(" ")}`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: blob: https://res.cloudinary.com https://lh3.googleusercontent.com",
-    "connect-src 'self' https://*.firebase.com https://*.googleapis.com https://*.upstash.io https://api.pwnedpasswords.com https://hcaptcha.com https://*.hcaptcha.com https://vitals.vercel-insights.com https://*.ably.io wss://*.ably.io https://*.ably-realtime.com wss://*.ably-realtime.com",
+    "connect-src 'self' https://*.googleapis.com https://*.upstash.io https://api.pwnedpasswords.com https://hcaptcha.com https://*.hcaptcha.com https://vitals.vercel-insights.com https://*.ably.io wss://*.ably.io https://*.ably-realtime.com wss://*.ably-realtime.com",
     "frame-src 'self' https://hcaptcha.com https://*.hcaptcha.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
@@ -60,6 +73,7 @@ function finalizeResponse(response: NextResponse, requestId: string) {
 }
 
 export async function proxy(request: NextRequest) {
+  validateAuthSecrets()
   const url = request.nextUrl.clone()
   const path = url.pathname
   const requestId = request.headers.get("x-request-id") ?? crypto.randomUUID()
@@ -81,7 +95,7 @@ export async function proxy(request: NextRequest) {
   if (sessionCookie) {
     try {
       const decoded = await verifyServerSession(sessionCookie)
-      const role = fromFirebaseRoleClaim(decoded.role)
+      const role = parseRoleClaim(decoded.role)
 
       if (!role) {
         throw new Error("Missing role claim")

@@ -1,89 +1,85 @@
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/db";
-import { sendWelcomeEmail } from "@/services/email.service";
-import { logAuthEvent } from "@/lib/auth-audit";
-import { getIpAddress, getUserAgent } from "@/lib/request-context";
-import { createProblemResponse } from "@/lib/problem-details";
+import { NextRequest, NextResponse } from "next/server"
+import { z } from "zod"
+import prisma from "@/lib/db"
+import { inductionResendLimiter } from "@/lib/auth-rate-limit"
+import { validateCsrfToken } from "@/lib/csrf"
+import { sendWelcomeEmail } from "@/services/email.service"
+import { logAuthEvent } from "@/lib/auth-audit"
+import { getIpAddress, getUserAgent } from "@/lib/request-context"
+import { createProblemResponse, handleApiError } from "@/lib/problem-details"
 
-/**
- * POST /api/auth/resend-induction
- * Resends the magic induction link to a student if they haven't set a password yet.
- */
+const requestSchema = z.object({
+  email: z.string().email().max(255).transform((value) => value.trim().toLowerCase()),
+  csrfToken: z.string().length(64).optional(),
+})
+
+const GENERIC_MESSAGE = "If an induction is pending for this account, a new link has been sent."
+
 export async function POST(req: NextRequest) {
-  const ip = getIpAddress(req);
-  const userAgent = getUserAgent(req);
+  const ip = getIpAddress(req)
+  const userAgent = getUserAgent(req)
 
   try {
-    const { email } = await req.json();
+    const body = await req.json().catch(() => null)
+    const parsed = requestSchema.safeParse(body)
 
-    if (!email) {
+    if (!parsed.success) {
       return createProblemResponse(req, {
         status: 400,
         code: "VALIDATION_ERROR",
-        title: "Email is required",
-        detail: "Please enter your email address."
-      });
+        title: "Invalid request",
+        detail: "Please enter a valid email address.",
+      })
     }
 
-    // 1. Find user and check if they still need to change password (induction pending)
+    const csrfToken = parsed.data.csrfToken ?? req.headers.get("x-csrf-token")
+    if (!(await validateCsrfToken(req, csrfToken))) {
+      return createProblemResponse(req, {
+        status: 403,
+        code: "CSRF_INVALID",
+        title: "Security validation failed",
+        detail: "Security validation failed.",
+      })
+    }
+
+    const rateLimit = await inductionResendLimiter.limit(ip)
+    if (!rateLimit.success) {
+      return NextResponse.json({ message: GENERIC_MESSAGE }, { status: 200 })
+    }
+
     const user = await prisma.user.findUnique({
-      where: { email },
-      select: { 
-        id: true, 
-        email: true, 
-        name: true, 
-        mustChangePassword: true,
-        password: true // To check if they actually have a password set
-      }
-    });
+      where: { email: parsed.data.email },
+      select: { id: true, email: true, name: true, mustChangePassword: true },
+    })
 
-    // 2. Security Check: Only allow resend if they have NO password set OR mustChangePassword is true
-    // In our system, new students have a generated password but mustChangePassword is true.
-    // If they already set a password (mustChangePassword: false), they should use Forgot Password.
     if (!user || !user.mustChangePassword) {
-      // For security, don't reveal if the user exists but isn't eligible for resend.
-      // Just say "If an induction is pending, a link has been sent."
-      return NextResponse.json({ 
-        message: "If an induction is pending for this account, a new link has been sent." 
-      });
+      return NextResponse.json({ message: GENERIC_MESSAGE })
     }
 
-    // 3. Generate new magic token
-    const magicToken = crypto.randomUUID();
-    const magicTokenExpires = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 hours
+    const magicToken = crypto.randomUUID()
+    const magicTokenExpires = new Date(Date.now() + 48 * 60 * 60 * 1000)
 
     await prisma.user.update({
       where: { id: user.id },
-      data: {
-        magicToken,
-        magicTokenExpires
-      }
-    });
+      data: { magicToken, magicTokenExpires },
+    })
 
-    // 4. Send the welcome email again (Magic Link only)
-    await sendWelcomeEmail(user.email, user.name || "Student", "", magicToken);
-
-    // 5. Audit Logging
+    await sendWelcomeEmail(user.email, user.name || "Student", "", magicToken)
     await logAuthEvent({
       action: "LOGIN_FAILED",
       ip,
       userId: user.id,
       email: user.email,
       userAgent,
-      metadata: { reason: "induction_resend_requested" }
-    });
+      metadata: { reason: "induction_resend_requested" },
+    })
 
-    return NextResponse.json({ 
-      detail: "A secure reset code has been sent to your email." 
-    });
-
-  } catch (error: any) {
-    console.error("Resend Induction Error:", error);
-    return createProblemResponse(req, {
-      status: 500,
-      code: "INTERNAL_ERROR",
-      title: "Service Error",
-      detail: "We couldn't resend clinical induction link right now. Please try again later."
-    });
+    return NextResponse.json({ message: GENERIC_MESSAGE })
+  } catch (error) {
+    return handleApiError(req, error, {
+      event: "auth.induction_resend.failed",
+      message: "Induction resend failed",
+      context: { ip, userAgent },
+    })
   }
 }

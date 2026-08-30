@@ -15,12 +15,12 @@ export default function Guidance() {
           <div>
             <div className="mb-3 inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.28em] text-amber-700">
               <span className="h-0.5 w-5 rounded-full bg-gradient-to-r from-amber-700 to-amber-400" />
-              Career Guidance &amp; Support
+              Student Guidance &amp; Support
             </div>
             <h2 className="section-h2">
               Beyond Placement
               <br />
-              <span className="text-brown-600 italic">Lifelong Career Support</span>
+              <span className="text-brown-600 italic">Lifelong Mentorship &amp; Support</span>
             </h2>
           </div>
           <p className="max-w-[33rem] text-sm leading-[1.85] text-muted-foreground lg:justify-self-end">

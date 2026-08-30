@@ -10,7 +10,8 @@ import {
 } from"@/components/ui/dialog";
 import { Badge } from"@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from"@/components/ui/avatar";
-import { PlacementStudent } from"@/services/placement.client";
+import { PlacementStudent } from "@/services/placement.client";
+import { Heading } from "@/components/ui/heading";
 import { Quote, Briefcase, GraduationCap, Calendar, DollarSign, Linkedin } from"lucide-react";
 
 interface StudentDetailModalProps {
@@ -43,7 +44,7 @@ export function StudentDetailModal({ student, isOpen, onClose }: StudentDetailMo
  <div className="pt-16 px-8 pb-8 space-y-6">
  <div className="flex justify-between items-start">
  <div>
- <h2 className="text-3xl font-semibold tracking-tight text-foreground">{student.name}</h2>
+ <Heading variant="page-title" as="h2">{student.name}</Heading>
  <p className="text-brown-800 font-semibold uppercase tracking-widest text-xs">Roll No: {student.rollNo}</p>
  </div>
  {student.linkedin && (

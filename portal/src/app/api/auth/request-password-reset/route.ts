@@ -7,9 +7,7 @@ import {
   otpRequestLimiter,
   passwordResetLimiter,
   recordOtpResend,
-  trackPasswordResetAbuse,
 } from "@/lib/auth-rate-limit"
-// Firebase removed — suspension handled via Prisma only
 import { validateCsrfToken } from "@/lib/csrf"
 import { logger } from "@/lib/logger"
 import { generateOtp, generateOtpSalt, hashOtp } from "@/lib/otp"
@@ -100,43 +98,6 @@ export async function POST(req: NextRequest) {
     }
 
     if (user.isSuspended) {
-      await new Promise((resolve) => setTimeout(resolve, 250))
-      return genericResponse
-    }
-
-    const resetAbuseCount = await trackPasswordResetAbuse(user.email)
-    if (resetAbuseCount > 3) {
-      // Suspend abusive account directly in DB (Firebase removed)
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          isSuspended: true,
-          suspendedReason:
-            "Your account has been suspended. Contact the T&P office.",
-          suspendedAt: new Date(),
-        },
-      })
-      await logAuthEvent({
-        action: "ACCOUNT_SUSPENDED",
-        ip,
-        userId: user.id,
-        email: user.email,
-        userAgent,
-        metadata: {
-          reason: "password_reset_abuse",
-          resetRequestCount24h: resetAbuseCount,
-        },
-      })
-      await logAuthEvent({
-        action: "SESSION_REVOKED",
-        ip,
-        userId: user.id,
-        email: user.email,
-        userAgent,
-        metadata: {
-          reason: "account_suspended_password_reset_abuse",
-        },
-      })
       await new Promise((resolve) => setTimeout(resolve, 250))
       return genericResponse
     }

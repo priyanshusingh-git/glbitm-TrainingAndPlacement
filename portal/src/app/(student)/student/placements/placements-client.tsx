@@ -6,12 +6,14 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Briefcase, Building2, MapPin, IndianRupee, Clock, Search, Filter, CheckCircle2, XCircle, AlertCircle, Loader2 } from "lucide-react"
+import { Briefcase, Building2, MapPin, IndianRupee, Clock, Search, Loader2, AlertCircle } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { api } from "@/lib/api"
 import { PlacementDrive } from "@/types/training"
 import { format } from "date-fns"
 import { PageHeader } from "@/components/layout/page-header"
+import { EnhancedEmpty } from "@/components/ui/enhanced-empty"
+import { LoadingGrid } from "@/components/ui/loading-states"
 
 // Extend PlacementDrive to include application status from backend
 interface DriveWithStatus extends PlacementDrive {
@@ -33,101 +35,102 @@ export default function PlacementsPage() {
     try {
       setLoading(true)
       const data = await api.get('/placements')
-      setDrives(data)
+      setDrives(Array.isArray(data) ? data : [])
     } catch (error) {
-      console.error("Failed to fetch drives:", error)
+      console.error(error)
+      toast({
+        title: "Error",
+        description: "Failed to load placement drives",
+        variant: "destructive"
+      })
     } finally {
       setLoading(false)
     }
   }
 
   const handleApply = async (driveId: string) => {
-    // 1. Snapshot previous state
-    const previousDrives = [...drives];
-
-    // 2. Optimistic Update
-    setDrives(prev => prev.map(drive => {
-      if (drive.id === driveId) {
-        return {
-          ...drive,
-          applications: [{ status: 'applied' }] // Mock application
-        };
-      }
-      return drive;
-    }));
-
-    // Optimistically set applyingId to null immediately to remove loader
-    setApplyingId(null);
-    toast({ title: "Success", description: "Applied successfully!" });
-
     try {
-      // 3. Background Sync
-      await api.post(`/placements/${driveId}/apply`, {});
-
-      // 4. Reconcile (Optional: Fetch/Refresh to get real ID/data if needed, 
-      // but for status 'applied', the optimistic update is usually sufficient until next fetch)
-      // fetchDrives(); 
+      setApplyingId(driveId)
+      await api.post(`/placements/${driveId}/apply`, {})
+      toast({
+        title: "Application Submitted",
+        description: "You have successfully registered for this drive.",
+      })
+      fetchDrives() // Refresh state
     } catch (error: any) {
-      // 5. Rollback
-      setDrives(previousDrives);
-      toast({ title: "Error", description: error.message || "Failed to apply", variant: "destructive" });
+      toast({
+        title: "Application Failed",
+        description: error.message || "Failed to apply for drive.",
+        variant: "destructive"
+      })
+    } finally {
+      setApplyingId(null)
     }
-  };
+  }
 
-  const filteredDrives = drives.filter(drive =>
-    drive.company?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    drive.role.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredDrives = drives.filter(d => 
+    d.company?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    d.role.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const ongoingDrives = filteredDrives.filter(d => d.status === 'ongoing' || d.status === 'scheduled')
+  const ongoingDrives = filteredDrives.filter(d => d.status === 'ONGOING')
   const appliedDrives = filteredDrives.filter(d => d.applications && d.applications.length > 0)
 
   return (
     <div className="flex flex-col gap-8 pb-12 animate-fade-up stagger-1">
       <PageHeader
         title="Placement Drives"
-        description="Explore and apply for campus placement opportunities."
-        action={
-          <Button variant="outline">
-            Resume Builder
-          </Button>
-        }
+        description="Explore active campus drives, view job requirements, and track your applications."
       />
 
-      <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-        <div className="relative w-full sm:w-[350px]">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+      <div className="flex items-center gap-4">
+        <div className="relative flex-1 max-w-md">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            type="search"
-            placeholder="Search companies, roles..."
-            className="pl-8"
+            placeholder="Search company or role..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9"
           />
-        </div>
-        <div className="flex items-center gap-2 w-full sm:w-auto">
-          <Button variant="outline" size="sm" className="ml-auto sm:ml-0">
-            <Filter className="mr-2 h-4 w-4" /> Filter
-          </Button>
         </div>
       </div>
 
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList className="overflow-x-auto hide-scrollbar w-full justify-start rounded-none border-b bg-transparent p-0 mb-6">
-          <TabsTrigger value="all" className="relative rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:bg-transparent !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
-            All Drives
+      <Tabs defaultValue="all" className="w-full space-y-6">
+        <TabsList className="w-full sm:w-auto h-auto min-h-0 justify-start rounded-md border border-border/70 bg-card p-1 mb-6 flex overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden gap-1 shadow-xs scroll-smooth">
+          <TabsTrigger
+            value="all"
+            className="group h-auto rounded-sm px-4 py-2 text-xs font-semibold text-muted-foreground transition-all duration-200 data-[state=active]:bg-brown-800 data-[state=active]:text-cream data-[state=active]:shadow-xs hover:bg-muted/50 hover:text-foreground flex items-center justify-center gap-2"
+          >
+            <Briefcase className="h-4 w-4 shrink-0 text-muted-foreground group-data-[state=active]:text-amber-300 transition-colors" />
+            <span>Active Drives</span>
+            <span className="ml-1 rounded-full bg-muted/80 px-2 py-0.5 text-[10px] font-bold font-mono group-data-[state=active]:bg-amber-500/20 group-data-[state=active]:text-amber-200 group-data-[state=active]:border group-data-[state=active]:border-amber-500/30">
+              {ongoingDrives.length}
+            </span>
           </TabsTrigger>
-          <TabsTrigger value="applied" className="relative rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:bg-transparent !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
-            Applied ({appliedDrives.length})
+          <TabsTrigger
+            value="applied"
+            className="group h-auto rounded-sm px-4 py-2 text-xs font-semibold text-muted-foreground transition-all duration-200 data-[state=active]:bg-brown-800 data-[state=active]:text-cream data-[state=active]:shadow-xs hover:bg-muted/50 hover:text-foreground flex items-center justify-center gap-2"
+          >
+            <AlertCircle className="h-4 w-4 shrink-0 text-muted-foreground group-data-[state=active]:text-amber-300 transition-colors" />
+            <span>Applied Drives</span>
+            <span className="ml-1 rounded-full bg-muted/80 px-2 py-0.5 text-[10px] font-bold font-mono group-data-[state=active]:bg-amber-500/20 group-data-[state=active]:text-amber-200 group-data-[state=active]:border group-data-[state=active]:border-amber-500/30">
+              {appliedDrives.length}
+            </span>
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="space-y-6">
           {loading ? (
-            <div className="flex justify-center p-12"><Loader2 className="animate-spin text-amber-500" /></div>
+            <LoadingGrid items={6} />
+          ) : ongoingDrives.length === 0 ? (
+            <EnhancedEmpty
+              icon={Briefcase}
+              title="No Active Placement Drives"
+              description="There are currently no active placement drives open for application."
+              variant="illustrated"
+            />
           ) : (
             <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
-              {ongoingDrives.length === 0 && <div className="col-span-full text-center text-muted-foreground">No active drives found.</div>}
               {ongoingDrives.map((drive) => (
                 <JobCard key={drive.id} drive={drive} onApply={() => handleApply(drive.id)} applying={applyingId === drive.id} />
               ))}
@@ -135,12 +138,20 @@ export default function PlacementsPage() {
           )}
         </TabsContent>
         <TabsContent value="applied" className="space-y-6">
-          <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
-            {appliedDrives.length === 0 && <div className="col-span-full text-center text-muted-foreground">You haven't applied to any drives yet.</div>}
-            {appliedDrives.map((drive) => (
-              <JobCard key={drive.id} drive={drive} onApply={() => handleApply(drive.id)} applying={applyingId === drive.id} />
-            ))}
-          </div>
+          {appliedDrives.length === 0 ? (
+            <EnhancedEmpty
+              icon={Briefcase}
+              title="No Applications Submitted"
+              description="You haven't applied to any placement drives yet. Explore active drives to submit applications."
+              variant="illustrated"
+            />
+          ) : (
+            <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
+              {appliedDrives.map((drive) => (
+                <JobCard key={drive.id} drive={drive} onApply={() => handleApply(drive.id)} applying={applyingId === drive.id} />
+              ))}
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>

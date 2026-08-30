@@ -105,6 +105,7 @@ export async function POST(req: NextRequest) {
       data: {
         password: hashedPassword,
         mustChangePassword: false,
+        sessionVersion: { increment: 1 },
       },
     })
 

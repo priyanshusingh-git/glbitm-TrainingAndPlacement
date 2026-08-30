@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
+import { Heading } from '@/components/ui/heading';
 
 interface PageHeaderProps {
   title: string;
@@ -12,12 +13,7 @@ export function PageHeader({ title, description, action, className }: PageHeader
   return (
     <div data-slot="page-header" className={cn("flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8", className)}>
       <div className="space-y-1.5">
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">{title}</h1>
-        {description && (
-          <p className="text-muted-foreground text-[15px] font-normal leading-relaxed max-w-2xl">
-            {description}
-          </p>
-        )}
+        <Heading variant="page-title">{title}</Heading>
       </div>
       {action && (
         <div className="flex items-center gap-3">
@@ -44,13 +40,9 @@ export function SectionHeader({ title, description, icon, className }: SectionHe
             {React.cloneElement(icon as React.ReactElement<any>, { className: 'h-4 w-4' })}
           </div>
         )}
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">{title}</h2>
+        <Heading variant="section-title">{title}</Heading>
       </div>
-      {description && (
-        <p className="text-sm text-muted-foreground max-w-xl pl-10">
-          {description}
-        </p>
-      )}
     </div>
   );
 }
+

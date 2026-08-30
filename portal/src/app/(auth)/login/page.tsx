@@ -1,7 +1,6 @@
 "use client"
 
 import { Suspense, useCallback, useEffect, useRef, useState } from "react"
-import NextImage from "next/image"
 import HCaptcha from "@hcaptcha/react-hcaptcha"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -15,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PasswordInput } from "@/components/ui/password-input"
+import { Heading } from "@/components/ui/heading"
 import { AuthBrandPanel } from "@/components/layout/auth-brand-panel"
 import { MobileAuthHeader } from "@/components/layout/mobile-auth-header"
 import { authBrandContent, authBrandStats } from "@/data/auth"
@@ -25,16 +25,20 @@ const MIN_PASSWORD_LENGTH = 8
 
 function Feedback({ message, success = false }: { message: string; success?: boolean }) {
   return (
-    <div className={cn(
+    <div
+      className={cn(
       "flex items-start gap-3 rounded-md border p-4 text-[14px] leading-snug animate-fade-in shadow-sm",
       success 
         ? "border-emerald-100 bg-emerald-50/50 text-emerald-800 shadow-emerald-500/5" 
         : "border-red-100 bg-red-50/50 text-red-800 shadow-red-500/5"
-    )}>
+      )}
+      role={success ? "status" : "alert"}
+      aria-live={success ? "polite" : "assertive"}
+    >
       {success ? (
-        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+        <CheckCircle2 aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
       ) : (
-        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
+        <AlertCircle aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
       )}
       <div className="flex-1 font-medium">{message}</div>
     </div>
@@ -60,7 +64,6 @@ function LoginContent() {
   const searchParams = useSearchParams()
   const { isAuthenticated, isLoading, user, login } = useAuth()
   const captchaRef = useRef<any>(null)
-  const formRef = useRef<HTMLFormElement>(null)
   const emailRef = useRef<HTMLInputElement>(null)
   const passwordRef = useRef<HTMLInputElement>(null)
 
@@ -68,7 +71,7 @@ function LoginContent() {
   const [rememberMe, setRememberMe] = useState(true)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [username, setUsername] = useState("") // honeypot
+  const [website, setWebsite] = useState("") // honeypot
   const [fingerprint, setFingerprint] = useState("")
   const [csrfToken, setCsrfToken] = useState("")
   const [captchaRequired, setCaptchaRequired] = useState(false)
@@ -154,26 +157,28 @@ function LoginContent() {
     }
   }
 
+  const shakeTimerRef = useRef<number | null>(null)
   const triggerShake = useCallback(() => {
     setShaking(true)
-    const timer = window.setTimeout(() => setShaking(false), 400)
-    return () => window.clearTimeout(timer)
+    if (shakeTimerRef.current) window.clearTimeout(shakeTimerRef.current)
+    shakeTimerRef.current = window.setTimeout(() => setShaking(false), 400)
   }, [])
 
   // ── Redirects ─────────────────────────────────────
   useEffect(() => {
     if (!isAuthenticated || isLoading || !user) return
     if (user.mustChangePassword) {
-      router.replace("/change-password")
+      window.location.href = "/change-password"
       return
     }
     const requestedPath = searchParams.get("redirect")
-    router.replace(requestedPath || getDashboardPath(user.role))
-  }, [isAuthenticated, isLoading, router, searchParams, user])
+    const targetUrl = requestedPath || getDashboardPath(user.role)
+    window.location.href = targetUrl
+  }, [isAuthenticated, isLoading, searchParams, user])
 
   // ── Security bootstrap ────────────────────────────
   useEffect(() => {
-    if (searchParams.get("expired") === "1") {
+    if (searchParams.get("expired") === "1" || consumeSessionExpiredFlag()) {
       setError({ message: "Your session has expired. Please sign in again." })
     }
 
@@ -230,7 +235,7 @@ function LoginContent() {
         email: email.trim().toLowerCase(),
         password,
         rememberMe,
-        username,
+        website,
         fingerprint,
         csrfToken,
         hcaptchaToken: captchaToken || undefined,
@@ -238,7 +243,8 @@ function LoginContent() {
       login(response.user)
       setSuccess("Login successful! Redirecting to your dashboard…")
       const requestedPath = searchParams.get("redirect")
-      router.replace(response.redirectUrl || requestedPath || getDashboardPath(response.user.role))
+      const targetUrl = response.redirectUrl || requestedPath || getDashboardPath(response.user.role)
+      window.location.href = targetUrl
     } catch (err: any) {
       const nextCaptchaRequired = Boolean(err.captchaRequired || err.code === "CAPTCHA_REQUIRED")
       if (nextCaptchaRequired) {
@@ -257,7 +263,9 @@ function LoginContent() {
       setError({ code: err.code, message: getAuthErrorMessage(err, { flow: "login" }) })
       setSuccess(null)
       triggerShake()
-      emailRef.current?.focus()
+      if (err.code === "AUTH_FAILED" || err.code === "INDUCTION_PENDING") {
+        passwordRef.current?.focus()
+      }
     } finally {
       setLoading(false)
     }
@@ -286,7 +294,13 @@ function LoginContent() {
     }
   }
 
+  const hasInputs = email.trim().length > 0 && password.length > 0
   const isFormFilled = EMAIL_REGEX.test(email.trim()) && password.length >= MIN_PASSWORD_LENGTH
+  const submitBlockReason = captchaRequired && hcaptchaSiteKey && !captchaToken
+    ? "Complete the security challenge to sign in."
+    : !hasInputs
+      ? "Enter your email address and password to sign in."
+      : null
 
   return (
     <div className="min-h-[100svh] overflow-x-hidden bg-brown-50 text-foreground lg:grid lg:h-screen lg:min-h-0 lg:grid-cols-[1fr_1fr] lg:overflow-hidden font-sans">
@@ -315,9 +329,9 @@ function LoginContent() {
 
             {/* ── Heading ── */}
             <div className="mb-8 animate-fade-up stagger-1 lg:mt-0">
-            <h2 className="mb-2 font-display text-[48px] font-bold leading-[1.05] tracking-tight text-brown-900 [font-variation-settings:'opsz'_48,'SOFT'_0,'WONK'_0]">
+            <Heading variant="display-section" className="mb-2">
               Welcome <span className="text-amber-700 italic">back</span>
-            </h2>
+            </Heading>
             <p className="text-[15px] font-medium text-muted-foreground/80 leading-relaxed">
               Sign in with your registered email to continue to your placement dashboard.
             </p>
@@ -348,7 +362,6 @@ function LoginContent() {
           </div>
 
           <form
-            ref={formRef}
             onSubmit={handleSubmit}
             noValidate
             className={cn("space-y-8", shaking && "form-shake")}
@@ -369,7 +382,7 @@ function LoginContent() {
                   ref={emailRef}
                   id="email"
                   type="email"
-                  autoComplete="email"
+                  autoComplete="username"
                   autoFocus
                   disabled={loading}
                   value={email}
@@ -388,6 +401,18 @@ function LoginContent() {
               <div id="email-error" aria-live="polite">
                 <FieldError message={touched.email ? fieldErrors.email : null} />
               </div>
+              <input
+                type="text"
+                name="website"
+                value={website}
+                onChange={(event) => setWebsite(event.target.value)}
+                autoComplete="off"
+                data-1p-ignore="true"
+                data-lpignore="true"
+                tabIndex={-1}
+                aria-hidden="true"
+                className="absolute -left-[10000px] h-px w-px overflow-hidden opacity-0"
+              />
             </div>
 
             {/* ── Password field ── */}
@@ -433,7 +458,7 @@ function LoginContent() {
                     checked={rememberMe}
                     disabled={loading}
                     onChange={(event) => setRememberMe(event.target.checked)}
-                    className="peer appearance-none h-4.5 w-4.5 cursor-pointer rounded border border-brown-200 bg-white shadow-sm transition-all checked:bg-brown-800 checked:border-brown-800 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                    className="peer appearance-none h-4.5 w-4.5 cursor-pointer rounded border border-brown-200 bg-white shadow-sm transition-all checked:bg-brown-800 checked:border-brown-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   />
                   <ShieldCheck className="absolute h-3 w-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
                 </div>
@@ -479,10 +504,11 @@ function LoginContent() {
                 success
                   ? "bg-emerald-600 text-white"
                   : isFormFilled
-                    ? "bg-brown-900 text-brown-50 hover:bg-brown-800 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
+                    ? "bg-brown-800 text-brown-50 hover:bg-brown-900 shadow-lg shadow-amber-900/15 hover:shadow-amber-500/20 hover:-translate-y-0.5"
                     : "bg-brown-100/50 text-brown-400 border border-brown-200/60 cursor-not-allowed shadow-none"
               )}
-              disabled={loading || !!success || (captchaRequired && !!hcaptchaSiteKey && !captchaToken) || !isFormFilled}
+              disabled={loading || !!success || (captchaRequired && !!hcaptchaSiteKey && !captchaToken) || !hasInputs}
+              aria-describedby={submitBlockReason ? "login-submit-help" : undefined}
             >
               <div className="relative z-10 flex items-center justify-center gap-2.5">
                 {success ? (
@@ -506,6 +532,11 @@ function LoginContent() {
                 <div className="absolute inset-0 bg-shimmer opacity-20 pointer-events-none" />
               )}
             </Button>
+            {submitBlockReason && (
+              <p id="login-submit-help" className="-mt-5 text-center text-xs font-medium text-muted-foreground" aria-live="polite">
+                {submitBlockReason}
+              </p>
+            )}
           </form>
 
           <div className="mt-8 text-center text-[13px] font-medium text-muted-foreground/60 animate-fade-up stagger-6">

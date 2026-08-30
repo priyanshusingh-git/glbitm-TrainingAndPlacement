@@ -24,7 +24,7 @@ export const getStudents = async () => {
 };
 
 export const getStudentById = async (id: string) => {
-  // Query by profile ID or userId (Firebase UID) to support both admin and student views
+  // Query by profile ID or userId to support both admin and student views
   return prisma.studentProfile.findFirst({
     where: { 
       OR: [
@@ -44,25 +44,23 @@ export const getStudentById = async (id: string) => {
   });
 };
 
-export const createStudent = async (data: { email: string; admissionId?: string; name?: string }) => {
-  const { email, admissionId, name = "Student" } = data;
+export const createStudent = async (data: any) => {
+  const { email, name, rollNo, admissionId, branch, course, batch } = data;
 
-  // 1. Check if user/profile exists
+  // 1. Check existing
   const existingUser = await prisma.user.findUnique({ where: { email } });
-  if (existingUser) throw new Error('User with this email already exists');
+  if (existingUser) throw new Error("A user with this email already exists");
 
-  if (admissionId) {
-    const existingProfile = await prisma.studentProfile.findUnique({ where: { admissionId } });
-    if (existingProfile) throw new Error('Student with this Admission ID already exists');
-  }
+  const existingProfile = await prisma.studentProfile.findUnique({ where: { rollNo } });
+  if (existingProfile) throw new Error("A student profile with this roll number already exists");
 
-  // 2. Generate Password
+  // 2. Generate Random Temp Password & Induction Token
   const password = generateStrongPassword(10);
   const hashedPassword = await bcrypt.hash(password, 10);
   const magicToken = randomUUID();
   const magicTokenExpires = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 hours
 
-  // 3. Create User & Profile in Database natively (Firebase removed)
+  // 3. Create User & Profile in Database natively
   const result = await prisma.$transaction(async (tx: any) => {
     const user = await tx.user.create({
       data: {

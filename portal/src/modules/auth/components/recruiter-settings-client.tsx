@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/comp
 import { Label } from"@/components/ui/label"
 import { Switch } from"@/components/ui/switch"
 import { useSidebar } from"@/components/layout/dashboard/dashboard-layout"
+import { Heading } from "@/components/ui/heading"
 
 export default function TrainerSettingsPage() {
  const { expandOnHover, setExpandOnHover } = useSidebar()
@@ -11,8 +12,7 @@ export default function TrainerSettingsPage() {
  return (
  <div className="space-y-6">
  <div>
- <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
- <p className="text-muted-foreground">Manage your dashboard preferences.</p>
+ <Heading variant="page-title">Settings</Heading>
  </div>
 
  <div className="grid gap-6">

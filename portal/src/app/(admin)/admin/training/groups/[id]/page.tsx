@@ -10,6 +10,7 @@ import {
  CardDescription
 } from"@/components/ui/card"
 import { Badge } from"@/components/ui/badge"
+import { Heading } from "@/components/ui/heading";
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import {
@@ -45,6 +46,7 @@ import { api } from"@/lib/api"
 import { useToast } from"@/components/ui/use-toast"
 import { useAuth } from"@/contexts/auth-context"
 import * as XLSX from"xlsx"
+import { DetailHeaderSkeleton } from "@/components/ui/loading-states"
 import { AttendanceDialog } from"@/modules/training/components/attendance-dialog"
 import {
  Table,
@@ -219,13 +221,13 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  }
  };
 
- if (loading) {
- return (
- <div className="flex items-center justify-center min-h-[400px]">
- <div className="h-12 w-12 border-4 border-brown-800/20 border-t-primary rounded-full animate-spin" />
- </div>
- );
- }
+  if (loading) {
+    return (
+      <div className="document-page pb-10 animate-fade-up">
+        <DetailHeaderSkeleton />
+      </div>
+    );
+  }
 
  if (!group) {
  return (
@@ -234,7 +236,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  <XCircle className="h-12 w-12 text-destructive" />
  </div>
  <div className="text-center">
- <h2 className="text-2xl font-black uppercase tracking-tight">Group not found</h2>
+ <Heading variant="section-title">Group not found</Heading>
  <p className="text-muted-foreground mt-1">The requested training group does not exist or has been removed.</p>
  </div>
  <Button onClick={() => router.back()} variant="outline" className="rounded-md px-8 font-bold uppercase tracking-widest text-[10px]">
@@ -303,16 +305,13 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  </Button>
  <div className="flex flex-col gap-2">
  <div className="flex items-center gap-3">
- <h1 className="text-3xl font-bold tracking-tight text-foreground">
- {group.name} <span className="text-brown-800 italic">Batch</span>
- </h1>
+        <Heading variant="page-title">
+          {group.name} <span className="text-brown-800 italic">Batch</span>
+        </Heading>
  <Badge variant="outline" className="px-3 py-1 rounded-full border-brown-800/20 bg-brown-800/10 text-brown-800 text-xs font-semibold">
  {group.branch} • {group.year}
  </Badge>
  </div>
- <p className="text-sm font-medium text-muted-foreground mt-1 max-w-2xl">
- {group.description ||"Core training group for academic advancement and career placement readiness."}
- </p>
  </div>
  </div>
  </div>
@@ -955,7 +954,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  className={cn(
 "h-12 rounded-sm border font-semibold text-sm transition-all duration-300",
  selectedTrainerType === type
- ?"bg-brown-900 border-brown-900 text-brown-50 shadow-md shadow-amber-500/20 scale-[1.02]"
+  ?"bg-brown-800 border-brown-800 text-brown-50 shadow-md shadow-amber-500/20 scale-[1.02]"
  :"bg-background/50 border-border text-muted-foreground hover:border-brown-800/30 hover:bg-brown-800/5"
  )}
  >
@@ -1049,7 +1048,7 @@ export default function GroupDetailPage({ params }: { params: Promise<{ id: stri
  <Button
  type="submit"
  disabled={isSubmitting || !selectedTrainerId}
- className="flex-[2] h-14 rounded-sm bg-brown-900 hover:bg-brown-800 text-brown-50 shadow-md shadow-amber-500/20 font-black uppercase tracking-widest text-[11px] transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+ className="flex-[2] h-14 rounded-sm bg-brown-800 hover:bg-brown-900 text-brown-50 shadow-md shadow-amber-500/20 font-black uppercase tracking-widest text-[11px] transition-all transform hover:scale-[1.02] active:scale-[0.98]"
  >
  {isSubmitting ?"Synchronizing..." :"Finalize Assignment"}
  </Button>

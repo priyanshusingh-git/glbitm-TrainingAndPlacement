@@ -3,6 +3,7 @@
 import React from "react"
 import { Check, Circle, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Heading } from "@/components/ui/heading"
 
 interface Stage {
   label: string;
@@ -29,7 +30,7 @@ export function PlacementPipeline({ company, role, stages, nextEvent }: Placemen
     <div className="card-base p-6 flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <h3 className="text-xl font-bold font-display text-brown-900">{company}</h3>
+          <Heading variant="section-title" as="h3" className="text-brown-900">{company}</Heading>
           <p className="text-sm text-muted-foreground">{role}</p>
         </div>
         <span className="rounded-full bg-amber-500/10 px-3 py-1 text-[10px] font-bold text-amber-600 ring-1 ring-amber-500/20 uppercase tracking-wider">
@@ -37,43 +38,49 @@ export function PlacementPipeline({ company, role, stages, nextEvent }: Placemen
         </span>
       </div>
 
-      <div className="relative flex items-center justify-between px-2">
-        {/* Connection Line */}
-        <div className="absolute left-10 right-10 top-5 h-0.5 bg-muted/40" />
-        <progress
-          aria-hidden="true"
-          className="placement-pipeline-progress absolute left-10 top-5 h-0.5"
-          max={100}
-          value={completedRatio}
-        />
+      {stages.length > 0 ? (
+        <div className="relative flex items-center justify-between px-2">
+          {/* Connection Line */}
+          <div className="absolute left-10 right-10 top-5 h-0.5 bg-muted/40" />
+          <progress
+            aria-hidden="true"
+            className="placement-pipeline-progress absolute left-10 top-5 h-0.5"
+            max={100}
+            value={completedRatio}
+          />
 
-        {stages.map((stage, idx) => (
-          <div key={stage.label} className="relative z-10 flex flex-col items-center gap-2">
-            <div className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300",
-              stage.status === 'completed' 
-                ? "bg-amber-500 border-amber-500 text-brown-900 shadow-lg shadow-amber-500/20" 
-                : stage.status === 'current'
-                  ? "bg-brown-900 border-white text-white shadow-xl"
-                  : "bg-white border-muted text-muted-foreground"
-            )}>
-              {stage.status === 'completed' ? (
-                <Check className="h-5 w-5" />
-              ) : stage.status === 'current' ? (
-                <ArrowRight className="h-5 w-5" />
-              ) : (
-                <span className="text-sm font-bold">{idx + 1}</span>
-              )}
+          {stages.map((stage, idx) => (
+            <div key={stage.label} className="relative z-10 flex flex-col items-center gap-2">
+              <div className={cn(
+                "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300",
+                stage.status === 'completed' 
+                  ? "bg-amber-500 border-amber-500 text-brown-900 shadow-lg shadow-amber-500/20" 
+                  : stage.status === 'current'
+                    ? "bg-brown-900 border-white text-white shadow-xl"
+                    : "bg-white border-muted text-muted-foreground"
+              )}>
+                {stage.status === 'completed' ? (
+                  <Check className="h-5 w-5" />
+                ) : stage.status === 'current' ? (
+                  <ArrowRight className="h-5 w-5" />
+                ) : (
+                  <span className="text-sm font-bold">{idx + 1}</span>
+                )}
+              </div>
+              <span className={cn(
+                "text-[9px] font-bold uppercase tracking-wider",
+                stage.status === 'pending' ? "text-muted-foreground/60" : "text-foreground"
+              )}>
+                {stage.label}
+              </span>
             </div>
-            <span className={cn(
-              "text-[9px] font-bold uppercase tracking-wider",
-              stage.status === 'pending' ? "text-muted-foreground/60" : "text-foreground"
-            )}>
-              {stage.label}
-            </span>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="py-4 text-center text-xs text-muted-foreground">
+          No recruitment rounds active currently. Apply to upcoming placement drives to start tracking your progress.
+        </div>
+      )}
 
       {nextEvent ? (
         <div className="flex items-center gap-2 rounded-sm bg-muted/40 p-3">

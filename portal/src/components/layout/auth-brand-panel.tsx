@@ -5,6 +5,8 @@ import Link from "next/link"
 import type { ReactNode } from "react"
 import { cn } from "@/lib/utils"
 
+import { Heading } from "@/components/ui/heading"
+
 interface AuthBrandPanelProps {
   eyebrow?: string
   title: ReactNode
@@ -48,18 +50,18 @@ export function AuthBrandPanel({
           </div>
           <div>
             <div className="text-[15px] font-bold leading-[1.2] tracking-tight text-white">GL Bajaj Institute</div>
-            <div className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.25em] text-amber-400/90">T&amp;P · CDC Portal</div>
+            <div className="mt-0.5 text-[10px] font-bold uppercase tracking-[0.25em] text-amber-400/90">Training &amp; Placement</div>
           </div>
         </Link>
       </div>
 
       {/* Hero Content */}
-      <div className="relative z-10 max-w-[25rem]">
+      <div className="relative z-10 max-w-[27rem]">
 
         
-        <h1 className="mb-4 animate-fade-up stagger-3 font-display text-[clamp(2rem,3.5vw,3.25rem)] font-bold leading-[1.05] tracking-tight text-white [font-variation-settings:'opsz'_64,'SOFT'_0,'WONK'_0]">
+        <Heading as="h1" className="mb-4 animate-fade-up stagger-3 font-display text-[2.5rem] lg:text-[3.25rem] font-bold leading-[1.08] tracking-tight text-white">
           {title}
-        </h1>
+        </Heading>
         
         <p className="max-w-[22.5rem] animate-fade-up stagger-4 text-[16px] font-light leading-relaxed text-white/50">
           {description}

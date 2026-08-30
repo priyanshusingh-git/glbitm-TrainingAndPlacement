@@ -27,7 +27,21 @@ import {
  DropdownMenuTrigger,
 } from"@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from"@/components/ui/avatar"
-import { Search, Filter, MoreHorizontal, Users, Download, Loader2 } from"lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
+import { EnhancedEmpty } from "@/components/ui/enhanced-empty"
+import {
+  Users,
+  Search,
+  Plus,
+  Filter,
+  Download,
+  MoreHorizontal,
+  Eye,
+  Edit,
+  Trash2,
+  Mail,
+  Loader2,
+} from "lucide-react"
 import { getAllStudents, Student } from"@/services/student.client"
 
 export function StudentTable() {
@@ -164,17 +178,34 @@ export function StudentTable() {
  </TableHeader>
  <TableBody>
   {loading ? (
-    <TableRow>
-      <TableCell colSpan={6} className="h-24 text-center">
-        <div className="flex justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-amber-500" />
-        </div>
-      </TableCell>
-    </TableRow>
+    Array.from({ length: 5 }).map((_, idx) => (
+      <TableRow key={idx}>
+        <TableCell>
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-9 w-9 rounded-full" />
+            <div className="space-y-1">
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-3 w-36" />
+            </div>
+          </div>
+        </TableCell>
+        <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+        <TableCell><Skeleton className="h-4 w-20" /></TableCell>
+        <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+        <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+        <TableCell><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+        <TableCell><Skeleton className="h-8 w-8 rounded-md" /></TableCell>
+      </TableRow>
+    ))
  ) : filteredStudents.length === 0 ? (
  <TableRow>
- <TableCell colSpan={6} className="h-24 text-center">
- No students found.
+ <TableCell colSpan={7} className="py-8">
+  <EnhancedEmpty
+    icon={Users}
+    title="No Students Found"
+    description="No registered students match your search criteria."
+    variant="minimal"
+  />
  </TableCell>
  </TableRow>
  ) : (

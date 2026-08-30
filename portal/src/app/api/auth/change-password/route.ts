@@ -78,12 +78,14 @@ export async function POST(req: NextRequest) {
     const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(newPassword, salt)
 
-    await prisma.user.update({
+    const updatedUser = await prisma.user.update({
       where: { id: authResult.id },
       data: {
         password: hashedPassword,
         mustChangePassword: false,
+        sessionVersion: { increment: 1 },
       },
+      select: { sessionVersion: true },
     })
 
     // Issue a fresh session cookie so the user stays logged in
@@ -92,6 +94,7 @@ export async function POST(req: NextRequest) {
       email: authResult.email,
       role: authResult.role as "ADMIN" | "STUDENT" | "TRAINER" | "RECRUITER",
       mustChangePassword: false,
+      sessionVersion: updatedUser.sessionVersion,
       rememberMe: false,
     })
 

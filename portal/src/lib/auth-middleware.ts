@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/db"
-import { fromFirebaseRoleClaim } from "@/lib/auth-claims"
+import { parseRoleClaim } from "@/lib/auth-claims"
 import { logger } from "@/lib/logger"
 import { createProblemResponse } from "@/lib/problem-details"
 import { getIpAddress, getRequestId, getUserAgent } from "@/lib/request-context"
@@ -12,6 +12,7 @@ export type AuthUser = {
  email: string
  role: string
  mustChangePassword: boolean
+ sessionVersion: number
 }
 
 export async function authenticate(req: NextRequest): Promise<AuthUser | NextResponse> {
@@ -29,7 +30,7 @@ export async function authenticate(req: NextRequest): Promise<AuthUser | NextRes
   try {
     const decodedToken = await verifyServerSession(sessionCookie)
     const userId = decodedToken.uid
-    const role = fromFirebaseRoleClaim(decodedToken.role)
+    const role = parseRoleClaim(decodedToken.role)
 
     if (!role) {
       logger.warn("Rejected session with missing role claim", {
@@ -51,7 +52,7 @@ export async function authenticate(req: NextRequest): Promise<AuthUser | NextRes
 
     const dbUser = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, email: true, isSuspended: true, suspendedReason: true },
+      select: { id: true, email: true, role: true, mustChangePassword: true, sessionVersion: true, isSuspended: true, suspendedReason: true },
     })
 
     if (!dbUser) {
@@ -82,11 +83,21 @@ export async function authenticate(req: NextRequest): Promise<AuthUser | NextRes
       })
     }
 
+    if (decodedToken.sessionVersion !== dbUser.sessionVersion) {
+      return createProblemResponse(req, {
+        status: 401,
+        code: "INVALID_SESSION",
+        title: "Authentication failed",
+        detail: "Your session is invalid or has expired.",
+      })
+    }
+
     return {
       id: dbUser.id,
       email: decodedToken.email || dbUser.email,
-      role,
-      mustChangePassword: Boolean(decodedToken.mustChangePassword),
+      role: dbUser.role,
+      mustChangePassword: dbUser.mustChangePassword,
+      sessionVersion: dbUser.sessionVersion,
     }
   } catch (error) {
     logger.warn("Rejected invalid or expired session", {

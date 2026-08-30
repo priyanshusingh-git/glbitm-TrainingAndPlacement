@@ -3,6 +3,7 @@
 import { useState, useEffect } from"react"
 import { useRouter, useSearchParams } from"next/navigation"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Heading } from "@/components/ui/heading"
 import { Badge } from"@/components/ui/badge"
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
@@ -45,6 +46,7 @@ import { api } from"@/lib/api"
 import { useToast } from"@/components/ui/use-toast"
 import { useAuth } from"@/contexts/auth-context"
 import { PageHeader } from"@/components/layout/page-header"
+import { LoadingGrid } from "@/components/ui/loading-states"
 import {
  AlertDialog,
  AlertDialogAction,
@@ -339,7 +341,7 @@ export default function AdminTrainingPage() {
  toast({
  title:"Success",
  description: targetBranches.length > 1 ? `Created ${realGroups.length} groups successfully` :"Group created successfully",
- className:"bg-green-500/10 border-green-500/20 text-green-500",
+ className:"bg-success/10 border-success/20 text-success",
  });
 
  // Silent Refetch for stats/masters
@@ -632,11 +634,7 @@ export default function AdminTrainingPage() {
  <TabsContent value="groups" className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
 
  {loading ? (
- <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
- {Array.from({ length: 6 }).map((_, i) => (
- <div key={i} className="h-[280px] rounded-md border border-border/60 bg-card animate-pulse" />
- ))}
- </div>
+ <LoadingGrid items={6} />
  ) : (
  <Tabs value={selectedYear} onValueChange={onYearChange} className="w-full">
  <TabsList className="mb-10 h-11 p-1">
@@ -669,7 +667,7 @@ export default function AdminTrainingPage() {
  <div className="h-8 w-8 rounded-md bg-brown-800/10 flex items-center justify-center border border-brown-800/20">
  <Users className="h-4 w-4 text-brown-800" />
  </div>
- <h3 className="text-2xl font-semibold tracking-tight text-foreground">{master.name}</h3>
+ <Heading variant="section-title">{master.name}</Heading>
  </div>
  <div className="h-px flex-1 bg-gradient-to-r from-border/60 to-transparent" />
 
@@ -808,7 +806,7 @@ export default function AdminTrainingPage() {
  <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center border border-border">
  <BookOpen className="h-4 w-4 text-muted-foreground" />
  </div>
- <h3 className="text-2xl font-semibold tracking-tight text-muted-foreground">Miscellaneous</h3>
+ <Heading variant="section-title" className="text-muted-foreground">Miscellaneous</Heading>
  </div>
  <div className="h-px flex-1 bg-gradient-to-r from-border/60 to-transparent" />
  </div>
@@ -912,11 +910,10 @@ export default function AdminTrainingPage() {
  {/* Empty State */}
  {groups.filter(g => g.year?.toString() === year).length === 0 && (
  <div className="py-32 text-center rounded-md border-2 border-dashed border-border bg-muted backdrop-blur-sm animate-in fade-in duration-700">
- {/* ... existing empty state ... */}
  <div className="p-6 rounded-md bg-brown-800/5 border border-brown-800/10 inline-block mb-6">
  <BookOpen className="h-10 w-12 text-brown-800/20" />
  </div>
- <h3 className="text-2xl font-semibold tracking-tight text-foreground/60">Zero Cohorts Detected</h3>
+ <Heading variant="section-title" className="text-foreground/60">Zero Cohorts Detected</Heading>
  <p className="text-muted-foreground mt-2 max-w-sm mx-auto font-medium">No training groups have been instantiated for the batch of {year}.</p>
  <Button onClick={() => setCreateGroupOpen(true)} className="mt-8 h-10 rounded-md px-10 font-bold text-sm font-medium">
  Initiate First Group

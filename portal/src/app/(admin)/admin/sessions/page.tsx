@@ -19,10 +19,13 @@ import {
  Trash2,
  RefreshCw
 } from"lucide-react";
-import { Button } from"@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card";
-import { Badge } from"@/components/ui/badge";
-import { Input } from"@/components/ui/input";
+import { Heading } from "@/components/ui/heading";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { LoadingGrid } from "@/components/ui/loading-states";
+import { EnhancedEmpty } from "@/components/ui/enhanced-empty";
 import { Label } from"@/components/ui/label";
 import {
  Dialog,
@@ -159,12 +162,9 @@ export default function AdminSessionsPage() {
  <RefreshCw className="mr-2 h-3 w-3 animate-spin" /> Live Operations Hub
  </Badge>
  </div>
- <h1 className="text-3xl font-bold tracking-tight text-foreground">
- Manage <span className="text-brown-800 italic">Sessions</span>
- </h1>
- <p className="text-sm font-medium text-muted-foreground mt-1">
- Orchestrate complex training schedules, assign personnel, and monitor learning velocity across all cohorts.
- </p>
+ <Heading variant="page-title">
+   Manage <span className="text-brown-800 italic">Sessions</span>
+ </Heading>
  </div>
  <div className="flex items-center gap-3">
  <Button onClick={() => setCreateDialogOpen(true)} className="h-10 rounded-md px-6 font-semibold text-sm shadow-sm transition-all">
@@ -218,56 +218,49 @@ export default function AdminSessionsPage() {
  </div>
  </div>
  </div>
+  <div className="lg:col-span-12">
+    <Tabs value={selectedYear.toString()} onValueChange={(v) => setSelectedYear(v)} className="w-full">
+      <TabsList className="bg-muted p-1.5 mb-10 h-10 rounded-md border border-border/20">
+        {[2025, 2026, 2027].map((year) => (
+          <TabsTrigger key={year} value={year.toString()} className="px-10 rounded-md data-[state=active]:bg-brown-800/10 data-[state=active]:text-brown-800 font-semibold text-sm transition-all">
+            Batch of {year}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </Tabs>
+  </div>
 
- <div className="lg:col-span-12">
- <Tabs value={selectedYear} onValueChange={onYearChange} className="w-full">
- <TabsList className="bg-muted p-1.5 mb-10 h-10 rounded-md border border-border/20">
- {getYearOptions().map(year => (
- <TabsTrigger key={year} value={year} className="px-10 rounded-md data-[state=active]:bg-brown-800/10 data-[state=active]:text-brown-800 font-semibold text-sm transition-all">
- Batch of {year}
- </TabsTrigger>
- ))}
- </TabsList>
- </Tabs>
- </div>
+  {activeTab === 'list' ? (
+    <div className="lg:col-span-12 space-y-12">
+      {loading ? (
+        <LoadingGrid items={6} />
+      ) : groups.filter(g => g.year === selectedYear).length === 0 ? (
+        <EnhancedEmpty
+          icon={Users}
+          title="No Active Cohorts"
+          description={`Create training groups for the Batch of ${selectedYear} to start scheduling sessions.`}
+          action={{ label: "Schedule Session", onClick: () => setCreateDialogOpen(true) }}
+          variant="illustrated"
+        />
+      ) : (
+        groupMasters.map((master) => {
+          const masterGroups = groups.filter(g =>
+            g.name === master.name &&
+            g.year === selectedYear &&
+            (selectedBranch === "ALL" || g.branch === selectedBranch || g.branch === "ALL")
+          );
 
- {activeTab === 'list' ? (
- <div className="lg:col-span-12 space-y-12">
- {loading ? (
- <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
- {Array.from({ length: 6 }).map((_, i) => (
- <div key={i} className="h-[280px] rounded-md bg-muted animate-pulse border border-border" />
- ))}
- </div>
- ) : groups.filter(g => g.year === selectedYear).length === 0 ? (
- <Card className="bg-card border-dashed border-2 py-32 text-center rounded-md">
- <CardContent className="space-y-4">
- <AlertCircle className="mx-auto h-12 w-12 text-muted-foreground/20" />
- <div className="space-y-1">
- <p className="text-xl font-bold">No Active Cohorts</p>
- <p className="text-muted-foreground font-medium">Create groups for the Batch of {selectedYear} to start scheduling.</p>
- </div>
- </CardContent>
- </Card>
- ) : (
- groupMasters.map((master) => {
- const masterGroups = groups.filter(g =>
- g.name === master.name &&
- g.year === selectedYear &&
- (selectedBranch ==="ALL" || g.branch === selectedBranch || g.branch ==="ALL")
- );
+          if (masterGroups.length === 0) return null;
 
- if (masterGroups.length === 0) return null;
-
- return (
- <div key={master.id} className="space-y-6 pb-8 border-b border-border last:border-0">
- <div className="flex items-center gap-4 px-2 group/header">
- <div className="flex items-center gap-3">
- <div className="h-8 w-8 rounded-md bg-brown-800/10 flex items-center justify-center border border-brown-800/20">
- <Users className="h-4 w-4 text-brown-800" />
- </div>
- <h3 className="text-2xl font-semibold tracking-tight text-foreground">{master.name}</h3>
- </div>
+          return (
+            <div key={master.id} className="space-y-6 pb-8 border-b border-border last:border-0">
+              <div className="flex items-center gap-4 px-2 group/header">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-md bg-brown-800/10 flex items-center justify-center border border-brown-800/20">
+                    <Users className="h-4 w-4 text-brown-800" />
+                  </div>
+                  <Heading variant="section-title">{master.name}</Heading>
+                </div>
  <div className="h-px flex-1 bg-gradient-to-r from-border/60 to-transparent" />
  <Badge variant="outline" className="rounded-full px-4 py-1 border-brown-800/20 bg-brown-800/5 text-brown-800 text-sm font-semibold">
  {masterGroups.length} {masterGroups.length === 1 ? 'Cohort' : 'Cohorts'}

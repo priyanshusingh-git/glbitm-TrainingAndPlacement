@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from"react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
+import { Heading } from "@/components/ui/heading"
 import { Button } from"@/components/ui/button"
 import { Input } from"@/components/ui/input"
 import { Label } from"@/components/ui/label"
@@ -208,10 +209,7 @@ export default function AdminTrainersPage() {
  <div className="space-y-6">
  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
  <div>
- <h1 className="text-2xl font-bold tracking-tight">Manage Trainers</h1>
- <p className="text-muted-foreground">
- Add and remove training staff members.
- </p>
+ <Heading variant="page-title">Manage Trainers</Heading>
  </div>
  <Button onClick={() => setCreateTrainerOpen(true)}>
  <UserPlus className="mr-2 h-4 w-4" /> Add New Trainer
@@ -263,7 +261,7 @@ export default function AdminTrainersPage() {
  <div className="bg-destructive/10 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">
  <AlertTriangle className="h-6 w-6 text-destructive" />
  </div>
- <h3 className="text-lg font-semibold text-destructive">Connection Error</h3>
+  <Heading variant="card-title" as="h3" className="text-destructive">Connection Error</Heading>
  <p className="text-muted-foreground max-w-sm mx-auto mb-6">We couldn't reach the server to load trainer records.</p>
  <Button onClick={fetchTrainers} variant="outline" className="gap-2">
  <RotateCcw className="h-4 w-4" />
@@ -537,7 +535,7 @@ export default function AdminTrainersPage() {
  <Dialog open={credentialsOpen} onOpenChange={setCredentialsOpen}>
  <DialogContent>
  <DialogHeader>
- <DialogTitle className="text-green-600">Trainer Created Successfully</DialogTitle>
+ <DialogTitle className="text-success">Trainer Created Successfully</DialogTitle>
  <DialogDescription>
  Please share these credentials with the trainer. They have also been sent via email (if configured).
  </DialogDescription>

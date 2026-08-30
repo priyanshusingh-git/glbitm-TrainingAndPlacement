@@ -1,33 +1,46 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { UploadCloud } from 'lucide-react';
+import { Heading } from '@/components/ui/heading';
 
 interface UploadingOverlayProps {
- isUploading: boolean;
+  isUploading: boolean;
 }
 
 export function UploadingOverlay({ isUploading }: UploadingOverlayProps) {
- if (!isUploading) {
- return null;
- }
+  const [mounted, setMounted] = useState(false);
 
- return (
- <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
- <div className="bg-background animate-in fade-in zoom-in-95 rounded-md border p-8 shadow-2xl mx-4 flex w-full max-w-sm flex-col items-center gap-4">
- <div className="relative">
- <div className="absolute inset-0 rounded-full border-b-2 border-brown-800 animate-spin" />
- <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brown-800/10">
- <UploadCloud className="h-8 w-8 text-brown-800" />
- </div>
- </div>
- <div className="text-center space-y-2">
- <h3 className="text-lg font-semibold">Uploading Profile Photo...</h3>
- <p className="text-sm text-muted-foreground">Please wait while we update your profile.</p>
- </div>
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
- <div className="w-full bg-secondary h-2 rounded-full overflow-hidden mt-2">
- <div className="uploading-overlay-bar h-full w-full bg-brown-800" />
- </div>
- </div>
- </div>
- );
+  if (!isUploading || !mounted) {
+    return null;
+  }
+
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 transition-opacity animate-in fade-in duration-200">
+      <div className="bg-card animate-in fade-in zoom-in-95 rounded-xl border border-border/80 p-6 sm:p-7 shadow-2xl mx-4 flex w-full max-w-sm flex-col items-center gap-4">
+        <div className="relative">
+          <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-amber-500 border-r-brown-800 animate-spin" />
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brown-800/10">
+            <UploadCloud className="h-8 w-8 text-brown-800 animate-pulse" />
+          </div>
+        </div>
+        <div className="text-center space-y-1.5">
+          <Heading variant="card-title" as="h3" className="text-base font-bold text-foreground">
+            Uploading Profile Photo...
+          </Heading>
+          <p className="text-xs text-muted-foreground">Please wait while we update your profile.</p>
+        </div>
+
+        <div className="w-full bg-muted h-2 rounded-full overflow-hidden mt-1">
+          <div className="uploading-overlay-bar h-full w-full bg-gradient-to-r from-brown-800 via-amber-500 to-brown-800" />
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
 }

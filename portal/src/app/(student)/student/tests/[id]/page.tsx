@@ -12,6 +12,7 @@ import {
 } from"lucide-react"
 import { api } from"@/lib/api"
 import { useToast } from"@/hooks/use-toast"
+import { TestTakerSkeleton } from "@/components/ui/loading-states"
 import { Checkbox } from"@/components/ui/checkbox"
 import { RadioGroup, RadioGroupItem } from"@/components/ui/radio-group"
 import { Label } from"@/components/ui/label"
@@ -25,6 +26,7 @@ import {
  AlertDialogHeader,
  AlertDialogTitle,
 } from"@/components/ui/alert-dialog"
+import { Heading } from "@/components/ui/heading"
 
 export default function TestPage() {
  const params = useParams()
@@ -122,12 +124,7 @@ export default function TestPage() {
  }
 
  if (loading) {
- return (
- <div className="flex flex-col items-center justify-center min-h-screen gap-4">
- <Loader2 className="h-10 w-10 animate-spin text-brown-800" />
- <p className="text-muted-foreground animate-pulse">Initializing assessment portal...</p>
- </div>
- )
+ return <TestTakerSkeleton />
  }
 
  const currentQuestion = questions[currentQuestionIdx]
@@ -145,7 +142,7 @@ export default function TestPage() {
  <CheckCircle2 className="h-5 w-5 text-brown-800" />
  </div>
  <div>
- <h1 className="font-bold text-sm tracking-tight">{test.title}</h1>
+ <Heading variant="eyebrow" as="h1">{test.title}</Heading>
  <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">{test.type}</p>
  </div>
  </div>
@@ -205,9 +202,9 @@ export default function TestPage() {
  <Badge variant="outline" className="text-[10px] uppercase font-bold text-brown-800 border-brown-800/20">
  Question {currentQuestionIdx + 1} of {questions.length}
  </Badge>
- <h2 className="text-2xl font-bold leading-tight text-foreground">
+ <Heading variant="section-title">
  {currentQuestion.text}
- </h2>
+ </Heading>
  </div>
 
  <div className="space-y-4">

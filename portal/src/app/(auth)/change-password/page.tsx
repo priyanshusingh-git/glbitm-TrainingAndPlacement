@@ -12,6 +12,7 @@ import { validateStrongPassword } from "@/lib/validators";
 import { AuthBrandPanel } from "@/components/layout/auth-brand-panel";
 import { MobileAuthHeader } from "@/components/layout/mobile-auth-header";
 import { changePasswordBrandContent } from "@/data/auth";
+import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -127,9 +128,9 @@ export default function ChangePasswordPage() {
 
           {/* Header */}
           <div className="mb-6 animate-fade-up stagger-1 lg:mt-0">
-            <h2 className="mb-2 font-display text-[42px] font-bold leading-[1.05] tracking-tight text-brown-900">
+            <Heading variant="display-section" className="mb-2">
               Change your <span className="text-amber-700 italic">password</span>
-            </h2>
+            </Heading>
             <p className="text-[15px] font-medium text-muted-foreground/80 leading-relaxed">
               Set a new strong password to continue into the platform.
             </p>
@@ -192,7 +193,7 @@ export default function ChangePasswordPage() {
                   success
                     ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/20"
                     : isFormValid
-                      ? "bg-brown-900 text-white hover:bg-brown-800 shadow-xl shadow-amber-900/10 hover:shadow-amber-900/20 hover:-translate-y-0.5"
+                      ? "bg-brown-800 text-white hover:bg-brown-900 shadow-xl shadow-amber-900/10 hover:shadow-amber-900/20 hover:-translate-y-0.5"
                       : "bg-brown-50 text-brown-300 border border-brown-100 cursor-not-allowed shadow-none"
                 )}
                 disabled={loading || !!success}

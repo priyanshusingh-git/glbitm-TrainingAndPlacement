@@ -19,35 +19,35 @@ function Tabs({
 }
 
 function TabsList({
- className,
- ...props
+  className,
+  ...props
 }: React.ComponentProps<typeof TabsPrimitive.List>) {
- return (
- <TabsPrimitive.List
- data-slot="tabs-list"
- className={cn(
- 'inline-flex h-11 w-fit items-center justify-center rounded-md border border-border/60 bg-card/90 p-1 text-muted-foreground shadow-sm',
- className,
- )}
- {...props}
- />
- )
+  return (
+    <TabsPrimitive.List
+      data-slot="tabs-list"
+      className={cn(
+        'inline-flex h-auto min-h-0 w-fit items-center justify-start rounded-md border border-border/70 bg-card p-1 text-muted-foreground shadow-xs overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden gap-1',
+        className,
+      )}
+      {...props}
+    />
+  )
 }
 
 function TabsTrigger({
- className,
- ...props
+  className,
+  ...props
 }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
- return (
- <TabsPrimitive.Trigger
- data-slot="tabs-trigger"
- className={cn(
-"inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-sm border border-transparent px-3 py-2 text-sm font-medium whitespace-nowrap text-muted-foreground transition-[background-color,border-color,color,box-shadow] disabled:pointer-events-none disabled:opacity-50 data-[state=active]:border-border/70 data-[state=active]:bg-card-hover data-[state=active]:text-foreground data-[state=active]:shadow-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
- className,
- )}
- {...props}
- />
- )
+  return (
+    <TabsPrimitive.Trigger
+      data-slot="tabs-trigger"
+      className={cn(
+        'group inline-flex h-auto flex-1 items-center justify-center gap-2 rounded-sm border border-transparent px-3.5 py-2 text-xs font-semibold text-muted-foreground whitespace-nowrap transition-all duration-200 hover:bg-muted/50 hover:text-foreground disabled:pointer-events-none disabled:opacity-40 data-[state=active]:bg-brown-800 data-[state=active]:text-cream data-[state=active]:shadow-xs [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*="size-"])]:size-4 [&_svg]:transition-colors data-[state=active]:[&_svg]:text-amber-300',
+        className,
+      )}
+      {...props}
+    />
+  )
 }
 
 function TabsContent({

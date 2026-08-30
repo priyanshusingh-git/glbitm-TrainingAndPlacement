@@ -8,31 +8,40 @@ import { Users, Loader2, ArrowLeft } from"lucide-react"
 import { Button } from"@/components/ui/button"
 import Link from"next/link"
 
+import { Heading } from "@/components/ui/heading"
+import { PageHeader } from "@/components/layout/page-header"
+import { LoadingGrid } from "@/components/ui/loading-states"
+
 export default function TrainerGroupsPage() {
- const [assignments, setAssignments] = useState<any[]>([])
- const [loading, setLoading] = useState(true)
- const [error, setError] = useState("")
+  const [assignments, setAssignments] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
 
- useEffect(() => {
- const fetchGroups = async () => {
- try {
- // Determine user ID from token or context in a real app, 
- // but our dashboard endpoint returns assignments. 
- // A dedicated endpoint for assignments might be cleaner, 
- // but let's reuse the dashboard one or fetch groups with filter.
- // Reusing dashboard for now as it contains assignments.
- const response = await api.get("/training/dashboard/trainer")
- setAssignments(response.assignments)
- } catch (err: any) {
- setError(err.message ||"Failed to load groups")
- } finally {
- setLoading(false)
- }
- }
- fetchGroups()
- }, [])
+  useEffect(() => {
+    const fetchGroups = async () => {
+      try {
+        const response = await api.get("/training/dashboard/trainer")
+        setAssignments(response.assignments)
+      } catch (err: any) {
+        setError(err.message || "Failed to load groups")
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchGroups()
+  }, [])
 
- if (loading) return <div className="flex h-[50vh] items-center justify-center"><Loader2 className="h-8 w-8 animate-spin" /></div>
+  if (loading) {
+    return (
+      <div className="space-y-6 animate-fade-up">
+        <PageHeader
+          title="My Training Groups"
+          description="Cohorts you are currently training."
+        />
+        <LoadingGrid items={6} />
+      </div>
+    );
+  }
  if (error) {
  return (
  <div className="rounded-md border border-destructive/20 bg-destructive/5 p-6 text-center">
@@ -51,8 +60,7 @@ export default function TrainerGroupsPage() {
       <Link href="/trainer"><ArrowLeft className="h-4 w-4" /></Link>
     </Button>
     <div className="flex flex-col gap-1">
-      <h1 className="section-h2">My Groups</h1>
-      <p className="text-sm text-muted-foreground font-medium">Cohorts you are currently training.</p>
+      <Heading variant="page-title">My Groups</Heading>
     </div>
   </div>
 

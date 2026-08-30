@@ -11,7 +11,7 @@ export default function ResetPasswordPage() {
       title="Reset flow updated"
       description="Password recovery now uses a 6-digit verification code sent to your registered email. Continue through the secure OTP flow to set a new password."
       asideTitle=""
-      asideDescription="Legacy reset links are no longer the primary recovery path. The platform now verifies password recovery through short-lived OTP codes."
+      asideDescription="Password recovery is verified securely through short-lived verification codes sent to your registered email address."
     >
       <div className="space-y-5">
         <div className="feedback-message feedback-message-error">

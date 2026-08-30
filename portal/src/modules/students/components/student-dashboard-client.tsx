@@ -3,6 +3,7 @@
 import { useAuth } from "@/contexts/auth-context";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Loader2, Briefcase, Trophy, CheckCircle, BookOpen, Building2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getImageUrl } from "@/lib/utils";
@@ -11,6 +12,8 @@ import { PlacementPipeline } from "./placement-pipeline";
 import { cn } from "@/lib/utils";
 import { getStudentGreeting, dashboardBanner, statCards } from "@/data/dashboard";
 import { getAblyClient } from "@/contexts/ably-context";
+import { Heading } from "@/components/ui/heading";
+import { LoadingGrid, HeroBannerSkeleton } from "@/components/ui/loading-states";
 
 export default function StudentDashboard() {
   const router = useRouter();
@@ -52,8 +55,9 @@ export default function StudentDashboard() {
 
   if (loading) {
     return (
-      <div className="flex h-[50vh] w-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+      <div className="space-y-8 animate-fade-up">
+        <HeroBannerSkeleton />
+        <LoadingGrid items={4} />
       </div>
     )
   }
@@ -62,9 +66,30 @@ export default function StudentDashboard() {
 
   // Map hero metrics securely from data + api response
   const heroMetrics = [
-    { label: dashboardBanner.metrics[0].label, value: dashboardData?.overview?.cgpa ?? dashboardBanner.metrics[0].fallback },
-    { label: dashboardBanner.metrics[1].label, value: dashboardData?.overview?.attendancePercentage ? `${dashboardData.overview.attendancePercentage}${dashboardBanner.metrics[1].suffix}` : dashboardBanner.metrics[1].fallback },
-    { label: dashboardBanner.metrics[2].label, value: dashboardData?.overview?.appliedDrives ?? dashboardBanner.metrics[2].fallback },
+    {
+      label: "CGPA",
+      value:
+        dashboardData?.overview?.cgpa && dashboardData.overview.cgpa !== "—"
+          ? dashboardData.overview.cgpa
+          : "—",
+    },
+    {
+      label: "Attendance",
+      value:
+        dashboardData?.overview?.attendancePercentage !== null &&
+        dashboardData?.overview?.attendancePercentage !== undefined &&
+        dashboardData?.overview?.attendancePercentage !== "—"
+          ? `${dashboardData.overview.attendancePercentage}%`
+          : "—",
+    },
+    {
+      label: "Applied",
+      value:
+        dashboardData?.overview?.appliedDrives !== null &&
+        dashboardData?.overview?.appliedDrives !== undefined
+          ? String(dashboardData.overview.appliedDrives)
+          : "0",
+    },
   ];
 
   return (
@@ -75,16 +100,16 @@ export default function StudentDashboard() {
         
         <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-8">
           <div className="flex flex-col gap-2">
-            <h1 className="font-display text-4xl font-bold md:text-5xl text-white">
+            <Heading variant="page-title" className="text-white text-2xl sm:text-3xl md:text-4xl font-bold">
               {timeOfDay}, <span className="italic text-amber-500">{name}!</span>
-            </h1>
+            </Heading>
           </div>
 
           <div className="flex flex-wrap gap-4">
             {heroMetrics.map((metric) => (
               <div key={metric.label} className="stat-bubble bg-white/5 border-white/10">
                 <span className="font-display text-2xl font-bold text-amber-500 tabular-nums">{metric.value}</span>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-white/40">{metric.label}</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-white/75">{metric.label}</span>
               </div>
             ))}
           </div>
@@ -94,19 +119,22 @@ export default function StudentDashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4 animate-fade-up stagger-2">
         {statCards.map((cardConfig) => {
-          let value = dashboardData?.overview?.[cardConfig.id] ?? "—";
-          if (cardConfig.suffix && value !== "—") value = `${value}${cardConfig.suffix}`;
+          const rawVal = dashboardData?.overview?.[cardConfig.id];
+          let value: string = "—";
+          if (rawVal !== null && rawVal !== undefined && rawVal !== "—") {
+            value = cardConfig.suffix ? `${rawVal}${cardConfig.suffix}` : String(rawVal);
+          }
 
           return (
             <StatCard
               key={cardConfig.id}
               icon={getIcon(cardConfig.tag, cardConfig.badgeColor)}
               label={cardConfig.label}
-              value={value.toString()}
+              value={value}
               badge={cardConfig.badge}
               badgeColor={cardConfig.badgeColor}
             />
-          )
+          );
         })}
       </div>
 
@@ -114,8 +142,8 @@ export default function StudentDashboard() {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 animate-fade-up stagger-3">
         <div className="lg:col-span-2">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="section-h3 text-brown-800">Placement Pipeline</h3>
-            <button className="text-xs font-bold text-brown-800 hover:text-amber-500 hover:underline transition-colors">View Details</button>
+            <Heading variant="section-title" as="h3" className="text-brown-800">Placement Pipeline</Heading>
+            <Link href="/student/placements" className="text-xs font-bold text-brown-800 hover:text-amber-500 hover:underline transition-colors">View Details</Link>
           </div>
           <PlacementPipeline 
             company={dashboardData?.currentPipeline?.company || "No active pipeline"} 
@@ -126,8 +154,8 @@ export default function StudentDashboard() {
         </div>
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <h3 className="section-h3 text-brown-800">Upcoming Drives</h3>
-            <button className="text-xs font-bold text-brown-800 hover:text-amber-500 hover:underline transition-colors">View All</button>
+            <Heading variant="section-title" as="h3" className="text-brown-800">Upcoming Drives</Heading>
+            <Link href="/student/placements" className="text-xs font-bold text-brown-800 hover:text-amber-500 hover:underline transition-colors">View All</Link>
           </div>
           <div className="card-base p-6 flex flex-col gap-4">
             {dashboardData?.placements?.length > 0 ? (
@@ -171,7 +199,7 @@ function StatCard({ icon, label, value, badge, badgeColor }: { icon: React.React
   }
 
   return (
-    <div className="card-base p-6 flex flex-col gap-4 group">
+    <div className="card-base p-4 sm:p-6 flex flex-col gap-4 group">
       <div className="flex items-center justify-between">
         <div className="flex h-12 w-12 items-center justify-center rounded-sm bg-muted/40 group-hover:bg-brown-800/5 transition-colors">
           {icon}

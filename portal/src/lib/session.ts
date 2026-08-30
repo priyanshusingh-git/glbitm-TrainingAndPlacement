@@ -5,18 +5,20 @@ import {
   getCookieTtlSeconds,
   signRoleCookie,
 } from "@/lib/role-cookie";
+import { getAuthSecret } from "@/lib/auth-secrets";
 
 type SessionRole = "ADMIN" | "STUDENT" | "TRAINER" | "RECRUITER";
 
 const isProduction = process.env.NODE_ENV === "production";
 
-const getJwtSecret = () => new TextEncoder().encode(process.env.JWT_SECRET || "default_super_secret_key_change_in_production");
+const getJwtSecret = () => new TextEncoder().encode(getAuthSecret("JWT_SECRET"));
 
 export async function createSessionCookies(params: {
   uid: string;
   email: string;
   role: SessionRole;
   mustChangePassword: boolean;
+  sessionVersion: number;
   rememberMe: boolean;
 }) {
   const expiresIn = getCookieTtlSeconds(params.rememberMe);
@@ -26,7 +28,8 @@ export async function createSessionCookies(params: {
     uid: params.uid,
     email: params.email,
     role: params.role.toLowerCase(), // match firebase role claim structure
-    mustChangePassword: params.mustChangePassword
+    mustChangePassword: params.mustChangePassword,
+    sessionVersion: params.sessionVersion,
   })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -98,5 +101,5 @@ export function clearSessionCookies(
 
 export async function verifyServerSession(sessionCookie: string) {
   const { payload } = await jwtVerify(sessionCookie, getJwtSecret());
-  return payload as { uid: string; email: string; role: string; mustChangePassword: boolean };
+  return payload as { uid: string; email: string; role: string; mustChangePassword: boolean; sessionVersion: number };
 }

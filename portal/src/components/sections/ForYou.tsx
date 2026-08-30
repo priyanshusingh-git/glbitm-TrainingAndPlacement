@@ -16,7 +16,7 @@ export default function ForYou() {
             <h2 className="section-h2">
               Year-Round Training
               <br />
-              <span className="text-brown-600 italic">That Builds Careers</span>
+              <span className="text-brown-600 italic">For Placement Success</span>
             </h2>
           </div>
           <p className="max-w-[32rem] text-sm leading-[1.85] text-muted-foreground lg:justify-self-end">

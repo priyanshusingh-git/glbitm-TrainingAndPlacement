@@ -11,34 +11,42 @@ import { api } from "@/lib/api"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { PageHeader } from "@/components/layout/page-header"
+import { Heading } from "@/components/ui/heading"
+import { LoadingGrid } from "@/components/ui/loading-states"
 
 export default function TrainingPage() {
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchDashboard();
-  }, []);
+    fetchTrainingData()
+  }, [])
 
-  const fetchDashboard = async () => {
+  const fetchTrainingData = async () => {
     try {
-      const res = await api.get('/training/dashboard/student');
-      setData(res);
+      setLoading(true)
+      const res = await api.get('/training/dashboard/student')
+      setData(res)
     } catch (error) {
-      console.error(error);
+      console.error(error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
   useEffect(() => {
+    if (!data?.group?.id) return;
     // Firebase or Ably logic if needed
   }, [data?.group?.id]);
 
   if (loading) {
     return (
-      <div className="flex h-[50vh] w-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
+      <div className="flex flex-col gap-8 pb-12 animate-fade-up stagger-1">
+        <PageHeader
+          title="My Training"
+          description="View your training sessions, attendance, and schedules."
+        />
+        <LoadingGrid items={6} />
       </div>
     );
   }
@@ -49,9 +57,9 @@ export default function TrainingPage() {
         <div className="bg-primary/10 p-4 rounded-full mb-4">
           <BookOpen className="h-8 w-8 text-primary" />
         </div>
-        <h3 className="text-xl font-bold">Not Enrolled Yet</h3>
+        <Heading variant="section-title" as="h3">Not Enrolled Yet</Heading>
         <p className="text-muted-foreground mt-2 max-w-md">
-          You have not been assigned to any training group. Please contact the CDC admin if you believe this is a mistake.
+          You have not been assigned to any training group. Please contact the T&amp;P admin if you believe this is a mistake.
         </p>
       </div>
     )
@@ -90,7 +98,7 @@ export default function TrainingPage() {
             {nextSession ? (
               <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
                 <div>
-                  <h3 className="text-xl font-bold">{nextSession.title}</h3>
+                  <Heading variant="section-title" as="h3">{nextSession.title}</Heading>
                   <div className="flex flex-wrap gap-3 mt-2 text-sm text-muted-foreground">
                     <span className="flex items-center gap-1"><Calendar className="h-4 w-4" /> <span className="tabular-nums">{format(new Date(nextSession.date), "EEEE, MMM d")}</span></span>
                     <span className="flex items-center gap-1"><Clock className="h-4 w-4" /> <span className="tabular-nums">{nextSession.startTime ? format(new Date(nextSession.startTime), "h:mm a") : "TBD"}</span></span>
@@ -150,18 +158,34 @@ export default function TrainingPage() {
 
       {/* SESSIONS LIST */}
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className="overflow-x-auto hide-scrollbar w-full justify-start rounded-none border-b bg-transparent p-0 mb-6">
-          <TabsTrigger value="all" className="relative rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:bg-transparent !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
-            All Sessions
+        <TabsList className="w-full sm:w-auto h-auto min-h-0 justify-start rounded-md border border-border/70 bg-card p-1 mb-6 flex overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden gap-1 shadow-xs scroll-smooth">
+          <TabsTrigger
+            value="all"
+            className="group h-auto rounded-sm px-4 py-2 text-xs font-semibold text-muted-foreground transition-all duration-200 data-[state=active]:bg-brown-800 data-[state=active]:text-cream data-[state=active]:shadow-xs hover:bg-muted/50 hover:text-foreground flex items-center justify-center gap-2"
+          >
+            <BookOpen className="h-4 w-4 shrink-0 text-muted-foreground group-data-[state=active]:text-amber-300 transition-colors" />
+            <span>All Sessions</span>
           </TabsTrigger>
-          <TabsTrigger value="technical" className="relative rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:bg-transparent !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
-            Technical
+          <TabsTrigger
+            value="technical"
+            className="group h-auto rounded-sm px-4 py-2 text-xs font-semibold text-muted-foreground transition-all duration-200 data-[state=active]:bg-brown-800 data-[state=active]:text-cream data-[state=active]:shadow-xs hover:bg-muted/50 hover:text-foreground flex items-center justify-center gap-2"
+          >
+            <FileText className="h-4 w-4 shrink-0 text-muted-foreground group-data-[state=active]:text-amber-300 transition-colors" />
+            <span>Technical</span>
           </TabsTrigger>
-          <TabsTrigger value="aptitude" className="relative rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:bg-transparent !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
-            Aptitude
+          <TabsTrigger
+            value="aptitude"
+            className="group h-auto rounded-sm px-4 py-2 text-xs font-semibold text-muted-foreground transition-all duration-200 data-[state=active]:bg-brown-800 data-[state=active]:text-cream data-[state=active]:shadow-xs hover:bg-muted/50 hover:text-foreground flex items-center justify-center gap-2"
+          >
+            <Users className="h-4 w-4 shrink-0 text-muted-foreground group-data-[state=active]:text-amber-300 transition-colors" />
+            <span>Aptitude</span>
           </TabsTrigger>
-          <TabsTrigger value="verbal" className="relative rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:bg-transparent !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
-            Verbal
+          <TabsTrigger
+            value="verbal"
+            className="group h-auto rounded-sm px-4 py-2 text-xs font-semibold text-muted-foreground transition-all duration-200 data-[state=active]:bg-brown-800 data-[state=active]:text-cream data-[state=active]:shadow-xs hover:bg-muted/50 hover:text-foreground flex items-center justify-center gap-2"
+          >
+            <Clock className="h-4 w-4 shrink-0 text-muted-foreground group-data-[state=active]:text-amber-300 transition-colors" />
+            <span>Verbal</span>
           </TabsTrigger>
         </TabsList>
 

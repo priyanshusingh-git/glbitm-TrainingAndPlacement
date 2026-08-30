@@ -3,6 +3,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { SignOutAnimationOverlay } from "@/components/ui/signout-animation-overlay";
+import { cn } from "@/lib/utils";
 
 type User = {
   id: string;
@@ -21,6 +23,7 @@ type AuthContextType = {
   updateUser: (user: Partial<User>) => void;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isLoggingOut: boolean;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,6 +31,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
 
   const refreshSession = async () => {
@@ -60,14 +64,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
+    setIsLoggingOut(true);
     try {
       await api.post("/auth/logout", {}, { skipRedirect: true });
     } catch {
       // Ignore logout failures and continue clearing client state.
     }
 
+    // Smooth delay for sign out animation before top-level navigation
+    await new Promise((r) => setTimeout(r, 600));
     setUser(null);
-    router.replace("/login");
+    window.location.href = "/login";
   };
 
   return (
@@ -80,9 +87,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         updateUser,
         isAuthenticated: !!user,
         isLoading,
+        isLoggingOut,
       }}
     >
-      {children}
+      <SignOutAnimationOverlay visible={isLoggingOut} />
+      <div className={cn("transition-all duration-300", isLoggingOut && "filter blur-md opacity-40 pointer-events-none select-none")}>
+        {children}
+      </div>
     </AuthContext.Provider>
   );
 }

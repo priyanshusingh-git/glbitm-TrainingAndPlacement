@@ -1,6 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Heading } from "@/components/ui/heading"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Building2, Plus, MapPin, Users, IndianRupee, Calendar, Briefcase } from "lucide-react"
@@ -52,24 +53,24 @@ export function CompanySection({ companies }: CompanySectionProps) {
     key={company.id}
     className="premium-muted space-y-4 rounded-md border border-border/50 p-5 transition-all duration-300 hover:bg-card-hover hover:border-primary/30 hover:shadow-md"
   >
- <div className="flex items-start justify-between">
- <div>
- <h3 className="font-semibold">{company.name}</h3>
- <p className="text-sm text-muted-foreground">
- {company.industry}
- </p>
- </div>
-  <Badge
-    variant={company.status ==="upcoming" ?"default" :"secondary"}
-    className={
-      company.status ==="upcoming"
-      ?"bg-primary/10 text-primary border-primary/20"
-      :"bg-success/10 text-success border-success/20"
-    }
-  >
- {company.status ==="upcoming" ?"Upcoming" :"Completed"}
- </Badge>
- </div>
+        <div className="flex items-start justify-between">
+          <div>
+            <Heading variant="card-title" as="h3">{company.name}</Heading>
+            <p className="text-sm text-muted-foreground">
+              {company.industry}
+            </p>
+          </div>
+          <Badge
+            variant={company.status === "upcoming" ? "default" : "secondary"}
+            className={
+              company.status === "upcoming"
+                ? "bg-primary/10 text-primary border-primary/20"
+                : "bg-success/10 text-success border-success/20"
+            }
+          >
+            {company.status === "upcoming" ? "Upcoming" : "Completed"}
+          </Badge>
+        </div>
 
  <div className="grid grid-cols-2 gap-2 text-sm">
  <div className="flex items-center gap-1.5 text-muted-foreground">

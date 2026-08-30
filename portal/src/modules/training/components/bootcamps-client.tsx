@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -218,7 +219,7 @@ export default function AdminBootcampsPage() {
                               setSelectedGroupIds(prev => prev.filter(id => id !== g.id));
                             }
                           }}
-                          className="h-4 w-4 rounded border-gray-300 text-brown-800 focus:ring-amber-500 cursor-pointer"
+                          className="h-4 w-4 rounded border-border text-brown-800 focus:ring-amber-500 cursor-pointer"
                         />
                         <label
                           htmlFor={`group-${g.id}`}
@@ -269,12 +270,15 @@ export default function AdminBootcampsPage() {
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-48 text-center">
-                  <Loader2 className="h-8 w-8 animate-spin mx-auto text-brown-800/40" />
-                  <p className="text-xs text-muted-foreground mt-4 font-medium uppercase tracking-widest">Retrieving Program Data</p>
-                </TableCell>
-              </TableRow>
+              Array.from({ length: 5 }).map((_, idx) => (
+                <TableRow key={idx} className="border-b border-border/40">
+                  <TableCell className="py-4"><Skeleton className="h-5 w-40" /></TableCell>
+                  <TableCell className="py-4"><Skeleton className="h-4 w-28" /></TableCell>
+                  <TableCell className="py-4"><Skeleton className="h-5 w-24 rounded-full" /></TableCell>
+                  <TableCell className="py-4"><Skeleton className="h-4 w-64" /></TableCell>
+                  <TableCell className="py-4 text-right"><Skeleton className="h-8 w-8 rounded-md ml-auto" /></TableCell>
+                </TableRow>
+              ))
             ) : bootcamps.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="h-48 text-center">

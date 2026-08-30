@@ -1,6 +1,6 @@
 export const processSteps = [
  { n:"01", t:"Registration", d:"Sign up with T&P in 3rd year and share your academic profile." },
- { n:"02", t:"CDC Training", d:"Attend aptitude, technical, and soft-skills programs." },
+ { n:"02", t:"Training & Upskilling", d:"Attend aptitude, technical, and soft-skills programs." },
  { n:"03", t:"Mock Rounds", d:"Participate in simulated interviews and GDs with expert feedback." },
  { n:"04", t:"PPT Sessions", d:"Attend pre-placement talks and shortlist your target companies." },
  { n:"05", t:"Campus Drives", d:"Appear for tests, technical rounds, and HR interviews on campus." },

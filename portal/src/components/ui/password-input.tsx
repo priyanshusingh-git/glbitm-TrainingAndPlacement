@@ -85,11 +85,11 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
  }
 
  const getStrengthColor = (score: number) => {
- if (score <= 20) return"bg-red-500"
- if (score <= 40) return"bg-orange-500"
- if (score <= 60) return"bg-yellow-500"
- if (score <= 80) return"bg-blue-500"
- return"bg-green-500"
+ if (score <= 20) return"bg-destructive"
+ if (score <= 40) return"bg-warning"
+ if (score <= 60) return"bg-amber-500"
+ if (score <= 80) return"bg-brown-600"
+ return"bg-success"
  }
 
  const getStrengthLabel = (score: number) => {
@@ -111,20 +111,19 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
  onChange={handleChange}
  {...props}
  />
- <button
- type="button"
- className="absolute right-0 top-0 flex h-full items-center justify-center rounded-r-lg border-0 bg-transparent px-3 text-brown-400 shadow-none transition-colors hover:bg-transparent hover:text-brown-800 focus-visible:outline-none"
- onClick={() => setShowPassword(!showPassword)}
+	 <button
+	 type="button"
+	 className="absolute right-0 top-0 flex h-full items-center justify-center rounded-r-lg border-0 bg-transparent px-3 text-brown-400 shadow-none transition-colors hover:bg-transparent hover:text-brown-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-600 focus-visible:ring-inset"
+	 onClick={() => setShowPassword(!showPassword)}
+	 aria-label={showPassword ? "Hide password" : "Show password"}
+	 aria-pressed={showPassword}
  >
  {showPassword ? (
  <EyeOff className="h-4 w-4" />
  ) : (
  <Eye className="h-4 w-4" />
  )}
- <span className="sr-only">
- {showPassword ?"Hide password" :"Show password"}
- </span>
- </button>
+	 </button>
  </div>
 
  {showStrength && (
@@ -134,10 +133,10 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
  Password Strength
  </span>
  <span className={cn("text-xs font-semibold",
- strength <= 20 ?"text-red-500" :
- strength <= 40 ?"text-orange-500" :
- strength <= 60 ?"text-yellow-500" :
- strength <= 80 ?"text-blue-500" :"text-green-500"
+ strength <= 20 ?"text-destructive" :
+ strength <= 40 ?"text-warning" :
+ strength <= 60 ?"text-amber-700" :
+ strength <= 80 ?"text-brown-600" :"text-success"
  )}>
  {getStrengthLabel(strength)}
  </span>
@@ -185,11 +184,11 @@ PasswordInput.displayName ="PasswordInput"
 const RequirementItem = ({ label, met }: { label: string; met: boolean }) => (
  <div className="flex items-center gap-1.5">
  {met ? (
- <Check className="h-3 w-3 text-green-500 shrink-0" />
+ <Check className="h-3 w-3 text-success shrink-0" />
  ) : (
  <X className="h-3 w-3 text-muted-foreground/40 shrink-0" />
  )}
- <span className={cn("text-[10px]", met ?"text-green-600 font-medium" :"text-muted-foreground")}>
+ <span className={cn("text-[10px]", met ?"text-success font-medium" :"text-muted-foreground")}>
  {label}
  </span>
  </div>

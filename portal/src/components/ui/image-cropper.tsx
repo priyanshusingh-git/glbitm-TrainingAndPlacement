@@ -60,42 +60,49 @@ export function ImageCropper({ imageSrc, onCropComplete, onCancel, open }: Image
  }
 
  return (
- <Dialog open={open} onOpenChange={(val) => !val && onCancel()}>
- <DialogContent className="sm:max-w-md">
- <DialogHeader>
- <DialogTitle>Crop Profile Picture</DialogTitle>
- <DialogDescription>
- Adjust the image crop and zoom level.
- </DialogDescription>
- </DialogHeader>
- <div className="relative h-[300px] w-full bg-black">
- {imageSrc && (
- <Cropper
- image={imageSrc}
- crop={crop}
- zoom={zoom}
- aspect={1} // Square aspect ratio
- onCropChange={onCropChange}
- onCropComplete={onCropCompleteHandler}
- onZoomChange={onZoomChange}
- />
- )}
- </div>
- <div className='py-4'>
- <label className='text-sm mb-2 block'>Zoom</label>
- <Slider
- value={[zoom]}
- min={1}
- max={3}
- step={0.1}
- onValueChange={(val) => setZoom(val[0])}
- />
- </div>
- <DialogFooter>
- <Button variant="secondary" onClick={onCancel}>Cancel</Button>
- <Button onClick={handleSave}>Confirm Crop</Button>
- </DialogFooter>
- </DialogContent>
- </Dialog>
+    <Dialog open={open} onOpenChange={(val) => !val && onCancel()}>
+      <DialogContent className="max-w-md w-[calc(100vw-2rem)] sm:w-full rounded-xl border-border/70 shadow-2xl">
+        <DialogHeader>
+          <DialogTitle className="text-base font-bold text-foreground">Crop Profile Picture</DialogTitle>
+          <DialogDescription className="text-xs text-muted-foreground">
+            Adjust the framing and zoom level for your student dossier photo.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="relative h-[260px] sm:h-[300px] w-full bg-black rounded-lg overflow-hidden border border-border/40">
+          {imageSrc && (
+            <Cropper
+              image={imageSrc}
+              crop={crop}
+              zoom={zoom}
+              aspect={1}
+              onCropChange={onCropChange}
+              onCropComplete={onCropCompleteHandler}
+              onZoomChange={onZoomChange}
+            />
+          )}
+        </div>
+        <div className="py-3 space-y-2">
+          <div className="flex items-center justify-between text-xs text-muted-foreground font-semibold">
+            <span>Zoom Level</span>
+            <span className="font-mono text-[11px]">{zoom.toFixed(1)}x</span>
+          </div>
+          <Slider
+            value={[zoom]}
+            min={1}
+            max={3}
+            step={0.05}
+            onValueChange={(val) => setZoom(val[0])}
+          />
+        </div>
+        <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2 pt-2">
+          <Button variant="outline" size="sm" onClick={onCancel} className="rounded-sm text-xs h-9 px-4">
+            Cancel
+          </Button>
+          <Button size="sm" onClick={handleSave} className="bg-brown-800 text-cream hover:bg-brown-900 text-xs font-bold rounded-sm h-9 px-4 shadow-sm">
+            Confirm &amp; Crop
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
  )
 }

@@ -88,12 +88,33 @@ elements, use `brown-900` (base) → `brown-800` (hover).
 
 | Role | Font | Variable | Notes |
 |:-----|:-----|:---------|:------|
-| Display (h1–h3) | **Fraunces** | `--font-display` | Variable serif. Use `font-display` class. Supports `opsz` axis. |
-| Body / UI | **Inter** | `--font-body` | Default on `<body>`. Has tabular numerals (`tnum`). |
-| Monospace | **Fira Code** | `--font-mono` | Code snippets only. |
+| Display & Headings (h1–h3) | **Fraunces** | `--font-display` | Variable serif. Mapped to `font-display`. Used for all page titles, section headers, card titles, and heroes. |
+| Body / UI | **Inter** | `--font-body` | Default on `<body>`. Applied to body copy, form controls, tables, buttons, and navigation. |
+| Monospace | **Fira Code** | `--font-mono` | Code snippets, technical IDs, badges, and tabular numerals. |
+
+### Heading Component & Standardization Rules
+
+All page titles, section headers, and card headings MUST consume the standardized `<Heading>` primitive (`src/components/ui/heading.tsx`) or `<PageHeader>` (`src/components/layout/page-header.tsx`).
+
+```
+❌ NEVER: <h1 className="text-4xl font-bold text-foreground">Title</h1>
+❌ NEVER: <h2 className="text-[48px] font-bold">Title</h2>
+
+✅ ALWAYS: <PageHeader title="Analytics & Reports" description="..." />
+✅ ALWAYS: <Heading variant="page-title">Page Title</Heading>
+✅ ALWAYS: <Heading variant="section-title">Section Subtitle</Heading>
+```
+
+#### Standard Heading Variants (`heading.tsx`)
+- `page-title`: `font-display text-3xl font-bold tracking-tight text-foreground` (**Fraunces**) — Standard app page header
+- `section-title`: `font-display text-xl font-bold tracking-tight text-foreground` (**Fraunces**) — Sub-section title
+- `card-title`: `font-display text-lg font-semibold tracking-tight text-foreground` (**Fraunces**) — Card header
+- `display-hero`: `font-display text-hero font-extrabold text-brown-900` (**Fraunces**) — Marketing hero title
+- `display-section`: `font-display text-h2 font-bold text-brown-900` (**Fraunces**) — Large splash section title
+- `eyebrow`: `font-sans text-xs font-bold uppercase tracking-widest text-muted-foreground` (**Inter**) — Eyebrow label above titles
 
 **Font loading**: Fonts are loaded via `next/font/google` in `src/app/layout.tsx`.
-Never import fonts via `<link>` tags or CSS `@import`.
+Never import fonts via `<link>` tags.
 
 ---
 

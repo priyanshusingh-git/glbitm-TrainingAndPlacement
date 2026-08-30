@@ -4,6 +4,7 @@ import { useEffect, useState } from"react";
 import { useRouter, useSearchParams } from"next/navigation";
 import { api } from"@/lib/api";
 import { cn } from"@/lib/utils";
+import { Heading } from "@/components/ui/heading";
 import { Button } from"@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs";
@@ -18,6 +19,8 @@ import {
  Home, Building, AlertCircle, Users
 } from"lucide-react";
 import { useToast } from"@/components/ui/use-toast";
+import { LoadingGrid, LoadingProfile } from "@/components/ui/loading-states";
+import { EnhancedEmpty } from "@/components/ui/enhanced-empty";
 
 interface ProfileClientProps {
  id: string;
@@ -72,22 +75,27 @@ export default function ProfileClient({ id }: ProfileClientProps) {
 
  if (loading) {
  return (
- <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
- <Loader2 className="h-10 w-10 animate-spin text-brown-800" />
- <p className="text-muted-foreground animate-pulse font-medium">Loading comprehensive profile...</p>
+ <div className="space-y-6 animate-fade-up">
+ <Button variant="ghost" onClick={() => router.back()} className="mb-2">
+ <ArrowLeft className="mr-2 h-4 w-4" /> Back
+ </Button>
+ <LoadingProfile />
  </div>
  );
  }
 
  if (!student) {
  return (
- <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
- <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center text-destructive">
- <AlertCircle className="h-8 w-8" />
- </div>
- <h2 className="text-xl font-bold">Student Not Found</h2>
- <p className="text-muted-foreground">The profile could not be loaded or doesn't exist.</p>
- <Button variant="outline" onClick={() => router.back()}>Go Back</Button>
+ <div className="space-y-6 animate-fade-up">
+ <Button variant="ghost" onClick={() => router.back()} className="mb-2">
+ <ArrowLeft className="mr-2 h-4 w-4" /> Back
+ </Button>
+ <EnhancedEmpty
+ icon={Users}
+ title="Student Profile Not Found"
+ description="The requested student profile could not be located in the database."
+ variant="illustrated"
+ />
  </div>
  );
  }
@@ -122,7 +130,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
 
  <div className="flex-1 space-y-2">
  <div className="flex flex-wrap items-center gap-3">
- <h1 className="text-4xl font-bold tracking-tight text-foreground">{student.name ||"Unknown Student"}</h1>
+ <Heading variant="page-title">{student.name || "Unknown Student"}</Heading>
  <Badge variant={student.isProfileLocked ?"success" :"warning"} className="px-3 py-1 font-bold uppercase text-[10px] tracking-widest shadow-sm">
  {student.isProfileLocked ?"Verified Profile" :"Awaiting Verification"}
  </Badge>
@@ -359,7 +367,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  )}>
  {semResult?.sgpa >= 8.5 && !isFuture && (
  <div className="absolute top-0 right-0 p-1">
- <div className="h-4 w-4 bg-yellow-400 rounded-full flex items-center justify-center text-[8px] font-bold text-yellow-900 border-2 border-background shadow-sm">★</div>
+ <div className="h-4 w-4 bg-amber-400 rounded-full flex items-center justify-center text-[8px] font-bold text-brown-900 border-2 border-background shadow-sm">★</div>
  </div>
  )}
  <span className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-[0.2em] group-hover:text-brown-800 transition-colors">Sem {i + 1}</span>
@@ -416,9 +424,9 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  {student.projects?.length > 0 || student.certifications?.length > 0 ? (
  <div className="grid lg:grid-cols-2 gap-10">
  <div className="space-y-6">
- <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-brown-800 flex items-center">
+ <Heading variant="eyebrow" as="h3" className="text-brown-800 flex items-center">
  <Briefcase className="h-4 w-4 mr-3" /> Featured Projects
- </h3>
+ </Heading>
  <div className="space-y-4">
  {student.projects?.map((project: any) => (
  <div key={project.id} className="group p-6 rounded-md border-2 border-muted bg-muted/10 hover:border-brown-800/30 hover:bg-brown-800/5 transition-all duration-300">
@@ -447,9 +455,9 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </div>
 
  <div className="space-y-6">
- <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground flex items-center opacity-60">
+ <Heading variant="eyebrow" as="h3" className="text-muted-foreground flex items-center opacity-60">
  <Award className="h-4 w-4 mr-3" /> Credentials & Badges
- </h3>
+ </Heading>
  <div className="space-y-4">
  {student.certifications?.length > 0 ? (
  student.certifications.map((cert: any) => (
@@ -496,7 +504,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  <CardHeader className="bg-brown-800 p-10 relative">
  <Code className="absolute top-0 right-0 h-48 w-48 text-background/10 -mr-16 -mt-16" />
  <div className="relative">
- <h2 className="text-3xl font-bold text-brown-800-foreground uppercase tracking-tighter">Competitive Profile</h2>
+ <Heading variant="display-section" className="text-brown-800-foreground uppercase tracking-tighter">Competitive Profile</Heading>
  <p className="text-brown-800-foreground/70 font-bold tracking-tight mt-1 uppercase text-xs">Algorithmic performance across global platforms</p>
  </div>
  </CardHeader>
@@ -583,7 +591,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  <div className="absolute top-0 right-0 p-6">
  <CheckCircle2 className="h-10 w-10 text-brown-800/10" />
  </div>
- <h3 className="text-[10px] font-bold uppercase tracking-[0.4em] text-muted-foreground/60 mb-12">Engagement Matrix</h3>
+ <Heading variant="eyebrow" as="h3" className="text-muted-foreground/60 mb-12">Engagement Matrix</Heading>
 
  <div className="relative h-64 w-64 flex items-center justify-center">
  <svg className="h-full w-full transform -rotate-90">
@@ -605,13 +613,13 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </Card>
  </div>
  </TabsContent>
- </div>
+</div>
  </Tabs >
 
  {/* Print-Only Dossier Content */}
  <div className="hidden print:block space-y-10">
  <div className="border-b-4 border-brown-800 pb-6 mb-8">
- <h1 className="text-4xl font-bold uppercase tracking-tighter text-brown-800">Student Dossier</h1>
+ <Heading variant="display-section" className="uppercase tracking-tighter text-brown-800">Student Dossier</Heading>
  <p className="text-sm font-bold opacity-60">Confidential Academic & Technical Record</p>
  </div>
 
@@ -641,7 +649,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  <div className="grid grid-cols-2 gap-8">
  <Card className="shadow-none border p-6 rounded-none">
  <CardHeader className="p-0 mb-4 border-b pb-2">
- <h3 className="font-bold text-xs uppercase tracking-widest text-brown-800">Secondary Academics</h3>
+ <Heading variant="eyebrow" as="h3" className="text-brown-800">Secondary Academics</Heading>
  </CardHeader>
  <CardContent className="p-0 space-y-3">
  <div className="flex justify-between text-xs"><span>Class X:</span> <b>{student.class10Percentage}%</b></div>
@@ -650,7 +658,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
  </Card>
  <Card className="shadow-none border p-6 rounded-none">
  <CardHeader className="p-0 mb-4 border-b pb-2">
- <h3 className="font-bold text-xs uppercase tracking-widest text-brown-800">Cohort Context</h3>
+ <Heading variant="eyebrow" as="h3" className="text-brown-800">Cohort Context</Heading>
  </CardHeader>
  <CardContent className="p-0 space-y-3">
  <div className="flex justify-between text-xs"><span>Group:</span> <b>{student.trainingGroup?.name ||"N/A"}</b></div>
@@ -661,7 +669,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
 
  <Card className="shadow-none border p-6 rounded-none">
  <CardHeader className="p-0 mb-4 border-b pb-2">
- <h3 className="font-bold text-xs uppercase tracking-widest text-brown-800">Technical Projects</h3>
+ <Heading variant="eyebrow" as="h3" className="text-brown-800">Technical Projects</Heading>
  </CardHeader>
  <CardContent className="p-0 space-y-4">
  {student.projects?.map((p: any) => (
@@ -676,7 +684,7 @@ export default function ProfileClient({ id }: ProfileClientProps) {
 
  <Card className="shadow-none border p-6 rounded-none">
  <CardHeader className="p-0 mb-4 border-b pb-2">
- <h3 className="font-bold text-xs uppercase tracking-widest text-brown-800">Competitive Profiles</h3>
+ <Heading variant="eyebrow" as="h3" className="text-brown-800">Competitive Profiles</Heading>
  </CardHeader>
  <CardContent className="p-0 grid grid-cols-3 gap-6">
  {[{ l:"LeetCode", v: student.leetcodeId }, { l:"GitHub", v: student.githubId }, { l:"CodeChef", v: student.codechefId }].map((p, i) => (

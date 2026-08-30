@@ -19,7 +19,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Recruiter not found' }, { status: 404 })
     }
 
-    // Delete directly from Postgres (Firebase removed)
+    // Delete directly from Postgres
     await prisma.user.delete({ where: { id } })
 
     const ipAddress = req.headers.get('x-forwarded-for') || undefined

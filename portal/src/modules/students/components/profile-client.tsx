@@ -2,14 +2,15 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useAuth } from "@/contexts/auth-context";
-import { api, API_BASE_URL } from "@/lib/api";
+import { api } from "@/lib/api";
 import { cn, getImageUrl } from "@/lib/utils";
 import { getAblyClient } from "@/contexts/ably-context";
+import { Heading } from "@/components/ui/heading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -18,93 +19,218 @@ import {
   Loader2, Trash2, AlertTriangle, GraduationCap, BookOpen,
   Award, Github, Linkedin, Link2, Code2, FileText, Plus, X,
   CheckCircle2, ExternalLink, AlertCircle, Calculator, Divide,
-  Fingerprint, Calendar, Mail,
+  Fingerprint, Calendar, Mail, ShieldCheck, Sparkles, Check, Globe,
+  Pencil, Save
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { ImageCropper } from "@/components/ui/image-cropper";
 import { UploadingOverlay } from "@/components/ui/uploading-overlay";
+import { LoadingProfile } from "@/components/ui/loading-states";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useSidebar } from "@/components/layout/dashboard/dashboard-layout";
 import { INDIAN_STATES, DISTRICTS_BY_STATE } from "@/lib/indian-locations";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type StudentProfile = {
-  id: string; name: string; rollNo: number | null; admissionId?: string;
-  branch: string; year?: number | null; currentSemester?: number; cgpa?: number;
-  skills: string[]; resumeLink?: string | null;
-  githubId?: string | null; leetcodeId?: string | null;
-  codechefId?: string | null; linkedinId?: string | null; bio?: string | null;
+  id: string;
+  name: string;
+  rollNo: number | null;
+  admissionId?: string;
+  branch: string;
+  year?: number | null;
+  currentSemester?: number;
+  cgpa?: number;
+  skills: string[];
+  resumeLink?: string | null;
+  githubId?: string | null;
+  leetcodeId?: string | null;
+  codechefId?: string | null;
+  linkedinId?: string | null;
+  bio?: string | null;
   photoUrl?: string | null;
-  isProfileLocked: boolean; isBasicInfoLocked?: boolean;
-  isClass10Locked?: boolean; isClass12Locked?: boolean; isDiplomaLocked?: boolean;
+  isProfileLocked: boolean;
+  isBasicInfoLocked?: boolean;
+  isClass10Locked?: boolean;
+  isClass12Locked?: boolean;
+  isDiplomaLocked?: boolean;
   studentType?: string;
-  class10School?: string; class10Board?: string; class10Percentage?: number; class10Year?: number;
-  class12School?: string; class12Board?: string; class12Percentage?: number;
-  class12PcmPercentage?: number; class12MathPercentage?: number | null; class12Year?: number;
-  diplomaInstitute?: string; diplomaBranch?: string; diplomaPercentage?: number; diplomaYear?: number;
-  mobileNo?: string; personalEmail?: string;
-  presentHouseNo?: string; presentBlock?: string; presentLocality?: string;
-  presentCity?: string; presentTehsil?: string; presentDistrict?: string;
-  presentState?: string; presentCountry?: string; presentPincode?: string;
-  permanentHouseNo?: string; permanentBlock?: string; permanentLocality?: string;
-  permanentCity?: string; permanentTehsil?: string; permanentDistrict?: string;
-  permanentState?: string; permanentCountry?: string; permanentPincode?: string;
-  fatherName?: string; fatherOccupation?: string; fatherMobile?: string; fatherEmail?: string;
-  motherName?: string; motherOccupation?: string; motherMobile?: string; motherEmail?: string;
-  semesterResults?: { semester: number; sgpa: number | null; backlogs: number; credits?: number | null; totalMarks?: number | null; obtainedMarks?: number | null; percentage?: number | null; isLocked?: boolean }[];
+  course?: string;
+  dob?: string | null;
+  gender?: string | null;
+  class10School?: string;
+  class10Board?: string;
+  class10Percentage?: number;
+  class10Year?: number;
+  class12School?: string;
+  class12Board?: string;
+  class12Percentage?: number;
+  class12PcmPercentage?: number;
+  class12MathPercentage?: number | null;
+  class12Year?: number;
+  diplomaInstitute?: string;
+  diplomaBranch?: string;
+  diplomaPercentage?: number;
+  diplomaYear?: number;
+  mobileNo?: string;
+  personalEmail?: string;
+  presentHouseNo?: string;
+  presentBlock?: string;
+  presentLocality?: string;
+  presentCity?: string;
+  presentTehsil?: string;
+  presentDistrict?: string;
+  presentState?: string;
+  presentCountry?: string;
+  presentPincode?: string;
+  permanentHouseNo?: string;
+  permanentBlock?: string;
+  permanentLocality?: string;
+  permanentCity?: string;
+  permanentTehsil?: string;
+  permanentDistrict?: string;
+  permanentState?: string;
+  permanentCountry?: string;
+  permanentPincode?: string;
+  fatherName?: string;
+  fatherOccupation?: string;
+  fatherMobile?: string;
+  fatherEmail?: string;
+  motherName?: string;
+  motherOccupation?: string;
+  motherMobile?: string;
+  motherEmail?: string;
+  semesterResults?: {
+    semester: number;
+    sgpa: number | null;
+    backlogs: number;
+    credits?: number | null;
+    totalMarks?: number | null;
+    obtainedMarks?: number | null;
+    percentage?: number | null;
+    isLocked?: boolean;
+  }[];
 };
 
 // ─── Constants ────────────────────────────────────────────────────────────────
-const BRANCHES = ["CSE","CSAI","CSDS","CSAIML","AIML","AIDS","IT","ECE","EEE","ME"];
+const BRANCHES = ["CSE", "CSAI", "CSDS", "CSAIML", "AIML", "AIDS", "IT", "ECE", "EEE", "ME"];
 const CURRENT_YEAR = new Date().getFullYear();
 const PASSING_YEARS = Array.from({ length: 11 }, (_, i) => (CURRENT_YEAR - i).toString());
 const getYearOptions = () => Array.from({ length: 4 }, (_, i) => (CURRENT_YEAR + i).toString());
-const getSemesterOptions = (type?: string) => type === "Lateral Entry" ? [3,4,5,6,7,8] : [1,2,3,4,5,6,7,8];
-const BOARDS = ["CBSE","ICSE/ISC","NIOS","Uttar Pradesh Board (UPMSP)","Rajasthan Board (RBSE)","Bihar Board (BSEB)","Maharashtra Board (MSBSHSE)","Karnataka Board (KSEEB/PUE)","Tamil Nadu Board (TNBSE)","Gujarat Board (GSEB)","Andhra Pradesh Board","Telangana Board (TSBIE/BSE)","West Bengal Board (WBBSE/WBCHSE)","Madhya Pradesh Board (MPBSE)","Punjab Board (PSEB)","Haryana Board (HBSE)","Others"];
-const DIPLOMA_BRANCHES = ["Computer Science","Information Technology","Electronics & Communication","Electrical","Mechanical","Civil","Others"];
+const getSemesterOptions = (type?: string) => (type === "Lateral Entry" ? [3, 4, 5, 6, 7, 8] : [1, 2, 3, 4, 5, 6, 7, 8]);
+const BOARDS = [
+  "CBSE",
+  "ICSE/ISC",
+  "NIOS",
+  "Uttar Pradesh Board (UPMSP)",
+  "Rajasthan Board (RBSE)",
+  "Bihar Board (BSEB)",
+  "Maharashtra Board (MSBSHSE)",
+  "Karnataka Board (KSEEB/PUE)",
+  "Tamil Nadu Board (TNBSE)",
+  "Gujarat Board (GSEB)",
+  "Andhra Pradesh Board",
+  "Telangana Board (TSBIE/BSE)",
+  "West Bengal Board (WBBSE/WBCHSE)",
+  "Madhya Pradesh Board (MPBSE)",
+  "Punjab Board (PSEB)",
+  "Haryana Board (HBSE)",
+  "Others"
+];
+const DIPLOMA_BRANCHES = [
+  "Computer Science",
+  "Information Technology",
+  "Electronics & Communication",
+  "Electrical",
+  "Mechanical",
+  "Civil",
+  "Others"
+];
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
-// --- Helper Components (Defined outside to prevent focus loss) ---
-const LockedBadge = () => (
-  <div className="flex items-center gap-1 bg-brown-900/5 border border-brown-900/10 px-2.5 py-1 rounded-sm">
-    <Lock className="h-3 w-3 text-brown-900/60" />
-    <span className="text-[10px] font-bold uppercase tracking-widest text-brown-900/80">Locked</span>
-  </div>
-);
-
-// ── Constants ─────────────────────────────────────────
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_REGEX = /^\d{10}$/;
 const ROLL_NO_REGEX = /^\d{13}$/;
 const ADMISSION_ID_REGEX = /^[A-Z0-9]{6,15}$/;
 
-const LockButton = ({ onClick, saving: s, label = "Save & Lock", disabled }: { onClick: () => void, saving: boolean, label?: string, disabled?: boolean }) => (
-  <Button onClick={onClick} disabled={disabled || s} size="sm" className="h-10 px-5 text-xs font-bold bg-brown-900 hover:bg-brown-800 text-white rounded-sm shadow-sm transition-all active:scale-95">
-    {s ? <><Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />Locking...</> : <><Lock className="mr-2 h-3.5 w-3.5" />{label}</>}
+// ─── Helper Components ────────────────────────────────────────────────────────
+const LockedBadge = () => (
+  <span className="inline-flex items-center gap-1.5 rounded-sm bg-brown-900/5 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-brown-900 ring-1 ring-inset ring-brown-900/20">
+    <Lock className="h-3 w-3 text-brown-800" />
+    <span>Locked</span>
+  </span>
+);
+
+const LockButton = ({
+  onClick,
+  saving,
+  label = "Save & Lock",
+  disabled
+}: {
+  onClick: () => void;
+  saving: boolean;
+  label?: string;
+  disabled?: boolean;
+}) => (
+  <Button
+    onClick={onClick}
+    disabled={disabled || saving}
+    size="sm"
+    className="h-9 gap-1.5 rounded-sm bg-brown-800 px-4 text-xs font-bold text-cream shadow-sm hover:bg-brown-900 active:scale-[0.98] transition-all"
+  >
+    {saving ? (
+      <>
+        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        Locking...
+      </>
+    ) : (
+      <>
+        <Lock className="h-3.5 w-3.5 text-amber-400" />
+        {label}
+      </>
+    )}
   </Button>
 );
 
-const FieldRow = ({ label, children, error, required: req, icon: Icon, className }: { label: string, children: React.ReactNode, error?: string, required?: boolean, icon?: any, className?: string }) => (
-  <div className={cn("space-y-2", className)}>
-    <div className="flex items-center gap-2 px-0.5">
-      {Icon && <Icon className="h-4 w-4 text-brown-900/50" />}
-      <Label className="text-sm font-semibold text-brown-900/80 leading-none">
-        {label}
-        {req && <span className="text-destructive ml-1">*</span>}
-      </Label>
+const FieldRow = ({
+  label,
+  children,
+  error,
+  required: req,
+  icon: Icon,
+  className
+}: {
+  label: string;
+  children: React.ReactNode;
+  error?: string;
+  required?: boolean;
+  icon?: any;
+  className?: string;
+}) => (
+  <div className={cn("space-y-1.5", className)}>
+    <div className="flex items-center justify-between px-0.5">
+      <div className="flex items-center gap-1.5">
+        {Icon && <Icon className="h-3.5 w-3.5 text-muted-foreground" />}
+        <Label className="text-xs font-semibold text-foreground/90">
+          {label}
+          {req && <span className="text-destructive ml-0.5">*</span>}
+        </Label>
+      </div>
     </div>
-    <div className="relative group/field">
-      {children}
-    </div>
+    <div className="relative group/field">{children}</div>
     {error && (
-      <div className="flex items-center gap-1.5 text-[11px] font-semibold text-destructive/90 animate-in fade-in slide-in-from-top-1 px-1 mt-1.5">
-        <AlertCircle className="h-3 w-3" />
+      <div className="flex items-center gap-1 text-[11px] font-medium text-destructive animate-in fade-in slide-in-from-top-1 px-0.5 pt-0.5">
+        <AlertCircle className="h-3 w-3 shrink-0" />
         <span>{error}</span>
       </div>
     )}
@@ -122,6 +248,7 @@ export default function StudentProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | boolean>(false);
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
+  const [isEditingProfiles, setIsEditingProfiles] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [isDeletingPhoto, setIsDeletingPhoto] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -534,23 +661,60 @@ export default function StudentProfilePage() {
     finally { setSaving(false); }
   };
 
-  // ─── Save: Career ──────────────────────────────────────────────────────────
+  // ─── Save: Career / Online Profiles ───────────────────────────────────────
   const saveCareer = async () => {
     setSaving("career");
-    const payload = { githubId: formData.githubId || null, leetcodeId: formData.leetcodeId || null, codechefId: formData.codechefId || null, linkedinId: formData.linkedinId || null, bio: formData.bio || null, resumeLink: formData.resumeLink || null, skills: formData.skills };
+    const payload = {
+      githubId: formData.githubId || null,
+      leetcodeId: formData.leetcodeId || null,
+      codechefId: formData.codechefId || null,
+      linkedinId: formData.linkedinId || null,
+      bio: formData.bio || null,
+      resumeLink: formData.resumeLink || null,
+      skills: formData.skills
+    };
     const prev = profile ? { ...profile } : null;
-    setProfile(p => p ? { ...p, ...payload } : p);
-    try { await api.put("/students/profile", payload); toast({ title: "Career profile saved ✓" }); }
-    catch (err: any) { if (prev) setProfile(prev); toast({ title: "Error", description: err.message, variant: "destructive" }); }
-    finally { setSaving(false); }
+    setProfile(p => (p ? { ...p, ...payload } : p));
+    setIsEditingProfiles(false);
+    try {
+      await api.put("/students/profile", payload);
+      toast({ title: "Online profiles saved ✓" });
+    } catch (err: any) {
+      if (prev) setProfile(prev);
+      setIsEditingProfiles(true);
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancelProfiles = () => {
+    if (profile) {
+      setFormData(p => ({
+        ...p,
+        linkedinId: profile.linkedinId || "",
+        githubId: profile.githubId || "",
+        leetcodeId: profile.leetcodeId || "",
+        resumeLink: profile.resumeLink || "",
+      }));
+    }
+    setIsEditingProfiles(false);
   };
 
   // ─── Photo Handlers ────────────────────────────────────────────────────────
   const handleDeletePhoto = async () => {
-    setIsDeleteDialogOpen(false); setIsDeletingPhoto(true);
-    try { await api.put("/students/profile", { photoUrl: null }); setProfile(p => p ? { ...p, photoUrl: null } : p); updateUser({ photoUrl: undefined }); toast({ title: "Photo removed" }); }
-    catch { toast({ title: "Error", description: "Failed to remove photo", variant: "destructive" }); }
-    finally { setIsDeletingPhoto(false); }
+    setIsDeletingPhoto(true);
+    try {
+      await api.put("/students/profile", { photoUrl: null });
+      setProfile(p => (p ? { ...p, photoUrl: null } : p));
+      updateUser({ photoUrl: undefined });
+      toast({ title: "Photo removed ✓" });
+      setIsDeleteDialogOpen(false);
+    } catch {
+      toast({ title: "Error", description: "Failed to remove photo", variant: "destructive" });
+    } finally {
+      setIsDeletingPhoto(false);
+    }
   };
 
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -581,1021 +745,1748 @@ export default function StudentProfilePage() {
   const addSkill = () => {
     const s = skillInput.trim();
     if (s && !formData.skills.includes(s) && formData.skills.length < 20) {
-      setFormData(p => ({ ...p, skills: [...p.skills, s] })); setSkillInput("");
+      setFormData(p => ({ ...p, skills: [...p.skills, s] }));
+      setSkillInput("");
       skillInputRef.current?.focus();
     }
   };
   const removeSkill = (skill: string) => setFormData(p => ({ ...p, skills: p.skills.filter(s => s !== skill) }));
 
+  const [activeTab, setActiveTab] = useState("basic");
+
   // ─── Derived State ─────────────────────────────────────────────────────────
-  if (loading) return <div className="flex h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>;
+  if (loading) return <LoadingProfile />;
 
   const isLocked = profile?.isProfileLocked;
   const fullPhotoUrl = getImageUrl(profile?.photoUrl);
 
   const completionItems = [
     { done: !!profile?.isBasicInfoLocked, weight: 20, label: "Basic Details" },
-    { done: !!profile?.isClass10Locked, weight: 10, label: "Class 10" },
-    { done: !!(profile?.isClass12Locked || profile?.isDiplomaLocked), weight: 10, label: "Class 12 / Diploma" },
-    { done: semesterResults.some(s => s.isLocked), weight: 10, label: "Semester Results" },
-    { done: !!(formData.mobileNo && formData.personalEmail), weight: 10, label: "Contact Details" },
+    { done: !!profile?.isClass10Locked, weight: 15, label: "Class 10" },
+    { done: !!(profile?.isClass12Locked || profile?.isDiplomaLocked), weight: 15, label: "Class 12 / Diploma" },
+    { done: semesterResults.some(s => s.isLocked), weight: 15, label: "Semester Results" },
+    { done: !!(formData.mobileNo && formData.personalEmail), weight: 15, label: "Contact Details" },
     { done: !!formData.resumeLink, weight: 15, label: "Resume" },
-    { done: !!(formData.githubId || formData.linkedinId), weight: 10, label: "Social Links" },
-    { done: formData.skills.length > 0, weight: 15, label: "Skills & Expertise" },
+    { done: !!(formData.githubId || formData.linkedinId || formData.leetcodeId), weight: 5, label: "Online Profiles" },
   ];
   const completionScore = completionItems.reduce((sum, item) => sum + (item.done ? item.weight : 0), 0);
 
-
-
-
-
-
-
   return (
-    <div className="space-y-6 pb-12">
-      {/* ════ IDENTITY HEADER ════════════════════════════════════════════════ */}
-      <div className="overflow-hidden rounded-md border border-border/60 bg-card shadow-sm">
-        {/* Gradient Banner */}
-        <div className="relative h-32 bg-gradient-to-br from-brown-950 via-brown-900 to-brown-900">
-          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,.05) 10px,rgba(255,255,255,.05) 11px)" }} />
-          {isLocked && (
-            <div className="absolute top-4 right-4 flex items-center gap-2 bg-destructive/10 border border-destructive/20 text-destructive text-[10px] font-bold px-4 py-2 rounded-sm backdrop-blur-md uppercase tracking-[0.2em] shadow-md">
-              <Lock className="h-3 w-3" /> Locked by Admin
-            </div>
-          )}
-        </div>
+    <div className="space-y-8 pb-16 animate-fade-up">
+      {/* ════════════════════════════════════════════════════════════════════════ */}
+      {/* 🏛️ EXECUTIVE INSTITUTIONAL IDENTITY DOSSIER CARD                        */}
+      {/* ════════════════════════════════════════════════════════════════════════ */}
+      <div className="rounded-xl border border-border/70 bg-card p-5 sm:p-6 shadow-sm transition-all relative overflow-hidden">
+        {/* Top Institutional Accent Line */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brown-800 via-amber-500 to-brown-900" />
 
-        <div className="px-5 pb-5 sm:px-6 sm:pb-6">
-          {/* Avatar + Meta row */}
-          <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-14 mb-5">
-            {/* Avatar with upload */}
-            <div className="relative group w-fit shrink-0">
-              <Avatar className="h-24 w-24 sm:h-28 sm:w-28 rounded-md border-4 border-card shadow-xl">
-                <AvatarImage src={fullPhotoUrl} className="object-cover" />
-                <AvatarFallback className="rounded-md bg-brown-900 text-white text-2xl font-display font-bold">
-                  {formData.name?.split(" ").map((n: string) => n[0]).join("").substring(0,2).toUpperCase() || "ST"}
-                </AvatarFallback>
-              </Avatar>
-              {!isLocked && (
-                <label htmlFor="photo-upload" className="absolute -bottom-1.5 -right-1.5 cursor-pointer z-10">
-                  <div className="h-8 w-8 bg-brown-800 rounded-full border-2 border-card flex items-center justify-center shadow-lg hover:bg-brown-700 transition-colors">
-                    <Camera className="h-3.5 w-3.5 text-white" />
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          {/* Left: Avatar + Primary Identity */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-5 min-w-0">
+            {/* Avatar with Smooth Hover Edit Overlay + Dropdown Options */}
+            <div className="relative group shrink-0 w-fit">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild disabled={!!isLocked || !!uploading}>
+                  <div
+                    className={cn(
+                      "relative h-20 w-20 sm:h-22 sm:w-22 rounded-2xl ring-2 ring-amber-500/30 shadow-md bg-brown-900 overflow-hidden select-none transition-all",
+                      !isLocked && !uploading ? "cursor-pointer group-hover:ring-amber-500/60" : "cursor-default"
+                    )}
+                    title={!isLocked ? "Click to manage photo" : undefined}
+                  >
+                    <Avatar className="h-full w-full rounded-2xl">
+                      <AvatarImage src={fullPhotoUrl} className="object-cover" />
+                      <AvatarFallback className="rounded-2xl bg-gradient-to-br from-brown-900 to-brown-950 text-cream font-display font-bold text-2xl text-amber-100">
+                        {formData.name
+                          ?.split(" ")
+                          .map((n: string) => n[0])
+                          .join("")
+                          .substring(0, 2)
+                          .toUpperCase() || "ST"}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    {/* Smooth Hover Edit Overlay */}
+                    {!isLocked && !uploading && (
+                      <div className="absolute inset-0 bg-black/55 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-all duration-200 flex flex-col items-center justify-center gap-1 text-cream">
+                        <Camera className="h-4 w-4 text-amber-300" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-100">Edit</span>
+                      </div>
+                    )}
+
+                    {/* Uploading / Removing State Overlay */}
+                    {(uploading || isDeletingPhoto) && (
+                      <div className="absolute inset-0 z-20 bg-brown-950/85 backdrop-blur-[2px] flex flex-col items-center justify-center text-cream animate-in fade-in duration-200">
+                        <Loader2 className="h-5 w-5 animate-spin text-amber-400" />
+                        <span className="text-[9px] font-bold tracking-wider uppercase text-amber-200 mt-1">
+                          {isDeletingPhoto ? "Removing..." : "Uploading..."}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                </label>
-              )}
-              {profile?.photoUrl && !isLocked && (
-                <button onClick={() => setIsDeleteDialogOpen(true)} className="absolute -top-1.5 -right-1.5 z-10 h-6 w-6 bg-brown-900/80 rounded-full border-2 border-card flex items-center justify-center hover:bg-red-700 transition-colors">
-                  <X className="h-3 w-3 text-white" />
-                </button>
-              )}
+                </DropdownMenuTrigger>
+
+                {!isLocked && !uploading && !isDeletingPhoto && (
+                  <DropdownMenuContent align="start" className="w-48 rounded-md border-border/70 shadow-xl p-1">
+                    <DropdownMenuItem
+                      onClick={() => document.getElementById("photo-upload")?.click()}
+                      className="flex items-center gap-2.5 text-xs font-semibold cursor-pointer rounded-sm px-3 py-2 text-foreground hover:bg-muted"
+                    >
+                      <Camera className="h-4 w-4 text-amber-600" />
+                      {profile?.photoUrl ? "Upload New Photo" : "Upload Photo"}
+                    </DropdownMenuItem>
+
+                    {profile?.photoUrl && (
+                      <DropdownMenuItem
+                        onClick={() => setIsDeleteDialogOpen(true)}
+                        className="flex items-center gap-2.5 text-xs font-semibold cursor-pointer rounded-sm px-3 py-2 text-destructive focus:text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        Remove Photo
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                )}
+              </DropdownMenu>
             </div>
 
-            {/* Name + meta */}
-            <div className="flex-1 min-w-0 sm:pb-1 pt-2 sm:pt-0">
-              <div className="flex flex-wrap items-start gap-2">
-                <h1 className="text-2xl sm:text-3xl font-bold font-display text-foreground leading-tight">
-                  {profile?.name || <span className="text-muted-foreground italic text-xl">Your Name</span>}
+            {/* Name, Verified Status & Enrolment Credentials */}
+            <div className="space-y-1.5 min-w-0">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight leading-tight">
+                  {profile?.name || formData.name || <span className="text-muted-foreground italic font-normal">Student Name</span>}
                 </h1>
-                {profile?.isBasicInfoLocked && (
-                  <Badge variant="outline" className="mt-1 border-brown-900/40 bg-brown-900/5 text-brown-900 text-[10px] font-bold tracking-widest uppercase">
-                    <CheckCircle2 className="h-3 w-3 mr-1" />Verified
+                {profile?.isBasicInfoLocked ? (
+                  <Badge variant="outline" className="gap-1 bg-emerald-500/10 text-emerald-700 border-emerald-500/30 text-xs font-bold py-0.5 px-2.5">
+                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+                    Verified
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="text-xs text-amber-800 bg-amber-500/10 border-amber-500/20 py-0.5 px-2.5">
+                    Pending Verification
+                  </Badge>
+                )}
+                {isLocked && (
+                  <Badge variant="destructive" className="text-[10px] uppercase font-bold tracking-wider gap-1">
+                    <Lock className="h-3 w-3" /> Locked
                   </Badge>
                 )}
               </div>
-              <p className="text-sm text-muted-foreground mt-1 flex flex-wrap items-center gap-x-2">
-                {profile?.branch && <span className="font-medium">{profile.branch}</span>}
-                {!!profile?.year && profile.year !== 0 && <><span className="opacity-30">·</span><span>Class of {profile.year}</span></>}
-                {!!profile?.cgpa && Number(profile.cgpa) > 0 && <><span className="opacity-30">·</span><span className="font-bold text-brown-900">CGPA {Number(profile.cgpa).toFixed(2)}</span></>}
-              </p>
-              {formData.bio && (
-                <p className="mt-1.5 text-xs text-muted-foreground italic line-clamp-2 max-w-lg">&ldquo;{formData.bio}&rdquo;</p>
-              )}
-            </div>
 
-            {/* Social pills */}
-            <div className="flex flex-wrap gap-2 sm:pb-1">
-              {formData.linkedinId && (
-                <a href={`https://linkedin.com/in/${formData.linkedinId}`} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-sm bg-[#0A66C2]/10 border border-[#0A66C2]/30 text-[#0A66C2] hover:bg-[#0A66C2]/20 transition-colors">
-                  <Linkedin className="h-3.5 w-3.5" />LinkedIn
-                </a>
-              )}
-              {formData.githubId && (
-                <a href={`https://github.com/${formData.githubId}`} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-sm bg-muted border border-border/60 text-foreground hover:bg-muted/70 transition-colors">
-                  <Github className="h-3.5 w-3.5" />GitHub
-                </a>
-              )}
-              {formData.leetcodeId && (
-                <a href={`https://leetcode.com/${formData.leetcodeId}`} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-sm bg-brown-900/10 border border-brown-900/30 text-brown-900 hover:bg-brown-900/20 transition-colors">
-                  <Code2 className="h-3.5 w-3.5" />LeetCode
-                </a>
-              )}
-              {formData.resumeLink && (
-                <a href={formData.resumeLink} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-sm bg-brown-900/10 border border-brown-900/30 text-brown-900 hover:bg-brown-900/20 transition-colors">
-                  <FileText className="h-3.5 w-3.5" />Resume
-                </a>
-              )}
+              {/* Academic Subtitle */}
+              <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs sm:text-sm text-muted-foreground">
+                <span className="font-semibold text-foreground">
+                  {formData.branch || profile?.branch ? `${formData.branch || profile?.branch} Engineering` : "B.Tech"}
+                </span>
+                <span className="opacity-40">•</span>
+                <span>{formData.course || "Bachelor of Technology"}</span>
+                {formData.currentSemester && (
+                  <>
+                    <span className="opacity-40">•</span>
+                    <span>Semester {formData.currentSemester}</span>
+                  </>
+                )}
+                <span className="opacity-40">•</span>
+                <span>Class of {formData.year || profile?.year || "2027"}</span>
+                {!!profile?.cgpa && Number(profile.cgpa) > 0 && (
+                  <>
+                    <span className="opacity-40">•</span>
+                    <span className="font-bold text-amber-800 bg-amber-500/10 px-2 py-0.5 rounded-sm border border-amber-500/20 font-mono text-xs">
+                      CGPA {Number(profile.cgpa).toFixed(2)}
+                    </span>
+                  </>
+                )}
+              </div>
+
+              {/* Roll Number & Admission ID Pills */}
+              <div className="flex flex-wrap items-center gap-2 pt-1 font-mono text-xs text-muted-foreground">
+                <span className="inline-flex items-center gap-1.5 bg-muted/60 px-2.5 py-1 rounded-sm border border-border/50">
+                  <Award className="h-3.5 w-3.5 text-amber-700" />
+                  Roll: <strong className="text-foreground tracking-wider font-semibold">{formData.rollNo || profile?.rollNo || "—"}</strong>
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-muted/60 px-2.5 py-1 rounded-sm border border-border/50">
+                  <Fingerprint className="h-3.5 w-3.5 text-amber-700" />
+                  Adm: <strong className="text-foreground tracking-wider font-semibold">{formData.admissionId || profile?.admissionId || "—"}</strong>
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Completion Bar */}
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-foreground">Profile Readiness</span>
-              <span className={cn("text-xs font-bold tabular-nums", completionScore >= 80 ? "text-brown-900" : completionScore >= 50 ? "text-brown-900" : "text-destructive")}>
-                {completionScore}%
-              </span>
+          {/* Right: Placement Readiness & Digital Footprint */}
+          <div className="flex flex-col sm:items-end justify-between gap-3 shrink-0 border-t lg:border-t-0 pt-4 lg:pt-0 border-border/40">
+            {/* Profile Readiness Gauge */}
+            <div className="space-y-1.5 w-full sm:w-56">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Placement Readiness</span>
+                <span
+                  className={cn(
+                    "font-mono font-bold text-sm",
+                    completionScore >= 80 ? "text-emerald-600" : completionScore >= 50 ? "text-amber-700" : "text-destructive"
+                  )}
+                >
+                  {completionScore}%
+                </span>
+              </div>
+              <Progress
+                value={completionScore}
+                className="h-2 rounded-full [&>div]:bg-[var(--progress-color)]"
+                style={
+                  {
+                    "--progress-color":
+                      completionScore >= 80 ? "#10B981" : completionScore >= 50 ? "#E8A020" : "#EF4444"
+                  } as any
+                }
+              />
+              {completionScore < 100 && (
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground pt-0.5">
+                  <span>Next step:</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const pending = completionItems.find(i => !i.done);
+                      if (pending?.label === "Basic Details") setActiveTab("basic");
+                      else if (pending?.label.includes("Class") || pending?.label.includes("Semester")) setActiveTab("academic");
+                      else if (pending?.label.includes("Contact")) setActiveTab("personal");
+                      else setActiveTab("profiles");
+                    }}
+                    className="text-amber-700 font-semibold underline hover:text-amber-800 transition-colors"
+                  >
+                    + Complete {completionItems.find(i => !i.done)?.label}
+                  </button>
+                </div>
+              )}
             </div>
-            <Progress value={completionScore} className="h-2 [&>div]:bg-[var(--progress-color)]"
-              style={{ "--progress-color": completionScore >= 80 ? "rgb(var(--primary))" : completionScore >= 50 ? "rgb(var(--accent))" : "rgb(var(--destructive))" } as any}
-            />
-            {completionScore < 100 && (
-              <p className="text-[10px] text-muted-foreground">
-                Incomplete: {completionItems.filter(i => !i.done).map(i => i.label).join(" · ")}
-              </p>
-            )}
+
+            {/* Connected Social Pills */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              {formData.linkedinId && (
+                <a
+                  href={`https://linkedin.com/in/${formData.linkedinId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-sm border border-[#0A66C2]/20 bg-[#0A66C2]/10 px-2.5 py-1 text-xs font-semibold text-[#0A66C2] hover:bg-[#0A66C2]/20 transition-all shadow-sm"
+                >
+                  <Linkedin className="h-3.5 w-3.5" />
+                  LinkedIn
+                </a>
+              )}
+              {formData.githubId && (
+                <a
+                  href={`https://github.com/${formData.githubId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-sm border border-border/70 bg-muted/60 px-2.5 py-1 text-xs font-semibold text-foreground hover:bg-muted transition-all shadow-sm"
+                >
+                  <Github className="h-3.5 w-3.5" />
+                  GitHub
+                </a>
+              )}
+              {formData.leetcodeId && (
+                <a
+                  href={`https://leetcode.com/${formData.leetcodeId}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-sm border border-[#FFA116]/20 bg-[#FFA116]/10 px-2.5 py-1 text-xs font-semibold text-[#D97706] hover:bg-[#FFA116]/20 transition-all shadow-sm"
+                >
+                  <Code2 className="h-3.5 w-3.5" />
+                  LeetCode
+                </a>
+              )}
+              {formData.resumeLink ? (
+                <a
+                  href={formData.resumeLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-sm border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-800 hover:bg-emerald-500/20 transition-all shadow-sm"
+                >
+                  <FileText className="h-3.5 w-3.5 text-emerald-700" />
+                  Resume ↗
+                </a>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("profiles")}
+                  className="inline-flex items-center gap-1 rounded-sm border border-dashed border-border/70 px-2.5 py-1 text-xs text-muted-foreground hover:text-foreground hover:border-border transition-colors"
+                >
+                  <FileText className="h-3.5 w-3.5" /> + Add Resume
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ════ CONTENT TABS ═══════════════════════════════════════════════════ */}
-      <Tabs defaultValue="basic" className="w-full">
-        <TabsList className="overflow-x-auto hide-scrollbar w-full justify-start rounded-none border-b bg-transparent p-0 mb-8 flex h-auto gap-2">
-          <TabsTrigger value="basic" className="relative rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:bg-transparent !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
-            <User className="h-4 w-4 mr-2" />Basic
+      {/* ════════════════════════════════════════════════════════════════════════ */}
+      {/* 🧭 STRUCTURED SECTION TABS                                              */}
+      {/* ════════════════════════════════════════════════════════════════════════ */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="w-full h-auto min-h-0 justify-start rounded-md border border-border/70 bg-card p-1 mb-6 flex overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden gap-1 shadow-xs scroll-smooth shrink-0 sm:grid sm:grid-cols-4">
+          {/* Basic Details */}
+          <TabsTrigger
+            value="basic"
+            className="group h-auto flex-1 min-w-[130px] sm:min-w-0 rounded-sm px-3.5 py-2 text-xs font-semibold text-muted-foreground transition-all duration-200 data-[state=active]:bg-brown-800 data-[state=active]:text-cream data-[state=active]:shadow-xs hover:bg-muted/50 hover:text-foreground shrink-0 sm:shrink flex items-center justify-center gap-2"
+          >
+            <User className="h-4 w-4 shrink-0 text-muted-foreground group-data-[state=active]:text-amber-300 transition-colors" />
+            <span className="truncate">Basic Details</span>
           </TabsTrigger>
-          <TabsTrigger value="academic" disabled={!profile?.isBasicInfoLocked} className="relative rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:bg-transparent !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
-            <GraduationCap className="h-4 w-4 mr-2" />Academic {!profile?.isBasicInfoLocked && "🔒"}
+
+          {/* Academic Standing */}
+          <TabsTrigger
+            value="academic"
+            disabled={!profile?.isBasicInfoLocked}
+            className="group h-auto flex-1 min-w-[145px] sm:min-w-0 rounded-sm px-3.5 py-2 text-xs font-semibold text-muted-foreground transition-all duration-200 data-[state=active]:bg-brown-800 data-[state=active]:text-cream data-[state=active]:shadow-xs hover:bg-muted/50 hover:text-foreground shrink-0 sm:shrink flex items-center justify-center gap-2 disabled:opacity-40"
+          >
+            <GraduationCap className="h-4 w-4 shrink-0 text-muted-foreground group-data-[state=active]:text-amber-300 transition-colors" />
+            <span className="truncate">Academic Standing</span>
           </TabsTrigger>
-          <TabsTrigger value="personal" disabled={!profile?.isBasicInfoLocked} className="relative rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:bg-transparent !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
-            <Phone className="h-4 w-4 mr-2" />Contact {!profile?.isBasicInfoLocked && "🔒"}
+
+          {/* Contact & Family */}
+          <TabsTrigger
+            value="personal"
+            disabled={!profile?.isBasicInfoLocked}
+            className="group h-auto flex-1 min-w-[135px] sm:min-w-0 rounded-sm px-3.5 py-2 text-xs font-semibold text-muted-foreground transition-all duration-200 data-[state=active]:bg-brown-800 data-[state=active]:text-cream data-[state=active]:shadow-xs hover:bg-muted/50 hover:text-foreground shrink-0 sm:shrink flex items-center justify-center gap-2 disabled:opacity-40"
+          >
+            <Phone className="h-4 w-4 shrink-0 text-muted-foreground group-data-[state=active]:text-amber-300 transition-colors" />
+            <span className="truncate">Contact &amp; Family</span>
           </TabsTrigger>
-          <TabsTrigger value="career" className="relative rounded-none border-x-0 border-t-0 border-b-2 border-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-brown-800 data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:bg-transparent !outline-none !ring-0 !ring-offset-0 !focus-visible:ring-0 !focus-visible:ring-offset-0 !focus-visible:outline-none !focus-visible:border-transparent">
-            <Briefcase className="h-4 w-4 mr-2" />Career
+
+          {/* Online Profiles */}
+          <TabsTrigger
+            value="profiles"
+            className="group h-auto flex-1 min-w-[130px] sm:min-w-0 rounded-sm px-3.5 py-2 text-xs font-semibold text-muted-foreground transition-all duration-200 data-[state=active]:bg-brown-800 data-[state=active]:text-cream data-[state=active]:shadow-xs hover:bg-muted/50 hover:text-foreground shrink-0 sm:shrink flex items-center justify-center gap-2"
+          >
+            <Globe className="h-4 w-4 shrink-0 text-muted-foreground group-data-[state=active]:text-amber-300 transition-colors" />
+            <span className="truncate">Online Profiles</span>
           </TabsTrigger>
         </TabsList>
 
-        {/* ── BASIC DETAILS TAB ─────────────────────────────────────────── */}
-        <TabsContent value="basic" className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {/* Section: Core Identity */}
-          <div className="space-y-8">
-            <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
-                  <Fingerprint className="h-5 w-5 text-brown-900/70" />
+        {/* ── 1. BASIC DETAILS TAB ─────────────────────────────────────────── */}
+        <TabsContent value="basic" className="space-y-6 animate-in fade-in duration-300">
+          {/* Card: Core Identity */}
+          <Card className="border-border/60 shadow-sm">
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border/40 pb-4 gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-brown-800/10 text-brown-800">
+                  <Fingerprint className="h-4 w-4" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold text-brown-900 tracking-tight">Core Identity</h3>
-                  <p className="text-sm text-muted-foreground">Foundational information for verification</p>
-                </div>
+                <CardTitle className="text-base font-bold text-foreground">Core Identity</CardTitle>
               </div>
-              {profile?.isBasicInfoLocked ? <LockedBadge /> : <LockButton onClick={handleSaveBasicInfo} saving={saving === "basic"} disabled={!!isLocked} />}
-            </div>
-
-            <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-md border border-border/40 relative overflow-hidden group/card">
-              <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover/card:opacity-[0.07] transition-opacity">
-                <Fingerprint className="h-24 w-24 text-brown-900" />
-              </div>
-              
-              <div className="grid gap-8 md:grid-cols-4 relative z-10">
-                <FieldRow label="Full Name" required error={errors.name} icon={User} className="md:col-span-2">
-                  <Input name="name" value={formData.name} onChange={handleInputChange} placeholder="As per official documents" disabled={!!isLocked || !!profile?.isBasicInfoLocked} className={cn("h-12 bg-white border-border/40 shadow-sm transition-all focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium", errors.name && "border-destructive", (isLocked || profile?.isBasicInfoLocked) && "bg-muted/20")} />
+              {profile?.isBasicInfoLocked ? (
+                <LockedBadge />
+              ) : (
+                <LockButton onClick={handleSaveBasicInfo} saving={saving === "basic"} disabled={!!isLocked} />
+              )}
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+                <FieldRow label="Full Name" required error={errors.name} icon={User} className="sm:col-span-2">
+                  <Input
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="As per official certificates"
+                    disabled={!!isLocked || !!profile?.isBasicInfoLocked}
+                    className={cn(
+                      "h-10 rounded-sm bg-card",
+                      errors.name && "border-destructive",
+                      (isLocked || profile?.isBasicInfoLocked) && "bg-muted/30"
+                    )}
+                  />
                 </FieldRow>
-                <FieldRow label="Date of Birth" required error={errors.dob} icon={Calendar} className="md:col-span-1">
-                  <Input type="date" name="dob" value={formData.dob} onChange={handleInputChange} disabled={!!isLocked || !!profile?.isBasicInfoLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base transition-all", (isLocked || profile?.isBasicInfoLocked) && "bg-muted/20", errors.dob && "border-destructive")} />
+                <FieldRow label="Date of Birth" required error={errors.dob} icon={Calendar}>
+                  <Input
+                    type="date"
+                    name="dob"
+                    value={formData.dob}
+                    onChange={handleInputChange}
+                    disabled={!!isLocked || !!profile?.isBasicInfoLocked}
+                    className={cn(
+                      "h-10 rounded-sm bg-card",
+                      (isLocked || profile?.isBasicInfoLocked) && "bg-muted/30",
+                      errors.dob && "border-destructive"
+                    )}
+                  />
                 </FieldRow>
-                <FieldRow label="Gender" required error={errors.gender} icon={User} className="md:col-span-1">
-                  <Select value={formData.gender} onValueChange={v => setFormData(p => ({ ...p, gender: v }))} disabled={!!isLocked || !!profile?.isBasicInfoLocked}>
-                    <SelectTrigger className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium transition-all", (isLocked || profile?.isBasicInfoLocked) && "bg-muted/20", errors.gender && "border-destructive")}><SelectValue placeholder="Select" /></SelectTrigger>
-                    <SelectContent><SelectItem value="Male">Male</SelectItem><SelectItem value="Female">Female</SelectItem><SelectItem value="Other">Other</SelectItem></SelectContent>
+                <FieldRow label="Gender" required error={errors.gender} icon={User}>
+                  <Select
+                    value={formData.gender}
+                    onValueChange={v => setFormData(p => ({ ...p, gender: v }))}
+                    disabled={!!isLocked || !!profile?.isBasicInfoLocked}
+                  >
+                    <SelectTrigger
+                      className={cn(
+                        "h-10 rounded-sm bg-card",
+                        (isLocked || profile?.isBasicInfoLocked) && "bg-muted/30",
+                        errors.gender && "border-destructive"
+                      )}
+                    >
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
                   </Select>
                 </FieldRow>
               </div>
-              
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          {/* Section: Academic Standing */}
-          <div className="space-y-8">
-            <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
-                  <GraduationCap className="h-5 w-5 text-brown-900/70" />
+          {/* Card: Academic Standing & University Identifiers */}
+          <Card className="border-border/60 shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between border-b border-border/40 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-brown-800/10 text-brown-800">
+                  <GraduationCap className="h-4 w-4" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold text-brown-900 tracking-tight">Academic Standing</h3>
-                  <p className="text-sm text-muted-foreground">University records and eligibility context</p>
-                </div>
+                <CardTitle className="text-base font-bold text-foreground">Academic Standing &amp; University Info</CardTitle>
               </div>
-            </div>
-
-            <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-md border border-border/40 relative overflow-hidden group/card">
-              <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover/card:opacity-[0.07] transition-opacity">
-                <GraduationCap className="h-24 w-24 text-brown-900" />
-              </div>
-              
-              {/* Row 1: College Name */}
-              <div className="grid gap-8 md:grid-cols-4 relative z-10">
-                <FieldRow label="College Name" icon={Home} className="md:col-span-4">
-                  <Input value="G.L. Bajaj Institute of Technology and Management" disabled className="h-12 bg-muted/20 border-border/40 shadow-sm font-semibold text-brown-900/80" />
+            </CardHeader>
+            <CardContent className="pt-6 space-y-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                <FieldRow label="Institution" icon={Home}>
+                  <Input value="G.L. Bajaj Institute of Technology and Management" disabled className="h-10 rounded-sm bg-muted/30 font-semibold" />
+                </FieldRow>
+                <FieldRow label="Degree Course" icon={BookOpen}>
+                  <Input value={formData.course || "Bachelor of Technology"} disabled className="h-10 rounded-sm bg-muted/30 font-semibold" />
                 </FieldRow>
               </div>
 
-              {/* Row 2: Degree & Branch */}
-              <div className="grid gap-8 md:grid-cols-2 relative z-10">
-                <FieldRow label="Degree Course" icon={BookOpen}>
-                  <Input value={formData.course || "Bachelor of Technology"} disabled className="h-12 bg-muted/20 border-border/40 shadow-sm font-bold text-brown-900/80" />
+              <div className="grid gap-6 md:grid-cols-2">
+                <FieldRow label="Entry Category" required error={errors.studentType} icon={Award}>
+                  <Select
+                    value={formData.studentType}
+                    onValueChange={v => setFormData(p => ({ ...p, studentType: v }))}
+                    disabled={!!isLocked || !!profile?.isBasicInfoLocked}
+                  >
+                    <SelectTrigger
+                      className={cn(
+                        "h-10 rounded-sm bg-card",
+                        errors.studentType && "border-destructive",
+                        (isLocked || profile?.isBasicInfoLocked) && "bg-muted/30"
+                      )}
+                    >
+                      <SelectValue placeholder="Select Entry Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Regular Entry">Regular Entry (4 Years)</SelectItem>
+                      <SelectItem value="Lateral Entry">Lateral Entry (Diploma / 3 Years)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FieldRow>
                 <FieldRow label="Branch Name" required error={errors.branch} icon={Briefcase}>
-                  <Select value={formData.branch} onValueChange={v => setFormData(p => ({ ...p, branch: v }))} disabled={!!isLocked || !!profile?.isBasicInfoLocked}>
-                    <SelectTrigger className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-semibold text-brown-900/80 transition-all", errors.branch && "border-destructive", (isLocked || profile?.isBasicInfoLocked) && "bg-muted/20")}><SelectValue placeholder="Select Branch" /></SelectTrigger>
-                    <SelectContent>{BRANCHES.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
+                  <Select
+                    value={formData.branch}
+                    onValueChange={v => setFormData(p => ({ ...p, branch: v }))}
+                    disabled={!!isLocked || !!profile?.isBasicInfoLocked}
+                  >
+                    <SelectTrigger
+                      className={cn(
+                        "h-10 rounded-sm bg-card font-semibold",
+                        errors.branch && "border-destructive",
+                        (isLocked || profile?.isBasicInfoLocked) && "bg-muted/30"
+                      )}
+                    >
+                      <SelectValue placeholder="Select Branch" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {BRANCHES.map(b => (
+                        <SelectItem key={b} value={b}>
+                          {b}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                 </FieldRow>
               </div>
 
-              {/* Row 3: Official Email & Roll No */}
-              <div className="grid gap-8 md:grid-cols-2 relative z-10">
-                <FieldRow label="Official Email" icon={Mail}>
-                  <div className="relative">
-                    <Input value={user?.email || ""} disabled className="h-12 bg-muted/20 border-border/40 shadow-sm font-mono text-sm pl-10 text-brown-900/80" />
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
-                  </div>
+              <div className="grid gap-6 md:grid-cols-2">
+                <FieldRow label="Official Student Email" icon={Mail}>
+                  <Input value={user?.email || ""} disabled className="h-10 rounded-sm bg-muted/30 font-mono text-xs" />
                 </FieldRow>
                 <FieldRow label="University Roll No" required error={errors.rollNo} icon={Award}>
-                  <Input name="rollNo" value={formData.rollNo} onChange={handleInputChange} placeholder="13-digit number" maxLength={13} disabled={!!isLocked || !!profile?.isBasicInfoLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 font-mono text-lg tracking-widest transition-all", errors.rollNo && "border-destructive", (isLocked || profile?.isBasicInfoLocked) && "bg-muted/20")} />
+                  <Input
+                    name="rollNo"
+                    value={formData.rollNo}
+                    onChange={handleInputChange}
+                    placeholder="13-digit university number"
+                    maxLength={13}
+                    disabled={!!isLocked || !!profile?.isBasicInfoLocked}
+                    className={cn(
+                      "h-10 rounded-sm bg-card font-mono tracking-wider",
+                      errors.rollNo && "border-destructive",
+                      (isLocked || profile?.isBasicInfoLocked) && "bg-muted/30"
+                    )}
+                  />
                 </FieldRow>
               </div>
 
-              {/* Row 4: Admission ID, Batch, Semester */}
-              <div className="grid gap-8 md:grid-cols-4 relative z-10">
-                <FieldRow label="Admission ID" required error={errors.admissionId} icon={Fingerprint} className="md:col-span-2">
-                  <Input name="admissionId" value={formData.admissionId} onChange={handleInputChange} placeholder="e.g. 23B0101001" disabled={!!isLocked || !!profile?.isBasicInfoLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 font-mono tracking-wider uppercase transition-all", (isLocked || profile?.isBasicInfoLocked) && "bg-muted/20", errors.admissionId && "border-destructive")} />
+              <div className="grid gap-6 md:grid-cols-3">
+                <FieldRow label="Admission ID" required error={errors.admissionId} icon={Fingerprint}>
+                  <Input
+                    name="admissionId"
+                    value={formData.admissionId}
+                    onChange={handleInputChange}
+                    placeholder="e.g. 23B0101001"
+                    disabled={!!isLocked || !!profile?.isBasicInfoLocked}
+                    className={cn(
+                      "h-10 rounded-sm bg-card font-mono uppercase",
+                      errors.admissionId && "border-destructive",
+                      (isLocked || profile?.isBasicInfoLocked) && "bg-muted/30"
+                    )}
+                  />
                 </FieldRow>
-                <FieldRow label="Batch Year" required error={errors.year} icon={Calendar} className="md:col-span-1">
-                  <Select value={formData.year} onValueChange={v => setFormData(p => ({ ...p, year: v }))} disabled={!!isLocked || !!profile?.isBasicInfoLocked}>
-                    <SelectTrigger className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base transition-all", errors.year && "border-destructive", (isLocked || profile?.isBasicInfoLocked) && "bg-muted/20")}><SelectValue placeholder="Graduation" /></SelectTrigger>
-                    <SelectContent>{getYearOptions().map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}</SelectContent>
+                <FieldRow label="Passing Year (Batch)" required error={errors.year} icon={Calendar}>
+                  <Select
+                    value={formData.year}
+                    onValueChange={v => setFormData(p => ({ ...p, year: v }))}
+                    disabled={!!isLocked || !!profile?.isBasicInfoLocked}
+                  >
+                    <SelectTrigger
+                      className={cn(
+                        "h-10 rounded-sm bg-card",
+                        errors.year && "border-destructive",
+                        (isLocked || profile?.isBasicInfoLocked) && "bg-muted/30"
+                      )}
+                    >
+                      <SelectValue placeholder="Graduation Year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getYearOptions().map(y => (
+                        <SelectItem key={y} value={y}>
+                          {y}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                 </FieldRow>
-                <FieldRow label="Current Semester" required error={errors.currentSemester} icon={BookOpen} className="md:col-span-1">
-                  <Select value={formData.currentSemester} onValueChange={v => setFormData(p => ({ ...p, currentSemester: v }))} disabled={!!isLocked || !!profile?.isBasicInfoLocked}>
-                    <SelectTrigger className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base transition-all", errors.currentSemester && "border-destructive", (isLocked || profile?.isBasicInfoLocked) && "bg-muted/20")}><SelectValue placeholder="Sem" /></SelectTrigger>
-                    <SelectContent>{getSemesterOptions(formData.studentType).map(s => <SelectItem key={s} value={s.toString()}>Semester {s}</SelectItem>)}</SelectContent>
+                <FieldRow label="Current Semester" required error={errors.currentSemester} icon={BookOpen}>
+                  <Select
+                    value={formData.currentSemester}
+                    onValueChange={v => setFormData(p => ({ ...p, currentSemester: v }))}
+                    disabled={!!isLocked || !!profile?.isBasicInfoLocked}
+                  >
+                    <SelectTrigger
+                      className={cn(
+                        "h-10 rounded-sm bg-card",
+                        errors.currentSemester && "border-destructive",
+                        (isLocked || profile?.isBasicInfoLocked) && "bg-muted/30"
+                      )}
+                    >
+                      <SelectValue placeholder="Select Semester" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {getSemesterOptions(formData.studentType).map(s => (
+                        <SelectItem key={s} value={s.toString()}>
+                          Semester {s}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                 </FieldRow>
               </div>
-            </div>
-          </div>
-          
+            </CardContent>
+          </Card>
         </TabsContent>
 
-        {/* ── ACADEMIC TAB ──────────────────────────────────────────────── */}
-        <TabsContent value="academic" className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          {/* Section: Secondary Education */}
-          <div className="space-y-8">
-            <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
-              <div className="flex items-center gap-4">
-                <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
-                  <BookOpen className="h-5 w-5 text-brown-900/70" />
+        {/* ── 2. ACADEMIC STANDING TAB ─────────────────────────────────────── */}
+        <TabsContent value="academic" className="space-y-6 animate-in fade-in duration-300">
+          {/* Card: Class 10th */}
+          <Card className="border-border/60 shadow-sm">
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border/40 pb-4 gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-brown-800/10 text-brown-800">
+                  <BookOpen className="h-4 w-4" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold text-brown-900 tracking-tight">Secondary Education</h3>
-                  <p className="text-sm text-muted-foreground">Class 10th records and board verification</p>
-                </div>
+                <CardTitle className="text-base font-bold text-foreground">Secondary Education (Class 10th)</CardTitle>
               </div>
-              {profile?.isClass10Locked ? <LockedBadge /> : <LockButton onClick={handleSaveClass10} saving={saving === "class10"} disabled={!!isLocked} />}
-            </div>
+              {profile?.isClass10Locked ? (
+                <LockedBadge />
+              ) : (
+                <LockButton onClick={handleSaveClass10} saving={saving === "class10"} disabled={!!isLocked} />
+              )}
+            </CardHeader>
+            <CardContent className="pt-6 space-y-6">
+              <FieldRow label="School Name" required error={errors.class10School} icon={Home}>
+                <Input
+                  name="class10School"
+                  value={formData.class10School}
+                  onChange={handleInputChange}
+                  placeholder="Full name of secondary school"
+                  disabled={!!isLocked || !!profile?.isClass10Locked}
+                  className={cn(
+                    "h-10 rounded-sm bg-card",
+                    errors.class10School && "border-destructive",
+                    (isLocked || profile?.isClass10Locked) && "bg-muted/30"
+                  )}
+                />
+              </FieldRow>
 
-            <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-md border border-border/40 relative overflow-hidden group/card">
-              <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover/card:opacity-[0.07] transition-opacity">
-                <BookOpen className="h-24 w-24 text-brown-900" />
-              </div>
-              
-              <div className="grid gap-8 md:grid-cols-1 relative z-10">
-                <FieldRow label="School Name" required error={errors.class10School} icon={Home}>
-                  <Input name="class10School" value={formData.class10School} onChange={handleInputChange} placeholder="Full name of your school" disabled={!!isLocked || !!profile?.isClass10Locked} className={cn("h-12 bg-white border-border/40 shadow-sm transition-all focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium", errors.class10School && "border-destructive", (isLocked || profile?.isClass10Locked) && "bg-muted/20")} />
-                </FieldRow>
-              </div>
-
-              <div className="grid gap-8 md:grid-cols-2 relative z-10">
-                <FieldRow label="Board" required error={errors.class10Board} icon={Award}>
-                  <Select value={formData.class10Board} onValueChange={v => { setFormData(p => ({ ...p, class10Board: v })); clearFieldError("class10Board"); }} disabled={!!isLocked || !!profile?.isClass10Locked}>
-                    <SelectTrigger className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium transition-all", (isLocked || profile?.isClass10Locked) && "bg-muted/20", errors.class10Board && "border-destructive")}><SelectValue placeholder="Select Board" /></SelectTrigger>
-                    <SelectContent>{BOARDS.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
+              <div className="grid gap-6 md:grid-cols-3">
+                <FieldRow label="Board of Education" required error={errors.class10Board} icon={Award}>
+                  <Select
+                    value={formData.class10Board}
+                    onValueChange={v => {
+                      setFormData(p => ({ ...p, class10Board: v }));
+                      clearFieldError("class10Board");
+                    }}
+                    disabled={!!isLocked || !!profile?.isClass10Locked}
+                  >
+                    <SelectTrigger
+                      className={cn(
+                        "h-10 rounded-sm bg-card",
+                        (isLocked || profile?.isClass10Locked) && "bg-muted/30",
+                        errors.class10Board && "border-destructive"
+                      )}
+                    >
+                      <SelectValue placeholder="Select Board" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {BOARDS.map(b => (
+                        <SelectItem key={b} value={b}>
+                          {b}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
                   </Select>
                 </FieldRow>
-                <div className="grid grid-cols-2 gap-6">
-                  <FieldRow label="Passing Year" required error={errors.class10Year} icon={GraduationCap}>
-                    <Select value={formData.class10Year} onValueChange={v => { setFormData(p => ({ ...p, class10Year: v })); clearFieldError("class10Year"); }} disabled={!!isLocked || !!profile?.isClass10Locked}>
-                      <SelectTrigger className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium transition-all", (isLocked || profile?.isClass10Locked) && "bg-muted/20", errors.class10Year && "border-destructive")}><SelectValue placeholder="Year" /></SelectTrigger>
-                      <SelectContent>{PASSING_YEARS.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}</SelectContent>
-                    </Select>
-                  </FieldRow>
-                  <FieldRow label="Overall %" required error={errors.class10Percentage} icon={FileText}>
-                    <div className="relative group">
-                      <Input name="class10Percentage" value={formData.class10Percentage} onChange={handleInputChange} placeholder="85.5" disabled={!!isLocked || !!profile?.isClass10Locked} className={cn("h-12 pr-10 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base transition-all", errors.class10Percentage && "border-destructive", (isLocked || profile?.isClass10Locked) && "bg-muted/20")} />
-                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold opacity-40">%</span>
-                    </div>
-                  </FieldRow>
-                </div>
+                <FieldRow label="Passing Year" required error={errors.class10Year} icon={GraduationCap}>
+                  <Select
+                    value={formData.class10Year}
+                    onValueChange={v => {
+                      setFormData(p => ({ ...p, class10Year: v }));
+                      clearFieldError("class10Year");
+                    }}
+                    disabled={!!isLocked || !!profile?.isClass10Locked}
+                  >
+                    <SelectTrigger
+                      className={cn(
+                        "h-10 rounded-sm bg-card",
+                        (isLocked || profile?.isClass10Locked) && "bg-muted/30",
+                        errors.class10Year && "border-destructive"
+                      )}
+                    >
+                      <SelectValue placeholder="Year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PASSING_YEARS.map(y => (
+                        <SelectItem key={y} value={y}>
+                          {y}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FieldRow>
+                <FieldRow label="Overall Percentage" required error={errors.class10Percentage} icon={FileText}>
+                  <div className="relative">
+                    <Input
+                      name="class10Percentage"
+                      value={formData.class10Percentage}
+                      onChange={handleInputChange}
+                      placeholder="e.g. 85.5"
+                      disabled={!!isLocked || !!profile?.isClass10Locked}
+                      className={cn(
+                        "h-10 rounded-sm bg-card pr-8 font-mono",
+                        errors.class10Percentage && "border-destructive",
+                        (isLocked || profile?.isClass10Locked) && "bg-muted/30"
+                      )}
+                    />
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">%</span>
+                  </div>
+                </FieldRow>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          {/* Section: Senior Secondary */}
+          {/* Card: Class 12th (Regular Entry) */}
           {formData.studentType === "Regular Entry" && (
-            <div className="space-y-8">
-              <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
-                <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
-                    <GraduationCap className="h-5 w-5 text-brown-900/70" />
+            <Card className="border-border/60 shadow-sm">
+              <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border/40 pb-4 gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-brown-800/10 text-brown-800">
+                    <GraduationCap className="h-4 w-4" />
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-brown-900 tracking-tight">Senior Secondary</h3>
-                    <p className="text-sm text-muted-foreground">Class 12th records and PCM proficiency</p>
-                  </div>
+                  <CardTitle className="text-base font-bold text-foreground">Senior Secondary (Class 12th)</CardTitle>
                 </div>
-                {profile?.isClass12Locked ? <LockedBadge /> : <LockButton onClick={handleSaveClass12} saving={saving === "class12"} disabled={!!isLocked} />}
-              </div>
+                {profile?.isClass12Locked ? (
+                  <LockedBadge />
+                ) : (
+                  <LockButton onClick={handleSaveClass12} saving={saving === "class12"} disabled={!!isLocked} />
+                )}
+              </CardHeader>
+              <CardContent className="pt-6 space-y-6">
+                <FieldRow label="School Name" required error={errors.class12School} icon={Home}>
+                  <Input
+                    name="class12School"
+                    value={formData.class12School}
+                    onChange={handleInputChange}
+                    placeholder="Full name of senior secondary school"
+                    disabled={!!isLocked || !!profile?.isClass12Locked}
+                    className={cn(
+                      "h-10 rounded-sm bg-card",
+                      errors.class12School && "border-destructive",
+                      (isLocked || profile?.isClass12Locked) && "bg-muted/30"
+                    )}
+                  />
+                </FieldRow>
 
-              <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-md border border-border/40 relative overflow-hidden group/card">
-                <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover/card:opacity-[0.07] transition-opacity">
-                  <GraduationCap className="h-24 w-24 text-brown-900" />
-                </div>
-                
-                <div className="grid gap-8 md:grid-cols-1 relative z-10">
-                  <FieldRow label="School Name" required error={errors.class12School} icon={Home}>
-                    <Input name="class12School" value={formData.class12School} onChange={handleInputChange} placeholder="Full name of your school" disabled={!!isLocked || !!profile?.isClass12Locked} className={cn("h-12 bg-white border-border/40 shadow-sm transition-all focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium", errors.class12School && "border-destructive", (isLocked || profile?.isClass12Locked) && "bg-muted/20")} />
-                  </FieldRow>
-                </div>
-
-                <div className="grid gap-8 md:grid-cols-2 relative z-10">
-                  <FieldRow label="Board" required error={errors.class12Board} icon={Award}>
-                    <Select value={formData.class12Board} onValueChange={v => { setFormData(p => ({ ...p, class12Board: v })); clearFieldError("class12Board"); }} disabled={!!isLocked || !!profile?.isClass12Locked}>
-                      <SelectTrigger className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base transition-all", (isLocked || profile?.isClass12Locked) && "bg-muted/20", errors.class12Board && "border-destructive")}><SelectValue placeholder="Select Board" /></SelectTrigger>
-                      <SelectContent>{BOARDS.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
+                <div className="grid gap-6 md:grid-cols-2">
+                  <FieldRow label="Board of Education" required error={errors.class12Board} icon={Award}>
+                    <Select
+                      value={formData.class12Board}
+                      onValueChange={v => {
+                        setFormData(p => ({ ...p, class12Board: v }));
+                        clearFieldError("class12Board");
+                      }}
+                      disabled={!!isLocked || !!profile?.isClass12Locked}
+                    >
+                      <SelectTrigger
+                        className={cn(
+                          "h-10 rounded-sm bg-card",
+                          (isLocked || profile?.isClass12Locked) && "bg-muted/30",
+                          errors.class12Board && "border-destructive"
+                        )}
+                      >
+                        <SelectValue placeholder="Select Board" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BOARDS.map(b => (
+                          <SelectItem key={b} value={b}>
+                            {b}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                   </FieldRow>
                   <FieldRow label="Passing Year" required error={errors.class12Year} icon={Calendar}>
-                    <Select value={formData.class12Year} onValueChange={v => { setFormData(p => ({ ...p, class12Year: v })); clearFieldError("class12Year"); }} disabled={!!isLocked || !!profile?.isClass12Locked}>
-                      <SelectTrigger className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium transition-all", (isLocked || profile?.isClass12Locked) && "bg-muted/20", errors.class12Year && "border-destructive")}><SelectValue placeholder="Select Year" /></SelectTrigger>
-                      <SelectContent>{PASSING_YEARS.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}</SelectContent>
+                    <Select
+                      value={formData.class12Year}
+                      onValueChange={v => {
+                        setFormData(p => ({ ...p, class12Year: v }));
+                        clearFieldError("class12Year");
+                      }}
+                      disabled={!!isLocked || !!profile?.isClass12Locked}
+                    >
+                      <SelectTrigger
+                        className={cn(
+                          "h-10 rounded-sm bg-card",
+                          (isLocked || profile?.isClass12Locked) && "bg-muted/30",
+                          errors.class12Year && "border-destructive"
+                        )}
+                      >
+                        <SelectValue placeholder="Select Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PASSING_YEARS.map(y => (
+                          <SelectItem key={y} value={y}>
+                            {y}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                   </FieldRow>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 relative z-10">
-                  <FieldRow label="Overall %" required error={errors.class12Percentage} icon={FileText}>
-                    <div className="relative group">
-                      <Input name="class12Percentage" value={formData.class12Percentage} onChange={handleInputChange} placeholder="85.0" disabled={!!isLocked || !!profile?.isClass12Locked} className={cn("h-12 pr-10 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base transition-all", errors.class12Percentage && "border-destructive", (isLocked || profile?.isClass12Locked) && "bg-muted/20")} />
-                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold opacity-40">%</span>
+                <div className="grid gap-6 sm:grid-cols-3">
+                  <FieldRow label="Overall Percentage" required error={errors.class12Percentage} icon={FileText}>
+                    <div className="relative">
+                      <Input
+                        name="class12Percentage"
+                        value={formData.class12Percentage}
+                        onChange={handleInputChange}
+                        placeholder="85.0"
+                        disabled={!!isLocked || !!profile?.isClass12Locked}
+                        className={cn(
+                          "h-10 rounded-sm bg-card pr-8 font-mono",
+                          errors.class12Percentage && "border-destructive",
+                          (isLocked || profile?.isClass12Locked) && "bg-muted/30"
+                        )}
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">%</span>
                     </div>
                   </FieldRow>
-                  <FieldRow label="PCM %" required error={errors.class12PcmPercentage} icon={Calculator}>
-                    <div className="relative group">
-                      <Input name="class12PcmPercentage" value={formData.class12PcmPercentage} onChange={handleInputChange} placeholder="82.5" disabled={!!isLocked || !!profile?.isClass12Locked} className={cn("h-12 pr-10 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base transition-all", errors.class12PcmPercentage && "border-destructive", (isLocked || profile?.isClass12Locked) && "bg-muted/20")} />
-                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold opacity-40">%</span>
+                  <FieldRow label="PCM Percentage" required error={errors.class12PcmPercentage} icon={Calculator}>
+                    <div className="relative">
+                      <Input
+                        name="class12PcmPercentage"
+                        value={formData.class12PcmPercentage}
+                        onChange={handleInputChange}
+                        placeholder="82.5"
+                        disabled={!!isLocked || !!profile?.isClass12Locked}
+                        className={cn(
+                          "h-10 rounded-sm bg-card pr-8 font-mono",
+                          errors.class12PcmPercentage && "border-destructive",
+                          (isLocked || profile?.isClass12Locked) && "bg-muted/30"
+                        )}
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">%</span>
                     </div>
                   </FieldRow>
-                  <FieldRow label="Math %" required error={errors.class12MathPercentage} icon={Divide}>
-                    <div className="relative group">
-                      <Input name="class12MathPercentage" value={formData.class12MathPercentage} onChange={handleInputChange} placeholder="90" disabled={!!isLocked || !!profile?.isClass12Locked} className={cn("h-12 pr-10 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base transition-all", errors.class12MathPercentage && "border-destructive", (isLocked || profile?.isClass12Locked) && "bg-muted/20")} />
-                      <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold opacity-40">%</span>
+                  <FieldRow label="Math Percentage" error={errors.class12MathPercentage} icon={Divide}>
+                    <div className="relative">
+                      <Input
+                        name="class12MathPercentage"
+                        value={formData.class12MathPercentage}
+                        onChange={handleInputChange}
+                        placeholder="90.0"
+                        disabled={!!isLocked || !!profile?.isClass12Locked}
+                        className={cn(
+                          "h-10 rounded-sm bg-card pr-8 font-mono",
+                          errors.class12MathPercentage && "border-destructive",
+                          (isLocked || profile?.isClass12Locked) && "bg-muted/30"
+                        )}
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">%</span>
                     </div>
                   </FieldRow>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           )}
 
-          {/* Section: Diploma Education */}
+          {/* Card: Diploma Education (Lateral Entry) */}
           {formData.studentType === "Lateral Entry" && (
-            <div className="space-y-8">
-              <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
-                <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
-                    <Award className="h-5 w-5 text-brown-900/70" />
+            <Card className="border-border/60 shadow-sm">
+              <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border/40 pb-4 gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-brown-800/10 text-brown-800">
+                    <Award className="h-4 w-4" />
                   </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-brown-900 tracking-tight">Diploma Education</h3>
-                    <p className="text-sm text-muted-foreground">Polytechnic diploma records and institute details</p>
-                  </div>
+                  <CardTitle className="text-base font-bold text-foreground">Polytechnic Diploma Education</CardTitle>
                 </div>
-                {profile?.isDiplomaLocked ? <LockedBadge /> : <LockButton onClick={handleSaveDiploma} saving={saving === "diploma"} disabled={!!isLocked} />}
-              </div>
+                {profile?.isDiplomaLocked ? (
+                  <LockedBadge />
+                ) : (
+                  <LockButton onClick={handleSaveDiploma} saving={saving === "diploma"} disabled={!!isLocked} />
+                )}
+              </CardHeader>
+              <CardContent className="pt-6 space-y-6">
+                <FieldRow label="Institute Name" required error={errors.diplomaInstitute} icon={Home}>
+                  <Input
+                    name="diplomaInstitute"
+                    value={formData.diplomaInstitute}
+                    onChange={handleInputChange}
+                    placeholder="Full name of polytechnic institute"
+                    disabled={!!isLocked || !!profile?.isDiplomaLocked}
+                    className={cn(
+                      "h-10 rounded-sm bg-card",
+                      errors.diplomaInstitute && "border-destructive",
+                      (isLocked || profile?.isDiplomaLocked) && "bg-muted/30"
+                    )}
+                  />
+                </FieldRow>
 
-              <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-md border border-border/40 relative overflow-hidden group/card">
-                <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover/card:opacity-[0.07] transition-opacity">
-                  <Award className="h-24 w-24 text-brown-900" />
-                </div>
-                
-                <div className="grid gap-8 md:grid-cols-1 relative z-10">
-                  <FieldRow label="Institute Name" required error={errors.diplomaInstitute} icon={Home}>
-                    <Input name="diplomaInstitute" value={formData.diplomaInstitute} onChange={handleInputChange} placeholder="Full name of your institute" disabled={!!isLocked || !!profile?.isDiplomaLocked} className={cn("h-12 bg-white border-border/40 shadow-sm transition-all focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium", errors.diplomaInstitute && "border-destructive", (isLocked || profile?.isDiplomaLocked) && "bg-muted/20")} />
-                  </FieldRow>
-                </div>
-
-                <div className="grid gap-8 md:grid-cols-2 relative z-10">
-                  <FieldRow label="Branch" required error={errors.diplomaBranch} icon={Briefcase}>
-                    <Select value={formData.diplomaBranch} onValueChange={v => { setFormData(p => ({ ...p, diplomaBranch: v })); clearFieldError("diplomaBranch"); }} disabled={!!isLocked || !!profile?.isDiplomaLocked}>
-                      <SelectTrigger className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium transition-all", (isLocked || profile?.isDiplomaLocked) && "bg-muted/20", errors.diplomaBranch && "border-destructive")}><SelectValue placeholder="Select Branch" /></SelectTrigger>
-                      <SelectContent>{DIPLOMA_BRANCHES.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
+                <div className="grid gap-6 md:grid-cols-3">
+                  <FieldRow label="Branch Name" required error={errors.diplomaBranch} icon={Briefcase}>
+                    <Select
+                      value={formData.diplomaBranch}
+                      onValueChange={v => {
+                        setFormData(p => ({ ...p, diplomaBranch: v }));
+                        clearFieldError("diplomaBranch");
+                      }}
+                      disabled={!!isLocked || !!profile?.isDiplomaLocked}
+                    >
+                      <SelectTrigger
+                        className={cn(
+                          "h-10 rounded-sm bg-card",
+                          (isLocked || profile?.isDiplomaLocked) && "bg-muted/30",
+                          errors.diplomaBranch && "border-destructive"
+                        )}
+                      >
+                        <SelectValue placeholder="Select Branch" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {DIPLOMA_BRANCHES.map(b => (
+                          <SelectItem key={b} value={b}>
+                            {b}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                   </FieldRow>
-                  <div className="grid grid-cols-2 gap-6">
-                    <FieldRow label="Passing Year" required error={errors.diplomaYear} icon={GraduationCap}>
-                      <Select value={formData.diplomaYear} onValueChange={v => { setFormData(p => ({ ...p, diplomaYear: v })); clearFieldError("diplomaYear"); }} disabled={!!isLocked || !!profile?.isDiplomaLocked}>
-                        <SelectTrigger className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium transition-all", (isLocked || profile?.isDiplomaLocked) && "bg-muted/20", errors.diplomaYear && "border-destructive")}><SelectValue placeholder="Select Year" /></SelectTrigger>
-                        <SelectContent>{PASSING_YEARS.map(y => <SelectItem key={y} value={y}>{y}</SelectItem>)}</SelectContent>
-                      </Select>
-                    </FieldRow>
-                    <FieldRow label="Overall %" required error={errors.diplomaPercentage} icon={FileText}>
-                      <div className="relative group">
-                        <Input name="diplomaPercentage" value={formData.diplomaPercentage} onChange={handleInputChange} placeholder="88.2" disabled={!!isLocked || !!profile?.isDiplomaLocked} className={cn("h-12 pr-10 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base transition-all", errors.diplomaPercentage && "border-destructive", (isLocked || profile?.isDiplomaLocked) && "bg-muted/20")} />
-                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold opacity-40">%</span>
-                      </div>
-                    </FieldRow>
-                  </div>
+                  <FieldRow label="Passing Year" required error={errors.diplomaYear} icon={GraduationCap}>
+                    <Select
+                      value={formData.diplomaYear}
+                      onValueChange={v => {
+                        setFormData(p => ({ ...p, diplomaYear: v }));
+                        clearFieldError("diplomaYear");
+                      }}
+                      disabled={!!isLocked || !!profile?.isDiplomaLocked}
+                    >
+                      <SelectTrigger
+                        className={cn(
+                          "h-10 rounded-sm bg-card",
+                          (isLocked || profile?.isDiplomaLocked) && "bg-muted/30",
+                          errors.diplomaYear && "border-destructive"
+                        )}
+                      >
+                        <SelectValue placeholder="Select Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PASSING_YEARS.map(y => (
+                          <SelectItem key={y} value={y}>
+                            {y}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FieldRow>
+                  <FieldRow label="Overall Percentage" required error={errors.diplomaPercentage} icon={FileText}>
+                    <div className="relative">
+                      <Input
+                        name="diplomaPercentage"
+                        value={formData.diplomaPercentage}
+                        onChange={handleInputChange}
+                        placeholder="88.0"
+                        disabled={!!isLocked || !!profile?.isDiplomaLocked}
+                        className={cn(
+                          "h-10 rounded-sm bg-card pr-8 font-mono",
+                          errors.diplomaPercentage && "border-destructive",
+                          (isLocked || profile?.isDiplomaLocked) && "bg-muted/30"
+                        )}
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-muted-foreground">%</span>
+                    </div>
+                  </FieldRow>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           )}
 
-           {/* Semester Results */}
-           <div className="space-y-8 mt-12">
-             <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
-               <div className="flex items-center gap-4">
-                 <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
-                   <Calculator className="h-5 w-5 text-brown-900" />
-                 </div>
-                 <div>
-                   <h3 className="text-lg font-bold text-brown-900 tracking-tight">University Performance</h3>
-                   <p className="text-sm text-muted-foreground">Verified semester-wise academic records</p>
-                 </div>
-               </div>
-               {(() => {
-                 const minSem = formData.studentType === "Lateral Entry" ? 3 : 1;
-                 const currentSem = parseInt(formData.currentSemester) || 9;
-                 const validSems = semesterResults.filter(r => r.totalMarks && r.obtainedMarks && r.semester >= minSem && r.semester < currentSem);
-                 if (validSems.length > 0) {
-                   const totalObt = validSems.reduce((s, r) => s + (r.obtainedMarks || 0), 0);
-                   const totalMks = validSems.reduce((s, r) => s + (r.totalMarks || 0), 0);
-                   const pct = totalMks > 0 ? ((totalObt / totalMks) * 100).toFixed(2) : "0.00";
-                   return (
-                     <div className="bg-white px-6 py-3 rounded-sm border border-border bg-opacity-80 shadow-sm flex flex-col items-end">
-                       <span className="text-[10px] font-bold text-brown-900/80 uppercase tracking-widest">Aggregate Score</span>
-                       <span className="text-2xl font-serif font-bold text-brown-900">{pct}%</span>
-                     </div>
-                   );
-                 }
-                 return null;
-               })()}
-             </div>
- 
-             <div className="grid gap-6">
-               {semesterResults
-                 .filter(r => { const min = formData.studentType === "Lateral Entry" ? 3 : 1; return r.semester >= min && r.semester < (parseInt(formData.currentSemester) || 9); })
-                 .map((result) => {
-                   const oi = semesterResults.findIndex(sr => sr.semester === result.semester);
-                   const pct = result.totalMarks && result.obtainedMarks && result.totalMarks > 0 ? ((result.obtainedMarks / result.totalMarks) * 100).toFixed(2) : null;
-                   return (
-                     <div key={result.semester} className="p-8 bg-white shadow-lg shadow-brown-900/[0.02] rounded-md border border-border/40 hover:border-brown-900/20 transition-all group/sem">
-                       <div className="flex items-center justify-between mb-8 pb-4 border-b border-border/40">
-                         <div className="flex items-center gap-4">
-                           <div className="h-12 w-12 rounded-sm bg-muted/20 flex items-center justify-center text-brown-900 font-serif font-bold text-lg group-hover/sem:bg-brown-900 group-hover/sem:text-white transition-colors">
-                             S{result.semester}
-                           </div>
-                           <h4 className="font-serif font-bold text-xl text-brown-900">Semester {result.semester} Details</h4>
-                         </div>
-                         {(isLocked || result.isLocked) ? <LockedBadge /> : (
-                           <LockButton onClick={() => handleConfirmSaveSemester(oi)} saving={saving === `sem-${result.semester}`} disabled={!!isLocked} label="Lock Semester" />
-                         )}
-                       </div>
- 
-                       <div className="grid grid-cols-2 sm:grid-cols-5 gap-8 items-end">
-                         {[
-                           { label: "Obtained Marks", field: "obtainedMarks", type: "number", icon: FileText },
-                           { label: "Total Marks", field: "totalMarks", type: "number", icon: Divide },
-                           { label: "SGPA", field: "sgpa", type: "number", step: "0.01", icon: Calculator },
-                           { label: "Backlogs", field: "backlogs", type: "number", icon: AlertCircle },
-                         ].map(({ label, field, type, step, icon: Icon }) => {
-                           const errKey = `sem-${result.semester}-${field}`;
-                           const hasError = !!errors[errKey];
-                           return (
-                             <FieldRow key={field} label={label} error={errors[errKey]} icon={Icon}>
-                               <Input type={type} step={step} value={(result as any)[field] ?? ""}
-                                 onChange={(e) => { 
-                                   const nr = [...semesterResults]; 
-                                   (nr[oi] as any)[field] = e.target.value ? (type === "number" ? parseFloat(e.target.value) : parseInt(e.target.value)) : null; 
-                                   setSemesterResults(nr); 
-                                   clearFieldError(errKey);
-                                 }}
-                                 disabled={!!isLocked || result.isLocked} 
-                                 className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 font-medium transition-all", (isLocked || result.isLocked) && "bg-muted/20", hasError && "border-destructive")} />
-                             </FieldRow>
-                           );
-                         })}
-                         <div className="p-4 bg-brown-900/[0.03] border border-brown-900/10 rounded-sm flex flex-col items-center justify-center h-full">
-                           <span className="text-[10px] font-bold text-brown-900 uppercase tracking-widest leading-none mb-1">Percentage</span>
-                           <span className="text-xl font-serif font-bold text-brown-900">{pct ? `${pct}%` : "—"}</span>
-                         </div>
-                       </div>
-                     </div>
-                   );
-                 })}
-               
-               {semesterResults.filter(r => { const min = formData.studentType === "Lateral Entry" ? 3 : 1; return r.semester >= min && r.semester < (parseInt(formData.currentSemester) || 9); }).length === 0 && (
-                 <div className="p-20 border border-dashed rounded-md text-center bg-muted/10 space-y-4">
-                   <div className="h-16 w-16 bg-muted/20 rounded-full flex items-center justify-center mx-auto">
-                     <GraduationCap className="h-8 w-8 text-muted-foreground/40" />
-                   </div>
-                   <div className="space-y-1">
-                     <p className="text-lg font-serif font-bold text-brown-900/40">Academic Records Ready</p>
-                     <p className="text-sm text-muted-foreground/60 max-w-sm mx-auto">Please confirm your Current Semester in the Basic Details tab to enable academic input fields.</p>
-                   </div>
-                 </div>
-               )}
-             </div>
-           </div>
+          {/* Card: University Semester Results */}
+          <Card className="border-border/60 shadow-sm">
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-border/40 pb-4 gap-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-brown-800/10 text-brown-800">
+                  <Calculator className="h-4 w-4" />
+                </div>
+                <CardTitle className="text-base font-bold text-foreground">University Semester Performance</CardTitle>
+              </div>
+
+              {(() => {
+                const minSem = formData.studentType === "Lateral Entry" ? 3 : 1;
+                const currentSem = parseInt(formData.currentSemester) || 9;
+                const validSems = semesterResults.filter(
+                  r => r.totalMarks && r.obtainedMarks && r.semester >= minSem && r.semester < currentSem
+                );
+                if (validSems.length > 0) {
+                  const totalObt = validSems.reduce((s, r) => s + (r.obtainedMarks || 0), 0);
+                  const totalMks = validSems.reduce((s, r) => s + (r.totalMarks || 0), 0);
+                  const pct = totalMks > 0 ? ((totalObt / totalMks) * 100).toFixed(2) : "0.00";
+                  return (
+                    <div className="flex items-center gap-2 rounded-sm bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 text-xs font-bold text-amber-800">
+                      <Sparkles className="h-3.5 w-3.5 text-amber-600" />
+                      <span>Aggregate Score:</span>
+                      <span className="font-mono text-sm">{pct}%</span>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+            </CardHeader>
+            <CardContent className="pt-6 space-y-4">
+              {semesterResults
+                .filter(r => {
+                  const min = formData.studentType === "Lateral Entry" ? 3 : 1;
+                  return r.semester >= min && r.semester < (parseInt(formData.currentSemester) || 9);
+                })
+                .map(result => {
+                  const oi = semesterResults.findIndex(sr => sr.semester === result.semester);
+                  const pct =
+                    result.totalMarks && result.obtainedMarks && result.totalMarks > 0
+                      ? ((result.obtainedMarks / result.totalMarks) * 100).toFixed(2)
+                      : null;
+
+                  return (
+                    <div
+                      key={result.semester}
+                      className="rounded-sm border border-border/60 bg-muted/10 p-4 transition-all hover:border-border"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-3 border-b border-border/30 gap-2">
+                        <div className="flex items-center gap-2.5">
+                          <span className="flex h-7 w-7 items-center justify-center rounded-sm bg-brown-800 text-xs font-bold text-cream">
+                            S{result.semester}
+                          </span>
+                          <span className="font-semibold text-sm text-foreground">Semester {result.semester}</span>
+                          {pct && (
+                            <Badge variant="outline" className="text-[11px] font-mono font-bold bg-card border-border/60">
+                              {pct}%
+                            </Badge>
+                          )}
+                        </div>
+                        <div>
+                          {isLocked || result.isLocked ? (
+                            <LockedBadge />
+                          ) : (
+                            <LockButton
+                              onClick={() => handleConfirmSaveSemester(oi)}
+                              saving={saving === `sem-${result.semester}`}
+                              disabled={!!isLocked}
+                              label="Lock Semester"
+                            />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        {[
+                          { label: "Obtained Marks", field: "obtainedMarks", type: "number" },
+                          { label: "Total Marks", field: "totalMarks", type: "number" },
+                          { label: "SGPA", field: "sgpa", type: "number", step: "0.01" },
+                          { label: "Backlogs", field: "backlogs", type: "number" }
+                        ].map(({ label, field, type, step }) => {
+                          const errKey = `sem-${result.semester}-${field}`;
+                          const hasError = !!errors[errKey];
+                          return (
+                            <FieldRow key={field} label={label} error={errors[errKey]}>
+                              <Input
+                                type={type}
+                                step={step}
+                                value={(result as any)[field] ?? ""}
+                                onChange={e => {
+                                  const nr = [...semesterResults];
+                                  (nr[oi] as any)[field] = e.target.value
+                                    ? type === "number"
+                                      ? parseFloat(e.target.value)
+                                      : parseInt(e.target.value)
+                                    : null;
+                                  setSemesterResults(nr);
+                                  clearFieldError(errKey);
+                                }}
+                                disabled={!!isLocked || result.isLocked}
+                                className={cn(
+                                  "h-9 rounded-sm bg-card font-mono text-xs",
+                                  (isLocked || result.isLocked) && "bg-muted/30",
+                                  hasError && "border-destructive"
+                                )}
+                              />
+                            </FieldRow>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+
+              {semesterResults.filter(r => {
+                const min = formData.studentType === "Lateral Entry" ? 3 : 1;
+                return r.semester >= min && r.semester < (parseInt(formData.currentSemester) || 9);
+              }).length === 0 && (
+                <div className="py-12 border border-dashed rounded-sm text-center bg-muted/10 space-y-2">
+                  <GraduationCap className="h-8 w-8 text-muted-foreground/40 mx-auto" />
+                  <p className="text-sm font-semibold text-foreground">Semester Records Ready</p>
+                  <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                    Please select your Current Semester in the Basic Details tab to view and lock previous semester scores.
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
-        {/* ── CONTACT & FAMILY TAB ──────────────────────────────────────── */}
-         {/* ── CONTACT & FAMILY TAB ──────────────────────────────────────── */}
-         <TabsContent value="personal" className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-           {/* Section: Contact & Family */}
-           <div className="space-y-8">
-             <div className="flex flex-row items-end justify-between border-b border-border/40 pb-6">
-                <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
-                    <Phone className="h-5 w-5 text-brown-900/70" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-brown-900 tracking-tight">Contact &amp; Family</h3>
-                    <p className="text-sm text-muted-foreground">Communication channels and guardian information</p>
-                  </div>
+        {/* ── 3. CONTACT & FAMILY TAB ──────────────────────────────────────── */}
+        <TabsContent value="personal" className="space-y-6 animate-in fade-in duration-300">
+          {/* Card: Direct Contact */}
+          <Card className="border-border/60 shadow-sm">
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border/40 pb-4 gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-brown-800/10 text-brown-800">
+                  <Phone className="h-4 w-4" />
                 </div>
-               <div className="flex gap-3">
-                 {isEditingPersonal && !isLocked && (
-                   <>
-                     <Button variant="ghost" size="sm" onClick={() => setIsEditingPersonal(false)} className="h-10 px-6 rounded-sm font-semibold">Cancel</Button>
-                     <Button size="sm" onClick={savePersonalInfo} disabled={!!saving} className="h-10 px-6 bg-brown-900 hover:bg-brown-800 text-white rounded-sm shadow-sm">
-                       {saving === "personal" && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                       Save Changes
-                     </Button>
-                   </>
-                 )}
-                 {!isEditingPersonal && !isLocked && (
-                   <Button variant="outline" size="sm" onClick={() => setIsEditingPersonal(true)} className="h-10 px-6 border-brown-200 hover:bg-brown-50 text-brown-700 rounded-sm font-semibold transition-all">
-                     Edit Information
-                   </Button>
-                 )}
-               </div>
-             </div>
- 
-             <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-md border border-border/40 relative overflow-hidden group/card">
-               <div className="absolute top-0 right-0 p-6 opacity-[0.03] group-hover/card:opacity-[0.07] transition-opacity">
-                 <Phone className="h-24 w-24 text-brown-900" />
-               </div>
-               
-               <div className="grid gap-8 md:grid-cols-2 relative z-10">
-                 <div className="space-y-6 bg-muted/5 p-8 rounded-sm border border-border/30">
-                   <div className="flex items-center gap-3 mb-2">
-                     <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
-                    <Phone className="h-5 w-5 text-brown-900/70" />
-                  </div>
-                     <h4 className="font-serif font-bold text-lg text-brown-900">Direct Contact</h4>
-                   </div>
-                   <div className="space-y-6">
-                     <FieldRow label="Mobile Number" required error={personalErrors.mobileNo} icon={Phone}>
-                       <Input name="mobileNo" value={formData.mobileNo} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked}
-                              className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium transition-all", personalErrors.mobileNo && "border-destructive", (!isEditingPersonal || isLocked) && "bg-muted/20")}
-                       />
-                     </FieldRow>
-                     <FieldRow label="Personal Email" required error={personalErrors.personalEmail} icon={Mail}>
-                       <Input name="personalEmail" type="email" value={formData.personalEmail} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked}
-                              className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium transition-all", personalErrors.personalEmail && "border-destructive", (!isEditingPersonal || isLocked) && "bg-muted/20")}
-                       />
-                     </FieldRow>
-                   </div>
-                 </div>
-                 
-                 <div className="flex flex-col justify-center items-center text-center p-8 space-y-4 bg-brown-900/[0.02] border border-brown-900/10 rounded-md group/verify">
-                   <div className="h-16 w-16 rounded-full bg-brown-900/10 flex items-center justify-center text-brown-900 group-hover/verify:scale-110 transition-transform"><CheckCircle2 className="h-8 w-8" /></div>
-                   <div className="space-y-1">
-                     <h4 className="font-serif font-bold text-xl text-brown-900">Verified Identity</h4>
-                     <p className="text-sm text-brown-900/60 font-medium px-6 leading-relaxed">
-                       Recruiters and the CDC platform will use these verified channels for critical communications.
-                     </p>
-                   </div>
-                 </div>
-               </div>
- 
-               <div className="grid gap-8 md:grid-cols-2 relative z-10 pt-4">
-                 <div className="p-8 rounded-sm bg-muted/5 border border-border/40 hover:border-brown-900/30 transition-all">
-                   <div className="flex items-center justify-between pb-6 border-b border-border/40 mb-6">
-                     <h4 className="font-serif font-bold text-xl text-brown-900">Father&apos;s Identity</h4>
-                     <Badge variant="outline" className="bg-brown-900/10 border-brown-900/20 text-brown-900 text-[10px] font-bold tracking-widest uppercase">Primary</Badge>
-                   </div>
-                   <div className="space-y-6">
-                     <FieldRow label="Full Name" required error={personalErrors.fatherName} icon={User}>
-                       <Input name="fatherName" value={formData.fatherName} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium", (!isEditingPersonal || isLocked) && "bg-muted/20")} />
-                     </FieldRow>
-                     <FieldRow label="Occupation" icon={Briefcase}>
-                       <Input name="fatherOccupation" value={formData.fatherOccupation} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked) && "bg-muted/20")} />
-                     </FieldRow>
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                       <FieldRow label="Mobile" icon={Phone}>
-                         <Input name="fatherMobile" value={formData.fatherMobile} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked) && "bg-muted/20")} />
-                       </FieldRow>
-                       <FieldRow label="Email" icon={Mail}>
-                         <Input name="fatherEmail" type="email" value={formData.fatherEmail} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked) && "bg-muted/20")} />
-                       </FieldRow>
-                     </div>
-                   </div>
-                 </div>
- 
-                 <div className="p-8 rounded-sm bg-muted/5 border border-border/40 hover:border-brown-900/30 transition-all">
-                   <div className="flex items-center justify-between pb-6 border-b border-border/40 mb-6">
-                     <h4 className="font-serif font-bold text-xl text-brown-900">Mother&apos;s Identity</h4>
-                   </div>
-                   <div className="space-y-6">
-                     <FieldRow label="Full Name" required error={personalErrors.motherName} icon={User}>
-                       <Input name="motherName" value={formData.motherName} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium", (!isEditingPersonal || isLocked) && "bg-muted/20")} />
-                     </FieldRow>
-                     <FieldRow label="Occupation" icon={Briefcase}>
-                       <Input name="motherOccupation" value={formData.motherOccupation} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked) && "bg-muted/20")} />
-                     </FieldRow>
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                       <FieldRow label="Mobile" icon={Phone}>
-                         <Input name="motherMobile" value={formData.motherMobile} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked) && "bg-muted/20")} />
-                       </FieldRow>
-                       <FieldRow label="Email" icon={Mail}>
-                         <Input name="motherEmail" type="email" value={formData.motherEmail} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked) && "bg-muted/20")} />
-                       </FieldRow>
-                     </div>
-                   </div>
-                 </div>
-               </div>
-             </div>
-           </div>
- 
-           {/* Section: Residence History */}
-           <div className="space-y-8">
-             <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
-                <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
-                    <MapPin className="h-5 w-5 text-brown-900/70" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-brown-900 tracking-tight">Residence History</h3>
-                    <p className="text-sm text-muted-foreground">Present and permanent address details</p>
-                  </div>
-                </div>
-             </div>
-             
-             <div className="grid gap-10 md:grid-cols-2">
-               {/* Present Address */}
-               <div className="p-10 rounded-md bg-brown-900/[0.01] border border-brown-900/10 shadow-sm relative overflow-hidden group/addr">
-                 <div className="absolute top-0 right-0 p-8 opacity-[0.02] group-hover/addr:opacity-[0.05] transition-opacity"><Home className="h-24 w-24 text-brown-900" /></div>
-                 <div className="flex items-center gap-3 pb-6 border-b border-brown-900/10 mb-8">
-                    <div className="h-10 w-10 rounded-sm bg-brown-900/5 flex items-center justify-center text-brown-900"><MapPin className="h-5 w-5" /></div>
-                    <h4 className="font-serif font-bold text-xl text-brown-900">Present Address</h4>
-                 </div>
-                 <div className="grid grid-cols-2 gap-x-6 gap-y-6 relative z-10">
-                   <FieldRow label="House/Flat No." className="col-span-2">
-                     <Input name="presentHouseNo" value={formData.presentHouseNo} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked) && "bg-muted/20")} />
-                   </FieldRow>
-                   <FieldRow label="Block/Sector">
-                     <Input name="presentBlock" value={formData.presentBlock} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked) && "bg-muted/20")} />
-                   </FieldRow>
-                   <FieldRow label="Locality/Village">
-                     <Input name="presentLocality" value={formData.presentLocality} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked) && "bg-muted/20")} />
-                   </FieldRow>
-                   <FieldRow label="City">
-                     <Input name="presentCity" value={formData.presentCity} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked) && "bg-muted/20")} />
-                   </FieldRow>
-                   <FieldRow label="Tehsil">
-                     <Input name="presentTehsil" value={formData.presentTehsil} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked) && "bg-muted/20")} />
-                   </FieldRow>
-                   <FieldRow label="State" required error={personalErrors.presentState}>
-                     <Select value={formData.presentState} onValueChange={v => setFormData(p => ({ ...p, presentState: v, presentDistrict: "" }))} disabled={!isEditingPersonal || isLocked}>
-                        <SelectTrigger className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium transition-all", (!isEditingPersonal || isLocked) && "bg-muted/20")}><SelectValue placeholder="State" /></SelectTrigger>
-                       <SelectContent>{INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
-                     </Select>
-                   </FieldRow>
-                   <FieldRow label="District" required error={personalErrors.presentDistrict}>
-                     <Select value={formData.presentDistrict} onValueChange={v => setFormData(p => ({ ...p, presentDistrict: v }))} disabled={!isEditingPersonal || isLocked || !formData.presentState}>
-                        <SelectTrigger className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium transition-all", (!isEditingPersonal || isLocked) && "bg-muted/20")}><SelectValue placeholder="District" /></SelectTrigger>
-                       <SelectContent>
-                         {(DISTRICTS_BY_STATE[formData.presentState as keyof typeof DISTRICTS_BY_STATE] || []).map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
-                       </SelectContent>
-                     </Select>
-                   </FieldRow>
-                   <FieldRow label="Pincode" required error={personalErrors.presentPincode} icon={MapPin}>
-                     <Input name="presentPincode" value={formData.presentPincode} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-mono", (!isEditingPersonal || isLocked) && "bg-muted/20")} />
-                   </FieldRow>
-                   <FieldRow label="Country" icon={Home}>
-                      <Input name="presentCountry" value="India" disabled className="h-12 bg-muted/20 border border-border/40 shadow-sm font-bold text-brown-900/80" />
-                   </FieldRow>
-                 </div>
-               </div>
- 
-               {/* Permanent Address */}
-               <div className="p-10 rounded-md bg-brown-900/[0.01] border border-brown-900/10 shadow-sm relative overflow-hidden group/perm">
-                 <div className="absolute top-0 right-0 p-8 opacity-[0.02] group-hover/perm:opacity-[0.05] transition-opacity"><Home className="h-24 w-24 text-brown-900" /></div>
-                 <div className="flex items-center justify-between pb-6 border-b border-brown-900/10 mb-8">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-sm bg-brown-900/5 flex items-center justify-center text-brown-900"><Home className="h-5 w-5" /></div>
-                      <h4 className="font-serif font-bold text-xl text-brown-900">Permanent Address</h4>
-                    </div>
-                    {isEditingPersonal && !isLocked && (
-                      <div className="flex items-center space-x-2 bg-brown-900/5 px-4 py-2.5 rounded-sm border border-brown-900/10 shadow-sm transition-all hover:bg-brown-900/10">
-                        <Checkbox
-                         id="sameAsPresent"
-                         checked={formData.sameAsPresent}
-                         className="border-amber-200 data-[state=checked]:bg-brown-900 data-[state=checked]:border-brown-900"
-                         onCheckedChange={(c) => {
-                            setFormData(p => {
-                              const np = { ...p, sameAsPresent: !!c };
-                              if (c) {
-                                np.permanentHouseNo = p.presentHouseNo; np.permanentBlock = p.presentBlock;
-                                np.permanentLocality = p.presentLocality; np.permanentCity = p.presentCity;
-                                np.permanentTehsil = p.presentTehsil; np.permanentDistrict = p.presentDistrict;
-                                np.permanentState = p.presentState; np.permanentPincode = p.presentPincode;
-                              }
-                              return np;
-                            });
-                         }}
-                        />
-                        <label htmlFor="sameAsPresent" className="text-[10px] font-bold text-brown-900 tracking-[0.15em] uppercase cursor-pointer leading-none">Same as Present</label>
-                      </div>
-                    )}
-                 </div>
-                 
-                 <div className="grid grid-cols-2 gap-x-6 gap-y-6 relative z-10">
-                   <FieldRow label="House/Flat No." className="col-span-2">
-                     <Input name="permanentHouseNo" value={formData.permanentHouseNo} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked || formData.sameAsPresent} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/20")} />
-                   </FieldRow>
-                   <FieldRow label="Block/Sector">
-                     <Input name="permanentBlock" value={formData.permanentBlock} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked || formData.sameAsPresent} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/20")} />
-                   </FieldRow>
-                   <FieldRow label="Locality/Village">
-                     <Input name="permanentLocality" value={formData.permanentLocality} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked || formData.sameAsPresent} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/20")} />
-                   </FieldRow>
-                   <FieldRow label="City">
-                     <Input name="permanentCity" value={formData.permanentCity} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked || formData.sameAsPresent} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/20")} />
-                   </FieldRow>
-                   <FieldRow label="Tehsil">
-                     <Input name="permanentTehsil" value={formData.permanentTehsil} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked || formData.sameAsPresent} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/20")} />
-                   </FieldRow>
-                   <FieldRow label="State">
-                     <Select value={formData.permanentState} onValueChange={v => setFormData(p => ({ ...p, permanentState: v, permanentDistrict: "" }))} disabled={!isEditingPersonal || isLocked || formData.sameAsPresent}>
-                        <SelectTrigger className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium transition-all", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/20")}><SelectValue placeholder="State" /></SelectTrigger>
-                       <SelectContent>{INDIAN_STATES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
-                     </Select>
-                   </FieldRow>
-                   <FieldRow label="District">
-                     <Select value={formData.permanentDistrict} onValueChange={v => setFormData(p => ({ ...p, permanentDistrict: v }))} disabled={!isEditingPersonal || isLocked || formData.sameAsPresent || !formData.permanentState}>
-                        <SelectTrigger className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-medium transition-all", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/20")}><SelectValue placeholder="District" /></SelectTrigger>
-                       <SelectContent>
-                         {(DISTRICTS_BY_STATE[formData.permanentState as keyof typeof DISTRICTS_BY_STATE] || []).map(d => <SelectItem key={d} value={d}>{d}</SelectItem>)}
-                       </SelectContent>
-                     </Select>
-                   </FieldRow>
-                   <FieldRow label="Pincode" icon={MapPin}>
-                     <Input name="permanentPincode" value={formData.permanentPincode} onChange={handleInputChange} disabled={!isEditingPersonal || isLocked || formData.sameAsPresent} className={cn("h-12 bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 text-base font-mono", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/20")} />
-                   </FieldRow>
-                   <FieldRow label="Country" icon={Home}>
-                      <Input value="India" disabled className="h-12 bg-muted/20 border border-border/40 shadow-sm font-bold text-brown-900/80" />
-                   </FieldRow>
-                 </div>
-               </div>
-             </div>
-           </div>
-         </TabsContent>
-
-
-         {/* ── CAREER TAB ──────────────────────────────────────────── */}
-         <TabsContent value="career" className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-           {/* Section: Career & Branding */}
-           <div className="space-y-8">
-              <div className="flex flex-row items-center justify-between pb-6 border-b border-border/50">
-                <div className="flex items-center gap-4">
-                  <div className="h-10 w-10 rounded-sm bg-brown-900/5 border border-brown-900/10 flex items-center justify-center">
-                    <Briefcase className="h-5 w-5 text-brown-900/70" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-brown-900 tracking-tight">Career &amp; Branding</h3>
-                    <p className="text-sm text-muted-foreground">Professional identity and technical presence</p>
-                  </div>
-                </div>
-                <Button onClick={saveCareer} disabled={!!saving} className="h-10 px-6 bg-brown-900 hover:bg-brown-800 text-white rounded-sm shadow-sm font-bold text-sm">
-                  {saving === "career" && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                  Update Profile
-                </Button>
+                <CardTitle className="text-base font-bold text-foreground">Direct Contact Information</CardTitle>
               </div>
- 
-             <div className="grid gap-10 p-10 bg-white shadow-xl shadow-brown-900/[0.02] rounded-md border border-border/40 relative overflow-hidden group/career">
-               <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover/career:opacity-[0.08] transition-opacity">
-                 <Briefcase className="h-32 w-32 text-brown-900" />
-               </div>
- 
-               <div className="space-y-10 relative z-10">
-                 {/* Professional Summary */}
-                 <div className="space-y-6">
-                   <div className="flex items-center gap-3">
-                     <div className="h-10 w-10 rounded-xl bg-brown-500/10 flex items-center justify-center text-brown-600"><User className="h-5 w-5" /></div>
-                     <h4 className="font-serif font-bold text-xl text-brown-900">Professional Summary</h4>
-                   </div>
-                   <div className="max-w-3xl">
-                     <FieldRow label="Elevator Pitch / Bio">
-                       <Textarea name="bio" value={formData.bio} onChange={handleInputChange} 
-                                 placeholder="Craft a compelling summary of your academic journey and professional aspirations..." 
-                                 className="h-32 resize-none bg-white border-border/40 shadow-sm focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 transition-all text-base leading-relaxed rounded-sm p-6" />
-                     </FieldRow>
-                   </div>
-                 </div>
- 
-                 {/* Skills Cluster */}
-                 <div className="space-y-6">
-                   <div className="flex items-center gap-3">
-                     <div className="h-10 w-10 rounded-sm bg-brown-900/5 flex items-center justify-center text-brown-900"><Code2 className="h-5 w-5" /></div>
-                     <h4 className="font-serif font-bold text-xl text-brown-900">Technical Expertise</h4>
-                   </div>
-                   <div className="space-y-6">
-                     <div className="flex items-center gap-3 max-w-md bg-muted/5 p-2 rounded-sm border border-border/30">
-                       <Input ref={skillInputRef} value={skillInput} onChange={e => setSkillInput(e.target.value)} 
-                              onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addSkill())} 
-                              placeholder="Add a skill (e.g. Next.js, Python)" 
-                              className="bg-transparent border-none shadow-none focus-visible:ring-0 h-12" />
-                       <Button type="button" onClick={addSkill} className="rounded-sm font-bold bg-brown-900 text-white hover:bg-brown-800">Add</Button>
-                     </div>
-                     
-                     <div className="bg-muted/5 rounded-sm p-8 border border-border/30 min-h-[140px] flex items-center justify-center">
-                       {formData.skills.length > 0 ? (
-                         <div className="flex flex-wrap gap-3">
-                           {formData.skills.map((skill) => (
-                             <Badge key={skill} variant="secondary" className="px-5 py-2.5 text-sm font-bold bg-white border border-border/40 shadow-sm text-brown-900 rounded-sm group/skill hover:border-brown-900/50 transition-all">
-                               {skill}
-                               <button onClick={() => removeSkill(skill)} className="ml-3 text-muted-foreground/40 group-hover/skill:text-destructive transition-colors">
-                                 <X className="h-3.5 w-3.5" />
-                               </button>
-                             </Badge>
-                           ))}
-                         </div>
-                       ) : (
-                         <div className="text-center space-y-2 opacity-40">
-                           <Code2 className="h-10 w-10 mx-auto text-muted-foreground" />
-                           <p className="text-sm font-bold uppercase tracking-widest">No technical skills indexed</p>
-                         </div>
-                       )}
-                     </div>
-                   </div>
-                 </div>
- 
-                 <div className="grid gap-12 md:grid-cols-2 pt-4">
-                   {/* Digital Presence */}
-                   <div className="space-y-6">
-                     <div className="flex items-center gap-3">
-                       <div className="h-10 w-10 rounded-sm bg-brown-900/5 flex items-center justify-center text-brown-900"><Link2 className="h-5 w-5" /></div>
-                       <h4 className="font-serif font-bold text-xl text-brown-900">Digital Presence</h4>
-                     </div>
-                     <div className="space-y-6 bg-muted/5 p-8 rounded-sm border border-border/30">
-                       <FieldRow label="LinkedIn Profile" icon={Linkedin}>
-                         <div className="flex group/link">
-                           <span className="inline-flex items-center px-4 rounded-l-sm border border-r-0 border-border/40 bg-white text-muted-foreground text-[10px] font-bold uppercase tracking-tighter">linkedin.com/in/</span>
-                           <Input name="linkedinId" value={formData.linkedinId} onChange={handleInputChange} placeholder="username" className="rounded-l-none h-12 bg-white border-border/40 focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 font-medium transition-all" />
-                         </div>
-                       </FieldRow>
-                       <FieldRow label="GitHub Archive" icon={Github}>
-                         <div className="flex group/link">
-                           <span className="inline-flex items-center px-4 rounded-l-sm border border-r-0 border-border/40 bg-white text-muted-foreground text-[10px] font-bold uppercase tracking-tighter">github.com/</span>
-                           <Input name="githubId" value={formData.githubId} onChange={handleInputChange} placeholder="username" className="rounded-l-none h-12 bg-white border-border/40 focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 font-medium transition-all" />
-                         </div>
-                       </FieldRow>
-                       <FieldRow label="LeetCode Rank" icon={Code2}>
-                         <div className="flex group/link">
-                           <span className="inline-flex items-center px-4 rounded-l-sm border border-r-0 border-border/40 bg-white text-muted-foreground text-[10px] font-bold uppercase tracking-tighter">leetcode.com/</span>
-                           <Input name="leetcodeId" value={formData.leetcodeId} onChange={handleInputChange} placeholder="username" className="rounded-l-none h-12 bg-white border-border/40 focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 font-medium transition-all" />
-                         </div>
-                       </FieldRow>
-                     </div>
-                   </div>
- 
-                   {/* Resume Repository */}
-                   <div className="space-y-6">
-                     <div className="flex items-center gap-3">
-                       <div className="h-10 w-10 rounded-sm bg-brown-900/5 flex items-center justify-center text-brown-900"><FileText className="h-5 w-5" /></div>
-                       <h4 className="font-serif font-bold text-xl text-brown-900">Career Dossier</h4>
-                     </div>
-                     <div className="space-y-6 bg-muted/5 p-8 rounded-sm border border-border/30 h-full">
-                       <FieldRow label="Resume (Drive Link)">
-                          <Input name="resumeLink" value={formData.resumeLink} onChange={handleInputChange} placeholder="https://drive.google.com/..." className="h-12 bg-white border-border/40 focus:border-brown-900/40 focus:ring-2 focus:ring-brown-900/10 font-medium rounded-sm transition-all" />
-                         <div className="flex items-start gap-2 mt-3 px-1">
-                           <AlertCircle className="h-3.5 w-3.5 text-muted-foreground/60 mt-0.5" />
-                           <p className="text-[10px] text-muted-foreground font-medium leading-relaxed">Ensure link sharing is set to public. PDF format is highly recommended for cross-platform compatibility.</p>
-                         </div>
-                       </FieldRow>
-                       
-                       <div className="pt-2">
-                         {formData.resumeLink ? (
-                           <div className="p-6 rounded-sm border border-brown-900/20 bg-brown-900/[0.02] flex items-center justify-between group/res">
-                             <div className="flex items-center gap-4">
-                               <div className="bg-brown-900/10 p-3 rounded-xl"><CheckCircle2 className="h-5 w-5 text-brown-900" /></div>
-                               <div>
-                                 <p className="text-sm font-bold text-brown-900 font-serif">Resume Active</p>
-                                 <p className="text-[10px] text-brown-900/60 font-bold uppercase tracking-widest mt-0.5 underline decoration-brown-900/20 break-all max-w-[140px] truncate">{formData.resumeLink}</p>
-                               </div>
-                             </div>
-                             <a href={formData.resumeLink} target="_blank" rel="noopener noreferrer" className="h-10 w-10 bg-white border border-brown-900/20 rounded-sm flex items-center justify-center text-brown-900 hover:bg-brown-900 hover:text-white transition-all shadow-sm">
-                               <ExternalLink className="h-4 w-4" />
-                             </a>
-                           </div>
-                         ) : (
-                           <div className="p-8 border border-dashed border-brown-900/30 rounded-sm text-center bg-brown-900/[0.02] group/missing">
-                             <AlertTriangle className="h-8 w-8 text-brown-900 mx-auto mb-3 opacity-30 group-hover/missing:opacity-60 transition-opacity" />
-                             <p className="text-sm font-bold text-brown-900 font-serif">Resume Missing</p>
-                             <p className="text-xs text-brown-900/50 mt-1 font-medium">Placement eligibility requires a validated resume.</p>
-                           </div>
-                         )}
-                       </div>
-                     </div>
-                   </div>
-                 </div>
-               </div>
-             </div>
-           </div>
-         </TabsContent>
-        
+              {!isLocked && (
+                isEditingPersonal ? (
+                  <Button
+                    size="sm"
+                    onClick={savePersonalInfo}
+                    disabled={!!saving}
+                    className="h-9 px-4 rounded-sm bg-brown-800 text-cream hover:bg-brown-900 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-200 font-bold text-xs shadow-sm min-w-[80px] inline-flex items-center justify-center animate-in fade-in zoom-in-95"
+                  >
+                    {saving === "personal" ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-3.5 w-3.5 mr-1.5 text-amber-300" />
+                        Save
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsEditingPersonal(true)}
+                    className="group h-9 px-4 rounded-sm border border-border/70 bg-card text-foreground hover:bg-brown-800/10 hover:text-brown-900 hover:border-brown-800/30 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-200 font-semibold text-xs shadow-xs min-w-[80px] inline-flex items-center justify-center animate-in fade-in zoom-in-95"
+                  >
+                    <Pencil className="h-3 w-3 mr-1.5 text-muted-foreground group-hover:text-brown-800 transition-colors" />
+                    Edit
+                  </Button>
+                )
+              )}
+            </CardHeader>
+            <CardContent className="pt-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                <FieldRow label="Primary Mobile Number" required error={personalErrors.mobileNo} icon={Phone}>
+                  <Input
+                    name="mobileNo"
+                    value={formData.mobileNo}
+                    onChange={handleInputChange}
+                    placeholder="10-digit number"
+                    disabled={!isEditingPersonal || isLocked}
+                    className={cn(
+                      "h-10 rounded-sm bg-card font-mono",
+                      personalErrors.mobileNo && "border-destructive",
+                      (!isEditingPersonal || isLocked) && "bg-muted/30"
+                    )}
+                  />
+                </FieldRow>
+                <FieldRow label="Personal Email Address" required error={personalErrors.personalEmail} icon={Mail}>
+                  <Input
+                    name="personalEmail"
+                    type="email"
+                    value={formData.personalEmail}
+                    onChange={handleInputChange}
+                    placeholder="student@example.com"
+                    disabled={!isEditingPersonal || isLocked}
+                    className={cn(
+                      "h-10 rounded-sm bg-card",
+                      personalErrors.personalEmail && "border-destructive",
+                      (!isEditingPersonal || isLocked) && "bg-muted/30"
+                    )}
+                  />
+                </FieldRow>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Card: Parental Details */}
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Father's Info */}
+            <Card className="border-border/60 shadow-sm">
+              <CardHeader className="border-b border-border/40 pb-4">
+                <CardTitle className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <User className="h-4 w-4 text-brown-800" />
+                  Father&apos;s Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-4">
+                <FieldRow label="Full Name" required error={personalErrors.fatherName}>
+                  <Input
+                    name="fatherName"
+                    value={formData.fatherName}
+                    onChange={handleInputChange}
+                    disabled={!isEditingPersonal || isLocked}
+                    className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked) && "bg-muted/30")}
+                  />
+                </FieldRow>
+                <FieldRow label="Occupation">
+                  <Input
+                    name="fatherOccupation"
+                    value={formData.fatherOccupation}
+                    onChange={handleInputChange}
+                    disabled={!isEditingPersonal || isLocked}
+                    className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked) && "bg-muted/30")}
+                  />
+                </FieldRow>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FieldRow label="Mobile Number">
+                    <Input
+                      name="fatherMobile"
+                      value={formData.fatherMobile}
+                      onChange={handleInputChange}
+                      disabled={!isEditingPersonal || isLocked}
+                      className={cn("h-10 rounded-sm bg-card font-mono text-xs", (!isEditingPersonal || isLocked) && "bg-muted/30")}
+                    />
+                  </FieldRow>
+                  <FieldRow label="Email">
+                    <Input
+                      name="fatherEmail"
+                      type="email"
+                      value={formData.fatherEmail}
+                      onChange={handleInputChange}
+                      disabled={!isEditingPersonal || isLocked}
+                      className={cn("h-10 rounded-sm bg-card text-xs", (!isEditingPersonal || isLocked) && "bg-muted/30")}
+                    />
+                  </FieldRow>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Mother's Info */}
+            <Card className="border-border/60 shadow-sm">
+              <CardHeader className="border-b border-border/40 pb-4">
+                <CardTitle className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <User className="h-4 w-4 text-brown-800" />
+                  Mother&apos;s Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-4">
+                <FieldRow label="Full Name" required error={personalErrors.motherName}>
+                  <Input
+                    name="motherName"
+                    value={formData.motherName}
+                    onChange={handleInputChange}
+                    disabled={!isEditingPersonal || isLocked}
+                    className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked) && "bg-muted/30")}
+                  />
+                </FieldRow>
+                <FieldRow label="Occupation">
+                  <Input
+                    name="motherOccupation"
+                    value={formData.motherOccupation}
+                    onChange={handleInputChange}
+                    disabled={!isEditingPersonal || isLocked}
+                    className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked) && "bg-muted/30")}
+                  />
+                </FieldRow>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FieldRow label="Mobile Number">
+                    <Input
+                      name="motherMobile"
+                      value={formData.motherMobile}
+                      onChange={handleInputChange}
+                      disabled={!isEditingPersonal || isLocked}
+                      className={cn("h-10 rounded-sm bg-card font-mono text-xs", (!isEditingPersonal || isLocked) && "bg-muted/30")}
+                    />
+                  </FieldRow>
+                  <FieldRow label="Email">
+                    <Input
+                      name="motherEmail"
+                      type="email"
+                      value={formData.motherEmail}
+                      onChange={handleInputChange}
+                      disabled={!isEditingPersonal || isLocked}
+                      className={cn("h-10 rounded-sm bg-card text-xs", (!isEditingPersonal || isLocked) && "bg-muted/30")}
+                    />
+                  </FieldRow>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Card: Addresses */}
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Present Address */}
+            <Card className="border-border/60 shadow-sm">
+              <CardHeader className="border-b border-border/40 pb-4">
+                <CardTitle className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <MapPin className="h-4 w-4 text-brown-800" />
+                  Present Address
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-4">
+                <FieldRow label="House / Flat No.">
+                  <Input
+                    name="presentHouseNo"
+                    value={formData.presentHouseNo}
+                    onChange={handleInputChange}
+                    disabled={!isEditingPersonal || isLocked}
+                    className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked) && "bg-muted/30")}
+                  />
+                </FieldRow>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FieldRow label="Block / Sector">
+                    <Input
+                      name="presentBlock"
+                      value={formData.presentBlock}
+                      onChange={handleInputChange}
+                      disabled={!isEditingPersonal || isLocked}
+                      className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked) && "bg-muted/30")}
+                    />
+                  </FieldRow>
+                  <FieldRow label="Locality / Area">
+                    <Input
+                      name="presentLocality"
+                      value={formData.presentLocality}
+                      onChange={handleInputChange}
+                      disabled={!isEditingPersonal || isLocked}
+                      className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked) && "bg-muted/30")}
+                    />
+                  </FieldRow>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FieldRow label="City">
+                    <Input
+                      name="presentCity"
+                      value={formData.presentCity}
+                      onChange={handleInputChange}
+                      disabled={!isEditingPersonal || isLocked}
+                      className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked) && "bg-muted/30")}
+                    />
+                  </FieldRow>
+                  <FieldRow label="Tehsil">
+                    <Input
+                      name="presentTehsil"
+                      value={formData.presentTehsil}
+                      onChange={handleInputChange}
+                      disabled={!isEditingPersonal || isLocked}
+                      className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked) && "bg-muted/30")}
+                    />
+                  </FieldRow>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FieldRow label="State" required error={personalErrors.presentState}>
+                    <Select
+                      value={formData.presentState}
+                      onValueChange={v => setFormData(p => ({ ...p, presentState: v, presentDistrict: "" }))}
+                      disabled={!isEditingPersonal || isLocked}
+                    >
+                      <SelectTrigger className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked) && "bg-muted/30")}>
+                        <SelectValue placeholder="Select State" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {INDIAN_STATES.map(s => (
+                          <SelectItem key={s} value={s}>
+                            {s}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FieldRow>
+                  <FieldRow label="District" required error={personalErrors.presentDistrict}>
+                    <Select
+                      value={formData.presentDistrict}
+                      onValueChange={v => setFormData(p => ({ ...p, presentDistrict: v }))}
+                      disabled={!isEditingPersonal || isLocked || !formData.presentState}
+                    >
+                      <SelectTrigger className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked) && "bg-muted/30")}>
+                        <SelectValue placeholder="Select District" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(DISTRICTS_BY_STATE[formData.presentState as keyof typeof DISTRICTS_BY_STATE] || []).map(d => (
+                          <SelectItem key={d} value={d}>
+                            {d}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FieldRow>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FieldRow label="Pincode" required error={personalErrors.presentPincode}>
+                    <Input
+                      name="presentPincode"
+                      value={formData.presentPincode}
+                      onChange={handleInputChange}
+                      disabled={!isEditingPersonal || isLocked}
+                      className={cn("h-10 rounded-sm bg-card font-mono", (!isEditingPersonal || isLocked) && "bg-muted/30")}
+                    />
+                  </FieldRow>
+                  <FieldRow label="Country">
+                    <Input value="India" disabled className="h-10 rounded-sm bg-muted/30 font-semibold" />
+                  </FieldRow>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Permanent Address */}
+            <Card className="border-border/60 shadow-sm">
+              <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border/40 pb-4 gap-2">
+                <CardTitle className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <Home className="h-4 w-4 text-brown-800" />
+                  Permanent Address
+                </CardTitle>
+                {isEditingPersonal && !isLocked && (
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="sameAsPresent"
+                      checked={formData.sameAsPresent}
+                      className="border-border/70 data-[state=checked]:bg-brown-800"
+                      onCheckedChange={c => {
+                        setFormData(p => {
+                          const np = { ...p, sameAsPresent: !!c };
+                          if (c) {
+                            np.permanentHouseNo = p.presentHouseNo;
+                            np.permanentBlock = p.presentBlock;
+                            np.permanentLocality = p.presentLocality;
+                            np.permanentCity = p.presentCity;
+                            np.permanentTehsil = p.presentTehsil;
+                            np.permanentDistrict = p.presentDistrict;
+                            np.permanentState = p.presentState;
+                            np.permanentPincode = p.presentPincode;
+                          }
+                          return np;
+                        });
+                      }}
+                    />
+                    <label htmlFor="sameAsPresent" className="text-xs font-semibold text-muted-foreground cursor-pointer">
+                      Same as Present
+                    </label>
+                  </div>
+                )}
+              </CardHeader>
+              <CardContent className="pt-6 space-y-4">
+                <FieldRow label="House / Flat No.">
+                  <Input
+                    name="permanentHouseNo"
+                    value={formData.permanentHouseNo}
+                    onChange={handleInputChange}
+                    disabled={!isEditingPersonal || isLocked || formData.sameAsPresent}
+                    className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/30")}
+                  />
+                </FieldRow>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FieldRow label="Block / Sector">
+                    <Input
+                      name="permanentBlock"
+                      value={formData.permanentBlock}
+                      onChange={handleInputChange}
+                      disabled={!isEditingPersonal || isLocked || formData.sameAsPresent}
+                      className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/30")}
+                    />
+                  </FieldRow>
+                  <FieldRow label="Locality / Area">
+                    <Input
+                      name="permanentLocality"
+                      value={formData.permanentLocality}
+                      onChange={handleInputChange}
+                      disabled={!isEditingPersonal || isLocked || formData.sameAsPresent}
+                      className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/30")}
+                    />
+                  </FieldRow>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FieldRow label="City">
+                    <Input
+                      name="permanentCity"
+                      value={formData.permanentCity}
+                      onChange={handleInputChange}
+                      disabled={!isEditingPersonal || isLocked || formData.sameAsPresent}
+                      className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/30")}
+                    />
+                  </FieldRow>
+                  <FieldRow label="Tehsil">
+                    <Input
+                      name="permanentTehsil"
+                      value={formData.permanentTehsil}
+                      onChange={handleInputChange}
+                      disabled={!isEditingPersonal || isLocked || formData.sameAsPresent}
+                      className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/30")}
+                    />
+                  </FieldRow>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FieldRow label="State">
+                    <Select
+                      value={formData.permanentState}
+                      onValueChange={v => setFormData(p => ({ ...p, permanentState: v, permanentDistrict: "" }))}
+                      disabled={!isEditingPersonal || isLocked || formData.sameAsPresent}
+                    >
+                      <SelectTrigger className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/30")}>
+                        <SelectValue placeholder="Select State" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {INDIAN_STATES.map(s => (
+                          <SelectItem key={s} value={s}>
+                            {s}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FieldRow>
+                  <FieldRow label="District">
+                    <Select
+                      value={formData.permanentDistrict}
+                      onValueChange={v => setFormData(p => ({ ...p, permanentDistrict: v }))}
+                      disabled={!isEditingPersonal || isLocked || formData.sameAsPresent || !formData.permanentState}
+                    >
+                      <SelectTrigger className={cn("h-10 rounded-sm bg-card", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/30")}>
+                        <SelectValue placeholder="Select District" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {(DISTRICTS_BY_STATE[formData.permanentState as keyof typeof DISTRICTS_BY_STATE] || []).map(d => (
+                          <SelectItem key={d} value={d}>
+                            {d}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FieldRow>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <FieldRow label="Pincode">
+                    <Input
+                      name="permanentPincode"
+                      value={formData.permanentPincode}
+                      onChange={handleInputChange}
+                      disabled={!isEditingPersonal || isLocked || formData.sameAsPresent}
+                      className={cn("h-10 rounded-sm bg-card font-mono", (!isEditingPersonal || isLocked || formData.sameAsPresent) && "bg-muted/30")}
+                    />
+                  </FieldRow>
+                  <FieldRow label="Country">
+                    <Input value="India" disabled className="h-10 rounded-sm bg-muted/30 font-semibold" />
+                  </FieldRow>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* ── 4. ONLINE PROFILES TAB ───────────────────────────────────────── */}
+        <TabsContent value="profiles" className="space-y-6 animate-in fade-in duration-300">
+          <Card className="border-border/60 shadow-sm">
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border/40 pb-4 gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-sm bg-brown-800/10 text-brown-800">
+                  <Globe className="h-4 w-4" />
+                </div>
+                <CardTitle className="text-base font-bold text-foreground">Online Profiles &amp; Placement Resume</CardTitle>
+              </div>
+              {!isLocked && (
+                isEditingProfiles ? (
+                  <Button
+                    size="sm"
+                    onClick={saveCareer}
+                    disabled={!!saving}
+                    className="h-9 px-4 rounded-sm bg-brown-800 text-cream hover:bg-brown-900 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-200 font-bold text-xs shadow-sm min-w-[80px] inline-flex items-center justify-center animate-in fade-in zoom-in-95"
+                  >
+                    {saving === "career" ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+                        Saving...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-3.5 w-3.5 mr-1.5 text-amber-300" />
+                        Save
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsEditingProfiles(true)}
+                    className="group h-9 px-4 rounded-sm border border-border/70 bg-card text-foreground hover:bg-brown-800/10 hover:text-brown-900 hover:border-brown-800/30 hover:-translate-y-0.5 active:translate-y-0 active:scale-95 transition-all duration-200 font-semibold text-xs shadow-xs min-w-[80px] inline-flex items-center justify-center animate-in fade-in zoom-in-95"
+                  >
+                    <Pencil className="h-3 w-3 mr-1.5 text-muted-foreground group-hover:text-brown-800 transition-colors" />
+                    Edit
+                  </Button>
+                )
+              )}
+            </CardHeader>
+            <CardContent className="pt-6 space-y-6">
+              {/* Digital & Coding Handles */}
+              <div>
+                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block mb-3">
+                  Digital Handles &amp; Coding Profiles
+                </Label>
+                <div className="grid gap-4 sm:gap-5 grid-cols-1 md:grid-cols-3">
+                  <FieldRow label="LinkedIn Username" icon={Linkedin}>
+                    <div className="flex">
+                      <span className={cn(
+                        "inline-flex items-center rounded-l-sm border border-r-0 border-border px-2.5 text-[11px] text-muted-foreground font-mono",
+                        (!isEditingProfiles || isLocked) ? "bg-muted/60" : "bg-muted/40"
+                      )}>
+                        in/
+                      </span>
+                      <Input
+                        name="linkedinId"
+                        value={formData.linkedinId}
+                        onChange={handleInputChange}
+                        placeholder="username"
+                        disabled={!isEditingProfiles || isLocked}
+                        className={cn("rounded-l-none h-10 bg-card", (!isEditingProfiles || isLocked) && "bg-muted/30")}
+                      />
+                    </div>
+                  </FieldRow>
+
+                  <FieldRow label="GitHub Username" icon={Github}>
+                    <div className="flex">
+                      <span className={cn(
+                        "inline-flex items-center rounded-l-sm border border-r-0 border-border px-2.5 text-[11px] text-muted-foreground font-mono",
+                        (!isEditingProfiles || isLocked) ? "bg-muted/60" : "bg-muted/40"
+                      )}>
+                        github/
+                      </span>
+                      <Input
+                        name="githubId"
+                        value={formData.githubId}
+                        onChange={handleInputChange}
+                        placeholder="username"
+                        disabled={!isEditingProfiles || isLocked}
+                        className={cn("rounded-l-none h-10 bg-card", (!isEditingProfiles || isLocked) && "bg-muted/30")}
+                      />
+                    </div>
+                  </FieldRow>
+
+                  <FieldRow label="LeetCode Username" icon={Code2}>
+                    <div className="flex">
+                      <span className={cn(
+                        "inline-flex items-center rounded-l-sm border border-r-0 border-border px-2.5 text-[11px] text-muted-foreground font-mono",
+                        (!isEditingProfiles || isLocked) ? "bg-muted/60" : "bg-muted/40"
+                      )}>
+                        leetcode/
+                      </span>
+                      <Input
+                        name="leetcodeId"
+                        value={formData.leetcodeId}
+                        onChange={handleInputChange}
+                        placeholder="username"
+                        disabled={!isEditingProfiles || isLocked}
+                        className={cn("rounded-l-none h-10 bg-card", (!isEditingProfiles || isLocked) && "bg-muted/30")}
+                      />
+                    </div>
+                  </FieldRow>
+                </div>
+              </div>
+
+              {/* Resume Repository */}
+              <div className="pt-4 border-t border-border/40 space-y-4">
+                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
+                  Active Placement Resume
+                </Label>
+
+                <FieldRow label="Google Drive Shareable Link" icon={FileText}>
+                  <Input
+                    name="resumeLink"
+                    value={formData.resumeLink}
+                    onChange={handleInputChange}
+                    placeholder="https://drive.google.com/file/d/..."
+                    disabled={!isEditingProfiles || isLocked}
+                    className={cn("h-10 rounded-sm bg-card font-mono text-xs", (!isEditingProfiles || isLocked) && "bg-muted/30")}
+                  />
+                  <p className="text-[11px] text-muted-foreground mt-1">
+                    Ensure Google Drive access permission is set to &quot;Anyone with the link can view&quot;.
+                  </p>
+                </FieldRow>
+
+                {formData.resumeLink && (
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-sm border border-amber-500/20 bg-amber-500/10 p-3.5">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="grid h-8 w-8 shrink-0 place-items-center rounded-sm bg-amber-500/20 text-amber-800">
+                        <Check className="h-4 w-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-foreground">Resume Document Linked</p>
+                        <p className="text-[11px] text-muted-foreground font-mono truncate">{formData.resumeLink}</p>
+                      </div>
+                    </div>
+                    <a
+                      href={formData.resumeLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-1 rounded-sm bg-card border border-border/70 px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors shadow-sm shrink-0 self-start sm:self-auto"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" />
+                      Preview
+                    </a>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
 
       {/* ── DIALOGS & OVERLAYS ────────────────────────────────────────────── */}
       <input type="file" id="photo-upload" className="hidden" accept="image/*" onChange={onSelectFile} disabled={!!isLocked} />
 
-      <ImageCropper 
-        open={isCropping} 
-        imageSrc={cropSrc!} 
-        onCancel={() => { setCropSrc(null); setIsCropping(false); }} 
-        onCropComplete={handleCropComplete} 
+      <ImageCropper
+        open={isCropping}
+        imageSrc={cropSrc!}
+        onCancel={() => {
+          setCropSrc(null);
+          setIsCropping(false);
+        }}
+        onCropComplete={handleCropComplete}
       />
 
       <UploadingOverlay isUploading={uploading} />
 
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={open => !isDeletingPhoto && setIsDeleteDialogOpen(open)}>
+        <AlertDialogContent className="rounded-xl border-border/70 max-w-sm">
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove profile photo?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to remove your profile photo? This cannot be undone.
+            <div className="mx-auto mb-1 flex h-11 w-11 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+              <Trash2 className="h-5 w-5" />
+            </div>
+            <AlertDialogTitle className="text-center text-base font-bold text-foreground">
+              Remove profile photo?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-xs text-muted-foreground">
+              Are you sure you want to remove your profile photo? Your avatar will revert to your name initials.
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeletingPhoto}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={(e) => { e.preventDefault(); handleDeletePhoto(); }} disabled={isDeletingPhoto} className="bg-destructive hover:bg-destructive/90 text-white">
-              {isDeletingPhoto ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Removing...</> : "Remove Photo"}
+          <AlertDialogFooter className="sm:justify-center gap-2 pt-2">
+            <AlertDialogCancel disabled={isDeletingPhoto} className="rounded-sm text-xs w-full sm:w-auto">
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={e => {
+                e.preventDefault();
+                handleDeletePhoto();
+              }}
+              disabled={isDeletingPhoto}
+              className="bg-destructive hover:bg-destructive/90 text-white rounded-sm text-xs font-bold w-full sm:w-auto min-w-[120px] transition-all"
+            >
+              {isDeletingPhoto ? (
+                <>
+                  <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                  Removing...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+                  Yes, Remove
+                </>
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
       {confirmDialog && (
-        <ConfirmLockModal 
+        <ConfirmLockModal
           open={confirmDialog.open}
           title={confirmDialog.title}
           onClose={() => setConfirmDialog(null)}
           onConfirm={confirmDialog.onConfirm}
         />
       )}
-
     </div>
   );
 }
 
-function ConfirmLockModal({ open, title, onClose, onConfirm }: { open: boolean, title: string, onClose: () => void, onConfirm: () => void }) {
+function ConfirmLockModal({
+  open,
+  title,
+  onClose,
+  onConfirm
+}: {
+  open: boolean;
+  title: string;
+  onClose: () => void;
+  onConfirm: () => void;
+}) {
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent className="border-brown-200">
+      <AlertDialogContent className="rounded-xl border-border/70 max-w-md w-[calc(100vw-2rem)] sm:w-full shadow-2xl">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-brown-900 border-b pb-2 flex items-center gap-2">
-            <Lock className="h-5 w-5 text-brown-600" />
-            {title}
+          <AlertDialogTitle className="flex items-center gap-2 text-base font-bold text-foreground border-b border-border/40 pb-3">
+            <Lock className="h-4 w-4 text-amber-600 shrink-0" />
+            <span>{title}</span>
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-brown-700 py-4 font-medium flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-brown-900 shrink-0 mt-0.5" />
-            <span>Are you sure? Once locked, these details become **Read-Only**. You cannot edit them later without contacting the Admin.</span>
+          <AlertDialogDescription className="text-xs text-muted-foreground pt-3 leading-relaxed">
+            <span className="font-semibold text-foreground block mb-1">Warning: Irreversible Action</span>
+            Once locked, these details become <strong>Read-Only</strong>. You will not be able to edit them without contacting the Training &amp; Placement administration.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        <AlertDialogFooter className="bg-muted/20 p-2 rounded-b-sm border-t mt-2">
-          <AlertDialogCancel onClick={onClose}>Review Again</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} className="bg-brown-900 text-white hover:bg-brown-800">
-            Yes, Lock & Save
+        <AlertDialogFooter className="flex flex-col-reverse sm:flex-row gap-2 pt-2">
+          <AlertDialogCancel onClick={onClose} className="rounded-sm text-xs h-9 px-4 w-full sm:w-auto">
+            Review Again
+          </AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm} className="rounded-sm bg-brown-800 text-cream hover:bg-brown-900 text-xs font-bold h-9 px-4 w-full sm:w-auto shadow-sm">
+            Yes, Lock &amp; Save
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
   );
 }
+
+

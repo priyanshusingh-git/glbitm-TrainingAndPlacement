@@ -1,12 +1,14 @@
 "use client"
 
 import React, { useState, createContext, useContext, useEffect } from "react"
+import { usePathname } from "next/navigation"
 import { Sidebar } from "@/components/layout/dashboard/sidebar"
 import { Header } from "@/components/layout/dashboard/header"
-import { DesignInspector } from "@/components/layout/dashboard/design-inspector"
 import { cn } from "@/lib/utils"
 import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/layout/page-header"
+import { LoadingGrid, LoadingTable, LoadingProfile, HeroBannerSkeleton, AnalyticsSkeleton } from "@/components/ui/loading-states"
 
 interface SidebarContextType {
   collapsed: boolean
@@ -15,6 +17,8 @@ interface SidebarContextType {
   setMobileOpen: (value: boolean) => void
   expandOnHover: boolean
   setExpandOnHover: (value: boolean) => void
+  navigatingPath: string | null
+  setNavigatingPath: (path: string | null) => void
 }
 
 const SidebarContext = createContext<SidebarContextType>({
@@ -24,9 +28,45 @@ const SidebarContext = createContext<SidebarContextType>({
   setMobileOpen: () => { },
   expandOnHover: false,
   setExpandOnHover: () => { },
+  navigatingPath: null,
+  setNavigatingPath: () => { },
 })
 
 export const useSidebar = () => useContext(SidebarContext)
+
+const routeMetadata: Record<string, { title: string; description: string; type: "grid" | "table" | "profile" | "analytics" }> = {
+  "/student": { title: "Overview", description: "Welcome back! Here is a summary of your placement & training progress.", type: "grid" },
+  "/student/training": { title: "Training", description: "View your training sessions, attendance, and schedules.", type: "grid" },
+  "/student/bootcamps": { title: "Bootcamps", description: "Intensive training programs to accelerate your skills.", type: "grid" },
+  "/student/tests": { title: "Tests & Results", description: "View your performance and upcoming assessments.", type: "grid" },
+  "/student/placements": { title: "Placement Drives", description: "Explore active campus drives, view job requirements, and track your applications.", type: "grid" },
+  "/student/profile": { title: "My Profile", description: "Manage your personal information, academic details, and resume.", type: "profile" },
+  "/student/portfolio/projects": { title: "My Projects", description: "Showcase your software engineering projects to recruiters.", type: "grid" },
+  "/student/portfolio/certifications": { title: "Certifications", description: "Add professional certificates to validate your skills.", type: "grid" },
+  "/student/portfolio/coding-profiles": { title: "Coding Profiles", description: "Connect LeetCode, CodeChef, and HackerRank profiles.", type: "grid" },
+  "/student/portfolio/hackathons": { title: "Hackathons", description: "Log your competitive programming and hackathon achievements.", type: "grid" },
+  "/student/updates": { title: "Updates", description: "Placement, training, and account activity in one focused feed.", type: "table" },
+  "/admin": { title: "Overview", description: "Orchestrate placements, track performance, and manage operations across the platform.", type: "grid" },
+  "/admin/analytics": { title: "Analytics & Reports", description: "Data-driven insights into placement performance and student progress.", type: "analytics" },
+  "/admin/students": { title: "Manage Students", description: "Manage student records, track placement status, and academic progress.", type: "table" },
+  "/admin/trainers": { title: "Manage Trainers", description: "Manage trainer assignments, schedules, and cohort allocations.", type: "table" },
+  "/admin/training": { title: "Training Groups", description: "Configure student training groups and branch cohorts.", type: "grid" },
+  "/admin/sessions": { title: "Manage Sessions", description: "Schedule, manage, and monitor training cohorts and sessions across departments.", type: "grid" },
+  "/admin/bootcamps": { title: "Bootcamps Management", description: "Schedule and manage intensive training programs for student cohorts.", type: "table" },
+  "/admin/tests": { title: "Tests & Assessments", description: "Create and publish technical and aptitude assessments.", type: "grid" },
+  "/admin/companies": { title: "Companies", description: "Manage recruiting companies and corporate relationships.", type: "grid" },
+  "/admin/placements": { title: "Placements", description: "Manage active recruitment drives, applications, and offers.", type: "grid" },
+  "/admin/recruiters": { title: "Recruiters", description: "Manage company recruiter accounts and access credentials.", type: "table" },
+  "/admin/activity": { title: "Activity Log", description: "Audit trail of system events, student actions, and admin operations.", type: "table" },
+  "/admin/settings": { title: "Settings", description: "Configure system administration preferences and portal controls.", type: "grid" },
+  "/admin/updates": { title: "Updates & Notices", description: "Broadcast updates and notifications to students and faculty.", type: "table" },
+  "/recruiter": { title: "Company Dashboard", description: "Welcome back to your recruitment workspace.", type: "grid" },
+  "/trainer": { title: "Trainer Dashboard", description: "Manage your assigned training groups, student attendance, and daily session schedules.", type: "grid" },
+  "/trainer/groups": { title: "My Training Groups", description: "View student cohorts and training progress.", type: "grid" },
+  "/trainer/schedule": { title: "My Schedule", description: "View upcoming training sessions and timetable.", type: "grid" },
+  "/trainer/profile": { title: "Trainer Profile", description: "Manage your trainer credentials and account info.", type: "profile" },
+  "/trainer/settings": { title: "Trainer Settings", description: "Configure your notification preferences and schedule availability.", type: "grid" },
+};
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -42,9 +82,16 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children, role, user, headerAction, defaultCollapsed = false }: DashboardLayoutProps) {
+  const pathname = usePathname()
   const [collapsed, setCollapsedState] = useState(defaultCollapsed)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [expandOnHover, setExpandOnHoverState] = useState(false)
+  const [navigatingPath, setNavigatingPath] = useState<string | null>(null)
+
+  // Clear instant navigating state as soon as pathname updates
+  useEffect(() => {
+    setNavigatingPath(null)
+  }, [pathname])
 
   // Initialize from localStorage on mount
   useEffect(() => {
@@ -64,6 +111,9 @@ export function DashboardLayout({ children, role, user, headerAction, defaultCol
     document.cookie = `sidebar-collapsed=${value}; path=/; max-age=31536000; SameSite=Lax`
   }
 
+  const isNavigating = Boolean(navigatingPath && navigatingPath !== pathname)
+  const navMeta = isNavigating && navigatingPath ? routeMetadata[navigatingPath] : null
+
   return (
     <SidebarContext.Provider
       value={{
@@ -73,6 +123,8 @@ export function DashboardLayout({ children, role, user, headerAction, defaultCol
         setMobileOpen,
         expandOnHover,
         setExpandOnHover,
+        navigatingPath,
+        setNavigatingPath,
       }}
     >
       <div className="dashboard-canvas min-h-screen">
@@ -86,7 +138,34 @@ export function DashboardLayout({ children, role, user, headerAction, defaultCol
         >
           <Header role={role} user={user} headerAction={headerAction} />
           <main className="page-shell pb-[calc(4rem+env(safe-area-inset-bottom))] pt-6 md:pb-8 md:pt-8">
-            {children}
+            {isNavigating && navMeta ? (
+              <div className="flex flex-col gap-8 pb-12 animate-fade-up">
+                {navigatingPath === "/student" ? (
+                  <>
+                    <HeroBannerSkeleton />
+                    <LoadingGrid items={4} />
+                  </>
+                ) : navigatingPath === "/admin/analytics" ? (
+                  <>
+                    <PageHeader title={navMeta.title} description={navMeta.description} />
+                    <AnalyticsSkeleton />
+                  </>
+                ) : (
+                  <>
+                    <PageHeader title={navMeta.title} description={navMeta.description} />
+                    {navMeta.type === "table" ? (
+                      <LoadingTable rows={6} cols={5} />
+                    ) : navMeta.type === "profile" ? (
+                      <LoadingProfile />
+                    ) : (
+                      <LoadingGrid items={6} />
+                    )}
+                  </>
+                )}
+              </div>
+            ) : (
+              children
+            )}
           </main>
         </div>
 
@@ -98,8 +177,6 @@ export function DashboardLayout({ children, role, user, headerAction, defaultCol
             </Button>
           </div>
         )}
-
-        <DesignInspector />
       </div>
     </SidebarContext.Provider>
   )

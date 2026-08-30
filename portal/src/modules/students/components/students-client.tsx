@@ -4,7 +4,8 @@ import { useEffect, useState, useMemo } from"react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from"@/components/ui/card"
 import { Badge } from"@/components/ui/badge"
-import { Button } from"@/components/ui/button"
+import { Button } from "@/components/ui/button"
+import { Heading } from "@/components/ui/heading"
 import { Input } from"@/components/ui/input"
 import { Search, Filter, MoreHorizontal, User, GraduationCap, BookOpen, Shield, Download, Upload, Plus, FileSpreadsheet, Send, SearchCode, Loader2, Mail, Phone, Calendar, MapPin, Building, Trash2, Edit, Pencil, Eye, CheckCircle2, XCircle, AlertCircle, Info, Lock, Unlock, ShieldAlert, ScrollText, Award, FileText, ExternalLink, Briefcase, Globe, Code } from"lucide-react"
 import { LoadingTable } from"@/components/ui/loading-states"
@@ -683,7 +684,7 @@ export default function StudentsClient() {
                                           <div className="flex gap-4 items-center justify-between">
                                             <div className="space-y-1">
                                               <p className="text-sm font-medium leading-none">Successful Imports</p>
-                                              <p className="text-2xl font-bold text-green-600">{importResults.success}</p>
+                                              <p className="text-2xl font-bold text-success">{importResults.success}</p>
                                             </div>
                                             <div className="space-y-1">
                                               <p className="text-sm font-medium leading-none">Failed Rows</p>
@@ -876,7 +877,7 @@ export default function StudentsClient() {
  <DropdownMenuLabel className="text-[10px] uppercase tracking-widest text-muted-foreground font-black">Actions</DropdownMenuLabel>
  <DropdownMenuSeparator />
  <DropdownMenuItem onClick={() => router.push(`/admin/students/${student.id}/profile`)} className="text-xs font-bold gap-2 cursor-pointer">
- <Eye className="h-3.5 w-3.5 text-blue-500" /> View Profile
+ <Eye className="h-3.5 w-3.5 text-brown-600" /> View Profile
  </DropdownMenuItem>
  <DropdownMenuItem onClick={() => handleEditClick(student)} className="text-xs font-bold gap-2 cursor-pointer">
  <Edit className="h-3.5 w-3.5 text-amber-500" /> Edit Record
@@ -885,7 +886,7 @@ export default function StudentsClient() {
  <Lock className="h-3.5 w-3.5 text-rose-500" /> Lock Management
  </DropdownMenuItem>
  <DropdownMenuItem onClick={() => handleResetPassword(student.id, student.name)} className="text-xs font-bold gap-2 cursor-pointer">
- <Send className="h-3.5 w-3.5 text-indigo-500" /> Send Password
+ <Send className="h-3.5 w-3.5 text-amber-700" /> Send Password
  </DropdownMenuItem>
  <DropdownMenuSeparator />
  <DropdownMenuItem
@@ -1138,67 +1139,67 @@ export default function StudentsClient() {
  </div>
  </div>
 
- <div className="space-y-4 mt-6">
- <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-brown-800">Present Address</h3>
- <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
- <div className="space-y-1.5 col-span-2">
- <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">House / Flat No & Locality</Label>
- <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
- <Input
- value={editFormData.presentHouseNo}
- onChange={e => setEditFormData({ ...editFormData, presentHouseNo: e.target.value })}
- className="h-10 rounded-md border-input"
- placeholder="House No"
- />
- <Input
- value={editFormData.presentLocality}
- onChange={e => setEditFormData({ ...editFormData, presentLocality: e.target.value })}
- className="h-10 rounded-md border-input"
- placeholder="Locality"
- />
- </div>
- </div>
- <div className="space-y-1.5">
- <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">City</Label>
- <Input
- value={editFormData.presentCity}
- onChange={e => setEditFormData({ ...editFormData, presentCity: e.target.value })}
- className="h-10 rounded-md border-input"
- placeholder="City"
- />
- </div>
- <div className="space-y-1.5">
- <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">District</Label>
- <Input
- value={editFormData.presentDistrict}
- onChange={e => setEditFormData({ ...editFormData, presentDistrict: e.target.value })}
- className="h-10 rounded-md border-input"
- placeholder="District"
- />
- </div>
- <div className="space-y-1.5">
- <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">State</Label>
- <Input
- value={editFormData.presentState}
- onChange={e => setEditFormData({ ...editFormData, presentState: e.target.value })}
- className="h-10 rounded-md border-input"
- placeholder="State"
- />
- </div>
- <div className="space-y-1.5">
- <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Pincode</Label>
- <Input
- value={editFormData.presentPincode}
- onChange={e => setEditFormData({ ...editFormData, presentPincode: e.target.value })}
- className="h-10 rounded-md border-input"
- placeholder="6-digit Pincode"
- />
- </div>
- </div>
- </div>
+  <div className="space-y-4 mt-6">
+  <Heading variant="eyebrow" as="h3" className="text-brown-800">Present Address</Heading>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+  <div className="space-y-1.5 col-span-2">
+  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">House / Flat No & Locality</Label>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <Input
+  value={editFormData.presentHouseNo}
+  onChange={e => setEditFormData({ ...editFormData, presentHouseNo: e.target.value })}
+  className="h-10 rounded-md border-input"
+  placeholder="House No"
+  />
+  <Input
+  value={editFormData.presentLocality}
+  onChange={e => setEditFormData({ ...editFormData, presentLocality: e.target.value })}
+  className="h-10 rounded-md border-input"
+  placeholder="Locality"
+  />
+  </div>
+  </div>
+  <div className="space-y-1.5">
+  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">City</Label>
+  <Input
+  value={editFormData.presentCity}
+  onChange={e => setEditFormData({ ...editFormData, presentCity: e.target.value })}
+  className="h-10 rounded-md border-input"
+  placeholder="City"
+  />
+  </div>
+  <div className="space-y-1.5">
+  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">District</Label>
+  <Input
+  value={editFormData.presentDistrict}
+  onChange={e => setEditFormData({ ...editFormData, presentDistrict: e.target.value })}
+  className="h-10 rounded-md border-input"
+  placeholder="District"
+  />
+  </div>
+  <div className="space-y-1.5">
+  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">State</Label>
+  <Input
+  value={editFormData.presentState}
+  onChange={e => setEditFormData({ ...editFormData, presentState: e.target.value })}
+  className="h-10 rounded-md border-input"
+  placeholder="State"
+  />
+  </div>
+  <div className="space-y-1.5">
+  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Pincode</Label>
+  <Input
+  value={editFormData.presentPincode}
+  onChange={e => setEditFormData({ ...editFormData, presentPincode: e.target.value })}
+  className="h-10 rounded-md border-input"
+  placeholder="6-digit Pincode"
+  />
+  </div>
+  </div>
+  </div>
 
- <div className="space-y-4 mt-6">
- <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-brown-800">Permanent Address</h3>
+  <div className="space-y-4 mt-6">
+  <Heading variant="eyebrow" as="h3" className="text-brown-800">Permanent Address</Heading>
  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
  <div className="space-y-1.5 col-span-2">
  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">House / Flat No & Locality</Label>
@@ -1266,7 +1267,7 @@ export default function StudentsClient() {
  <TabsContent value="family" className="space-y-4 pt-2">
  <div className="space-y-6">
  <div className="space-y-4">
- <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-brown-800">Father's Information</h3>
+ <Heading variant="eyebrow" as="h3" className="text-brown-800">Father's Information</Heading>
  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Father's Name</Label>
@@ -1299,7 +1300,7 @@ export default function StudentsClient() {
  </div>
 
  <div className="space-y-4 mt-6">
- <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-brown-800">Mother's Information</h3>
+ <Heading variant="eyebrow" as="h3" className="text-brown-800">Mother's Information</Heading>
  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Mother's Name</Label>
@@ -1342,7 +1343,7 @@ export default function StudentsClient() {
  <TabsContent value="education" className="space-y-6 pt-2">
  <div className="space-y-6">
  <div className="space-y-4">
- <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-brown-800">Class 10th Details</h3>
+ <Heading variant="eyebrow" as="h3" className="text-brown-800">Class 10th Details</Heading>
  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">School Name <span className="text-rose-500">*</span></Label>
@@ -1387,9 +1388,9 @@ export default function StudentsClient() {
  <div className="h-px bg-muted" />
 
  <div className="space-y-4">
- <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-brown-800">
+ <Heading variant="eyebrow" as="h3" className="text-brown-800">
  {editFormData.studentType === 'Lateral Entry' ? 'Diploma Details' : 'Class 12th Details'}
- </h3>
+ </Heading>
 
  {editFormData.studentType === 'Lateral Entry' ? (
  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">

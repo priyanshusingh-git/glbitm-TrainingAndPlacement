@@ -11,3 +11,5 @@ This folder documents all UI/UX issues encountered during development, the root 
 | 3 | [Hardcoded hex colors in components](./003-hardcoded-colors.md) | Analytics, Landing | ✅ Fixed |
 | 4 | [Hardcoded content in JSX](./004-hardcoded-content.md) | Auth pages, Analytics | ✅ Fixed |
 | 5 | [Button color too light / washed out](./005-washed-out-button.md) | Auth buttons | ✅ Fixed |
+| 8 | [SaaS Design Drift](./008-saas-design-drift.md) | Global Dashboards | ✅ Fixed |
+| 9 | [Sidebar 0ms Navigation & Skeleton Coordination](./009-instant-sidebar-navigation-and-skeleton-coordination.md) | Layout, Sidebar, Skeletons | ✅ Fixed |

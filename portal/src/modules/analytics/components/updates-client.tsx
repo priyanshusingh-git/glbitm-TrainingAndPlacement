@@ -8,6 +8,7 @@ import { Button } from"@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from"@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from"@/components/ui/tabs"
 import { Badge } from"@/components/ui/badge"
+import { Heading } from "@/components/ui/heading"
 
 export default function AdminUpdatesPage() {
  const { notifications, markAsRead, isLoading } = useNotifications()
@@ -18,9 +19,9 @@ export default function AdminUpdatesPage() {
 
  const getIcon = (type: string) => {
  switch (type) {
- case"WARNING": return <AlertTriangle className="h-5 w-5 text-yellow-500" />
- case"SUCCESS": return <CheckCircle className="h-5 w-5 text-green-500" />
- default: return <Info className="h-5 w-5 text-blue-500" />
+ case"WARNING": return <AlertTriangle className="h-5 w-5 text-warning" />
+ case"SUCCESS": return <CheckCircle className="h-5 w-5 text-success" />
+ default: return <Info className="h-5 w-5 text-brown-600" />
  }
  }
 
@@ -33,10 +34,7 @@ export default function AdminUpdatesPage() {
  return (
  <div className="space-y-6">
  <div className="flex flex-col gap-2">
- <h1 className="text-3xl font-bold tracking-tight">Updates</h1>
- <p className="text-muted-foreground">
- Stay informed about platform activities and alerts.
- </p>
+ <Heading variant="page-title">Updates</Heading>
  </div>
 
  <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">

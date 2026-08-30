@@ -108,7 +108,7 @@ export async function POST(
  }
  })
 
- // Also create a TestResult record for legacy compatibility/aggregation
+ // Create TestResult record for score aggregation
  await tx.testResult.create({
  data: {
  testId,
