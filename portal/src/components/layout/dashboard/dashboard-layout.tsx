@@ -138,34 +138,7 @@ export function DashboardLayout({ children, role, user, headerAction, defaultCol
         >
           <Header role={role} user={user} headerAction={headerAction} />
           <main className="page-shell pb-[calc(4rem+env(safe-area-inset-bottom))] pt-6 md:pb-8 md:pt-8">
-            {isNavigating && navMeta ? (
-              <div className="flex flex-col gap-8 pb-12 animate-fade-up">
-                {navigatingPath === "/student" ? (
-                  <>
-                    <HeroBannerSkeleton />
-                    <LoadingGrid items={4} />
-                  </>
-                ) : navigatingPath === "/admin/analytics" ? (
-                  <>
-                    <PageHeader title={navMeta.title} description={navMeta.description} />
-                    <AnalyticsSkeleton />
-                  </>
-                ) : (
-                  <>
-                    <PageHeader title={navMeta.title} description={navMeta.description} />
-                    {navMeta.type === "table" ? (
-                      <LoadingTable rows={6} cols={5} />
-                    ) : navMeta.type === "profile" ? (
-                      <LoadingProfile />
-                    ) : (
-                      <LoadingGrid items={6} />
-                    )}
-                  </>
-                )}
-              </div>
-            ) : (
-              children
-            )}
+            {children}
           </main>
         </div>
 

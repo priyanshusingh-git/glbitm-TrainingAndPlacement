@@ -99,9 +99,9 @@ export default function HackathonsPage() {
   const [position, setPosition] = useState("Participant");
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchHackathons = async () => {
+  const fetchHackathons = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent && hackathons.length === 0) setLoading(true);
       const data = await api.get("/portfolio/hackathons");
       setHackathons(Array.isArray(data) ? data : []);
     } catch (error) {

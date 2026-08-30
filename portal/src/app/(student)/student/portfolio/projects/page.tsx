@@ -107,9 +107,9 @@ export default function ProjectsPage() {
   const [featured, setFeatured] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchProjects = async () => {
+  const fetchProjects = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent && projects.length === 0) setLoading(true);
       const data = await api.get("/portfolio/projects");
       setProjects(Array.isArray(data) ? data : []);
     } catch (error) {

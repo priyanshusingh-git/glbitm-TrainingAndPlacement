@@ -264,9 +264,9 @@ export default function CodingProfilesPage() {
   const [editMonthlyGoal, setEditMonthlyGoal] = useState("30");
   const [editSubmitting, setEditSubmitting] = useState(false);
 
-  const fetchProfiles = async () => {
+  const fetchProfiles = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent && profiles.length === 0) setLoading(true);
       const data = await api.get("/portfolio/coding-profiles");
       setProfiles(Array.isArray(data) ? data : []);
     } catch (error) {

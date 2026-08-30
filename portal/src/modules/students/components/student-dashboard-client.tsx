@@ -23,15 +23,15 @@ export default function StudentDashboard() {
 
   const fetchData = useCallback(async (silent = false) => {
     try {
-      if (!silent) setLoading(true);
+      if (!silent && !dashboardData) setLoading(true);
       const data = await api.get("/dashboard/student");
       setDashboardData(data);
     } catch (error) {
       console.error("Failed to fetch dashboard:", error);
     } finally {
-      if (!silent) setLoading(false);
+      setLoading(false);
     }
-  }, []);
+  }, [dashboardData]);
 
   useEffect(() => {
     fetchData();

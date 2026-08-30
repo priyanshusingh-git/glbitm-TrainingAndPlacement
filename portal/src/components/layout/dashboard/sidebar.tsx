@@ -139,7 +139,6 @@ export function Sidebar({ role }: SidebarProps) {
                   onMouseEnter={() => router.prefetch(item.href)}
                   onClick={() => {
                     setOptimisticPath(item.href)
-                    setNavigatingPath(item.href)
                     setMobileOpen(false)
                   }}
                   className={cn(

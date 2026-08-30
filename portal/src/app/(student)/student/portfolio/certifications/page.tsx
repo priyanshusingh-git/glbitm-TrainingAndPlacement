@@ -89,9 +89,9 @@ export default function CertificationsPage() {
   const [skillTags, setSkillTags] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchCerts = async () => {
+  const fetchCerts = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent && certs.length === 0) setLoading(true);
       const data = await api.get("/portfolio/certifications");
       setCerts(Array.isArray(data) ? data : []);
     } catch (error) {

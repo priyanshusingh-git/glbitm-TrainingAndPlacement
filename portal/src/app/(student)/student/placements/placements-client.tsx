@@ -31,9 +31,9 @@ export default function PlacementsPage() {
     fetchDrives()
   }, [])
 
-  const fetchDrives = async () => {
+  const fetchDrives = async (silent = false) => {
     try {
-      setLoading(true)
+      if (!silent && drives.length === 0) setLoading(true)
       const data = await api.get('/placements')
       setDrives(Array.isArray(data) ? data : [])
     } catch (error) {
