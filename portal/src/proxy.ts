@@ -73,10 +73,17 @@ function finalizeResponse(response: NextResponse, requestId: string) {
 }
 
 export async function proxy(request: NextRequest) {
-  validateAuthSecrets()
+  try {
+    validateAuthSecrets()
+  } catch (err) {
+    console.error("[proxy] Auth secrets validation warning:", err)
+  }
+
   const url = request.nextUrl.clone()
   const path = url.pathname
   const requestId = request.headers.get("x-request-id") ?? crypto.randomUUID()
+
+  try {
 
   const protectedRoutes = [
     { prefix: "/student", role: "STUDENT" },
@@ -211,6 +218,10 @@ export async function proxy(request: NextRequest) {
     }),
     requestId
   )
+  } catch (error) {
+    console.error("[proxy] Middleware unhandled error:", error)
+    return NextResponse.next()
+  }
 }
 
 export const config = {
