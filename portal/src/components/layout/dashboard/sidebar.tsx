@@ -98,10 +98,10 @@ function NavContent({
                 prefetch={true}
                 onClick={() => onLinkClick(item.href)}
                 className={cn(
-                  "group relative flex items-center gap-3 rounded-md px-3 py-3 min-h-[44px] text-sm font-medium transition-all duration-200 overflow-hidden",
+                  "group relative flex items-center gap-3 rounded-md px-3 py-3 min-h-[44px] text-sm font-medium transition-colors duration-150 overflow-hidden border outline-none focus:outline-none focus-visible:ring-1 focus-visible:ring-amber-500/40",
                   isActive
-                    ? "bg-amber-500/15 text-white font-bold border border-amber-500/30"
-                    : "text-white/80 hover:bg-white/10 hover:text-white",
+                    ? "bg-amber-500/15 text-white font-bold border-amber-500/30"
+                    : "border-transparent text-white/80 hover:bg-white/10 hover:text-white",
                   isSidebarCollapsed && "justify-center px-2"
                 )}
               >
@@ -150,9 +150,9 @@ function NavContent({
                 onClick={onLogout}
                 disabled={activeLoggingOut}
                 className={cn(
-                  "group relative flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-white/80 transition-all hover:bg-destructive/20 hover:text-red-300 disabled:opacity-70 disabled:cursor-not-allowed",
+                  "group relative flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-white/80 transition-colors hover:bg-destructive/20 hover:text-red-300 disabled:opacity-70 disabled:cursor-not-allowed border border-transparent outline-none focus:outline-none focus-visible:ring-1 focus-visible:ring-destructive/40",
                   isSidebarCollapsed && "justify-center px-2",
-                  activeLoggingOut && "bg-destructive/20 text-red-300 font-bold"
+                  activeLoggingOut && "bg-destructive/20 text-red-300 font-bold border-destructive/30"
                 )}
               >
                 {activeLoggingOut ? (
