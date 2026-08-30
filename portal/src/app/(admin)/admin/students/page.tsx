@@ -5,7 +5,7 @@ import StudentsPage from "@/modules/students/components/students-client";
 import { LoadingTable } from "@/components/ui/loading-states";
 
 export const metadata: Metadata = {
-  title: "Students - Admin Dashboard",
+  title: "Manage Students - Admin Dashboard",
   description: "Manage student records, track placement status, and academic progress.",
 };
 

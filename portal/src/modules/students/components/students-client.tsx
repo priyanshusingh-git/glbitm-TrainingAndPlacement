@@ -71,7 +71,7 @@ import {
  SelectValue,
 } from"@/components/ui/select"
 import { PageHeader } from"@/components/layout/page-header"
-import { getImageUrl } from"@/lib/utils"
+import { getImageUrl, cn } from "@/lib/utils"
 
 // Constants
 const BRANCHES = [
@@ -122,7 +122,15 @@ export default function StudentsClient() {
  const [createOpen, setCreateOpen] = useState(false)
  const [createTab, setCreateTab] = useState("single")
  const [createLoading, setCreateLoading] = useState(false)
- const [formData, setFormData] = useState({ email: "" })
+ const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    admissionId: "",
+    rollNo: "",
+    branch: BRANCHES[0],
+    year: new Date().getFullYear().toString(),
+    currentSemester: "1",
+  })
 
  useEffect(() => {
    const action = searchParams?.get("action")
@@ -284,35 +292,75 @@ export default function StudentsClient() {
  }
  }
 
- const handleCreateStudent = async (e: React.FormEvent) => {
- e.preventDefault()
+  const handleDownloadTemplate = () => {
+    const sampleRows = [
+      {
+        name: "Aarav Sharma",
+        email: "aarav.sharma@glbitm.ac.in",
+        admissionId: "22BTCS001",
+        rollNo: "2201920100001",
+        branch: "Computer Science and Engineering",
+        year: "2026",
+        currentSemester: "6",
+        cgpa: "8.45"
+      },
+      {
+        name: "Diya Verma",
+        email: "diya.verma@glbitm.ac.in",
+        admissionId: "22BTIT002",
+        rollNo: "2201920130002",
+        branch: "Information Technology",
+        year: "2026",
+        currentSemester: "6",
+        cgpa: "8.80"
+      }
+    ]
+    exportToCSV(sampleRows, "student_import_template", [
+      { key: "name", label: "Name" },
+      { key: "email", label: "Email" },
+      { key: "admissionId", label: "AdmissionId" },
+      { key: "rollNo", label: "RollNo" },
+      { key: "branch", label: "Branch" },
+      { key: "year", label: "Year" },
+      { key: "currentSemester", label: "CurrentSemester" },
+      { key: "cgpa", label: "CGPA" }
+    ])
+  }
 
- // Frontend Validation
- const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
- if (!emailRegex.test(formData.email)) {
- toast({
- title:"Invalid Email",
- description:"Please enter a valid institution email address.",
- variant:"destructive"
- });
- return;
- }
+  const handleCreateStudent = async (e: React.FormEvent) => {
+    e.preventDefault()
 
- 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid institution email address.",
+        variant: "destructive"
+      })
+      return
+    }
 
- try {
- setCreateLoading(true)
- await api.post('/students', formData)
- toast({ title:"Success", description:"Student created successfully" })
- setCreateOpen(false)
- setFormData({ email: "" })
- fetchStudents()
- } catch (error: any) {
- toast({ title:"Error", description: error.message ||"Failed to create student", variant:"destructive" })
- } finally {
- setCreateLoading(false)
- }
- }
+    try {
+      setCreateLoading(true)
+      await api.post('/students', formData)
+      toast({ title: "Success", description: "Student account created and induction credentials generated." })
+      setCreateOpen(false)
+      setFormData({
+        name: "",
+        email: "",
+        admissionId: "",
+        rollNo: "",
+        branch: BRANCHES[0],
+        year: new Date().getFullYear().toString(),
+        currentSemester: "1",
+      })
+      fetchStudents()
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message || "Failed to create student", variant: "destructive" })
+    } finally {
+      setCreateLoading(false)
+    }
+  }
 
  const handleEditClick = (student: any) => {
  setEditingStudentId(student.id)
@@ -589,380 +637,540 @@ export default function StudentsClient() {
  { key:"personalEmail", label:"Email" }
  ]
 
- const processedStudents = useMemo(() => {
- let result = students.filter(student => {
- const studentEmail = student.user?.email || student.personalEmail ||"";
- const matchesSearch = (student.name ||"").toLowerCase().includes(searchQuery.toLowerCase()) ||
- (student.admissionId ||"").toLowerCase().includes(searchQuery.toLowerCase()) ||
- studentEmail.toLowerCase().includes(searchQuery.toLowerCase())
- const matchesBranch = branchFilter ==="all" || student.branch === branchFilter
- const matchesYear = yearFilter ==="all" || student.year === yearFilter
- const matchesStatus = statusFilter ==="all" || (statusFilter ==="placed" ? student.cgpa > 7 : student.cgpa <= 7)
- return matchesSearch && matchesBranch && matchesYear && matchesStatus
- })
+  const processedStudents = useMemo(() => {
+    let result = students.filter(student => {
+      const studentEmail = student.user?.email || student.personalEmail || ""
+      const matchesSearch =
+        (student.name || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (student.admissionId || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (student.rollNo || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+        studentEmail.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesBranch = branchFilter === "all" || student.branch === branchFilter
+      const matchesYear = yearFilter === "all" || student.year === yearFilter || student.year?.toString() === yearFilter
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "eligible"
+          ? (student.cgpa || 0) >= 7.0
+          : statusFilter === "not-eligible"
+            ? (student.cgpa || 0) < 7.0
+            : statusFilter === "placed"
+              ? student.applications?.some((a: any) => ["offered", "placed", "OFFERED", "PLACED"].includes(a.status))
+              : true)
+      return matchesSearch && matchesBranch && matchesYear && matchesStatus
+    })
 
- // Sorting logic
- result.sort((a, b) => {
- switch (sortBy) {
- case"name-asc":
- return (a.name ||"").localeCompare(b.name ||"");
- case"name-desc":
- return (b.name ||"").localeCompare(a.name ||"");
- case"admissionId-asc":
- return (a.admissionId ||"").localeCompare(b.admissionId ||"");
- case"admissionId-desc":
- return (b.admissionId ||"").localeCompare(a.admissionId ||"");
- case"cgpa-desc":
- return (b.cgpa || 0) - (a.cgpa || 0);
- case"cgpa-asc":
- return (a.cgpa || 0) - (b.cgpa || 0);
- default:
- return 0;
- }
- })
+    // Sorting logic
+    result.sort((a, b) => {
+      switch (sortBy) {
+        case "name-asc":
+          return (a.name || "").localeCompare(b.name || "")
+        case "name-desc":
+          return (b.name || "").localeCompare(a.name || "")
+        case "admissionId-asc":
+          return (a.admissionId || "").localeCompare(b.admissionId || "")
+        case "admissionId-desc":
+          return (b.admissionId || "").localeCompare(a.admissionId || "")
+        case "cgpa-desc":
+          return (b.cgpa || 0) - (a.cgpa || 0)
+        case "cgpa-asc":
+          return (a.cgpa || 0) - (b.cgpa || 0)
+        default:
+          return 0
+      }
+    })
 
- return result
- }, [students, searchQuery, branchFilter, yearFilter, statusFilter, sortBy])
+    return result
+  }, [students, searchQuery, branchFilter, yearFilter, statusFilter, sortBy])
 
- const rowsPerPage = itemsPerPage ==="all" ? processedStudents.length || 1 : itemsPerPage
- const totalPages = Math.ceil(processedStudents.length / rowsPerPage)
- const paginatedStudents = processedStudents.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
+  const rowsPerPage = itemsPerPage === "all" ? processedStudents.length || 1 : itemsPerPage
+  const totalPages = Math.ceil(processedStudents.length / rowsPerPage)
+  const paginatedStudents = processedStudents.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage)
 
- const getInitials = (name: string) => {
- return name
- .split(' ')
- .map(n => n[0])
- .join('')
- .toUpperCase()
- .slice(0, 2);
- }
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
+  }
 
- return (
- <div className="space-y-6">
- <PageHeader
- title="Student Database"
- description="Manage student records, track placement status, and academic progress."
- action={
- <div className="flex gap-2">
-                            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-                              <DialogTrigger asChild>
-                                <Button className="shadow-lg shadow-primary/20">
-                                  <Plus className="mr-2 h-4 w-4" /> Add Students
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent>
-                                <DialogHeader>
-                                  <DialogTitle>Add Students</DialogTitle>
-                                  <DialogDescription>Create a new student account or import from XLSX.</DialogDescription>
-                                </DialogHeader>
-                                <Tabs value={createTab} onValueChange={setCreateTab} className="w-full">
-                                  <TabsList className="grid w-full grid-cols-2">
-                                    <TabsTrigger value="single">Single Student</TabsTrigger>
-                                    <TabsTrigger value="bulk">Bulk Import</TabsTrigger>
-                                  </TabsList>
-                                  
-                                  <TabsContent value="single">
-                                    <form onSubmit={handleCreateStudent} className="space-y-4 pt-4">
-                                      <div className="space-y-4">
-                                        <div className="space-y-2">
-                                          <Label htmlFor="email">Institute Email</Label>
-                                          <Input id="email" type="email" placeholder="student@college.edu" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
-                                        </div>
-                                      </div>
-                                      <DialogFooter>
-                                        <Button type="submit" disabled={createLoading}>
-                                          {createLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Create Student Account"}
-                                        </Button>
-                                      </DialogFooter>
-                                    </form>
-                                  </TabsContent>
-                                  
-                                  <TabsContent value="bulk">
-                                    {importResults ? (
-                                      <div className="space-y-4 pt-4">
-                                        <div className="rounded-md bg-muted p-4 space-y-3 border">
-                                          <div className="flex gap-4 items-center justify-between">
-                                            <div className="space-y-1">
-                                              <p className="text-sm font-medium leading-none">Successful Imports</p>
-                                              <p className="text-2xl font-bold text-success">{importResults.success}</p>
-                                            </div>
-                                            <div className="space-y-1">
-                                              <p className="text-sm font-medium leading-none">Failed Rows</p>
-                                              <p className="text-2xl font-bold text-red-600">{importResults.failed}</p>
-                                            </div>
-                                          </div>
-                                          {importResults.errors && importResults.errors.length > 0 && (
-                                            <div className="mt-4 border-t pt-4">
-                                              <p className="text-sm font-bold mb-2 flex items-center gap-2"><AlertCircle className="h-4 w-4 text-destructive" /> Error Details</p>
-                                              <ScrollArea className="h-[200px] w-full rounded-md border p-4 bg-background">
-                                                <ul className="list-disc pl-4 space-y-1 text-sm text-muted-foreground">
-                                                  {importResults.errors.map((err: string, i: number) => (
-                                                    <li key={i}>{err}</li>
-                                                  ))}
-                                                </ul>
-                                              </ScrollArea>
-                                            </div>
-                                          )}
-                                        </div>
-                                        <DialogFooter>
-                                          <Button onClick={() => { setCreateOpen(false); setImportResults(null); setImportFile(null); }} className="w-full sm:w-auto">
-                                            Done
-                                          </Button>
-                                        </DialogFooter>
-                                      </div>
-                                    ) : (
-                                      <form onSubmit={handleImportStudents} className="space-y-4 pt-4">
-                                        <div className="grid gap-4 py-4">
-                                          <div className="grid gap-2">
-                                            <Label htmlFor="file">Select File (XLSX Only)</Label>
-                                            <Input id="file" type="file" accept=".xlsx" onChange={(e) => setImportFile(e.target.files?.[0] || null)} />
-                                          </div>
-                                        </div>
-                                        <DialogFooter>
-                                          <Button type="submit" disabled={importLoading || !importFile}>
-                                            {importLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading...</> : "Import Students"}
-                                          </Button>
-                                        </DialogFooter>
-                                      </form>
-                                    )}
-                                  </TabsContent>
-                                </Tabs>
-                              </DialogContent>
-                            </Dialog>
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        title="Manage Students"
+        action={
+          <div className="flex gap-2">
+            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+              <DialogTrigger asChild>
+                <Button className="shadow-lg shadow-primary/20">
+                  <Plus className="mr-2 h-4 w-4" /> Add Students
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-[calc(100vw-2rem)] md:max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-bold">Add Students</DialogTitle>
+                </DialogHeader>
+                <Tabs value={createTab} onValueChange={setCreateTab} className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="single">Single Student</TabsTrigger>
+                    <TabsTrigger value="bulk">Bulk Import</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="single">
+                    <form onSubmit={handleCreateStudent} className="space-y-4 pt-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1.5">
+                          <Label htmlFor="create-name">Full Name <span className="text-rose-500">*</span></Label>
+                          <Input
+                            id="create-name"
+                            placeholder="e.g. Aarav Sharma"
+                            value={formData.name}
+                            onChange={e => setFormData({ ...formData, name: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="create-email">Institute Email <span className="text-rose-500">*</span></Label>
+                          <Input
+                            id="create-email"
+                            type="email"
+                            placeholder="student@glbitm.ac.in"
+                            value={formData.email}
+                            onChange={e => setFormData({ ...formData, email: e.target.value })}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="create-admissionId">Admission ID <span className="text-rose-500">*</span></Label>
+                          <Input
+                            id="create-admissionId"
+                            placeholder="e.g. 22BTCS001"
+                            value={formData.admissionId}
+                            onChange={e => setFormData({ ...formData, admissionId: e.target.value.toUpperCase() })}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="create-rollNo">Roll Number</Label>
+                          <Input
+                            id="create-rollNo"
+                            placeholder="e.g. 2201920100001"
+                            value={formData.rollNo}
+                            onChange={e => setFormData({ ...formData, rollNo: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-1.5 col-span-1 md:col-span-2">
+                          <Label htmlFor="create-branch">Branch <span className="text-rose-500">*</span></Label>
+                          <Select
+                            value={formData.branch}
+                            onValueChange={v => setFormData({ ...formData, branch: v })}
+                          >
+                            <SelectTrigger id="create-branch">
+                              <SelectValue placeholder="Select Branch" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {BRANCHES.map(b => (
+                                <SelectItem key={b} value={b}>{b}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="create-year">Graduation Year <span className="text-rose-500">*</span></Label>
+                          <Select
+                            value={formData.year}
+                            onValueChange={v => setFormData({ ...formData, year: v })}
+                          >
+                            <SelectTrigger id="create-year">
+                              <SelectValue placeholder="Select Year" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {getYearOptions().map(y => (
+                                <SelectItem key={y} value={y}>{y}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-1.5">
+                          <Label htmlFor="create-semester">Current Semester <span className="text-rose-500">*</span></Label>
+                          <Select
+                            value={formData.currentSemester}
+                            onValueChange={v => setFormData({ ...formData, currentSemester: v })}
+                          >
+                            <SelectTrigger id="create-semester">
+                              <SelectValue placeholder="Select Semester" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {getSemesterOptions().map(s => (
+                                <SelectItem key={s} value={s.toString()}>Semester {s}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <DialogFooter className="pt-2">
+                        <Button type="submit" disabled={createLoading} className="w-full sm:w-auto">
+                          {createLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating...</> : "Create Student Account"}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </TabsContent>
+                  
+                  <TabsContent value="bulk">
+                    {importResults ? (
+                      <div className="space-y-4 pt-4">
+                        <div className="rounded-md bg-muted p-4 space-y-3 border">
+                          <div className="flex gap-4 items-center justify-between">
+                            <div className="space-y-1">
+                              <p className="text-sm font-medium leading-none">Successful Imports</p>
+                              <p className="text-2xl font-bold text-success">{importResults.success}</p>
+                            </div>
+                            <div className="space-y-1">
+                              <p className="text-sm font-medium leading-none">Failed Rows</p>
+                              <p className="text-2xl font-bold text-red-600">{importResults.failed}</p>
+                            </div>
                           </div>
- }
- />
+                          {importResults.errors && importResults.errors.length > 0 && (
+                            <div className="mt-4 border-t pt-4">
+                              <p className="text-sm font-bold mb-2 flex items-center gap-2"><AlertCircle className="h-4 w-4 text-destructive" /> Error Details</p>
+                              <ScrollArea className="h-[200px] w-full rounded-md border p-4 bg-background">
+                                <ul className="list-disc pl-4 space-y-1 text-sm text-muted-foreground">
+                                  {importResults.errors.map((err: string, i: number) => (
+                                    <li key={i}>{err}</li>
+                                  ))}
+                                </ul>
+                              </ScrollArea>
+                            </div>
+                          )}
+                        </div>
+                        <DialogFooter>
+                          <Button onClick={() => { setCreateOpen(false); setImportResults(null); setImportFile(null); }} className="w-full sm:w-auto">
+                            Done
+                          </Button>
+                        </DialogFooter>
+                      </div>
+                    ) : (
+                      <form onSubmit={handleImportStudents} className="space-y-4 pt-4">
+                        <div className="flex items-center justify-between p-3 rounded-md bg-muted/40 border text-xs">
+                          <span className="font-medium text-muted-foreground">Need the correct Excel layout?</span>
+                          <Button type="button" variant="outline" size="sm" onClick={handleDownloadTemplate} className="h-8 gap-1.5 font-semibold text-xs">
+                            <Download className="h-3.5 w-3.5" /> Download Template (.xlsx)
+                          </Button>
+                        </div>
+                        <div className="grid gap-4 py-2">
+                          <div className="grid gap-2">
+                            <Label htmlFor="file">Select File (XLSX Only)</Label>
+                            <Input id="file" type="file" accept=".xlsx" onChange={(e) => setImportFile(e.target.files?.[0] || null)} />
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button type="submit" disabled={importLoading || !importFile} className="w-full sm:w-auto">
+                            {importLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading...</> : "Import Students"}
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    )}
+                  </TabsContent>
+                </Tabs>
+              </DialogContent>
+            </Dialog>
+          </div>
+        }
+      />
 
- <DataTableToolbar
- searchQuery={searchQuery}
- onSearchChange={setSearchQuery}
- searchPlaceholder="Search by name, ID or email..."
- facets={[
- {
- id: 'branch',
- title: 'Branch',
- options: BRANCHES.map(b => ({ label: b, value: b })),
- value: branchFilter,
- onChange: setBranchFilter
- },
- {
- id: 'year',
- title: 'Year',
- options: [
- { label:"All Years", value:"all" },
- ...getYearOptions().map(y => ({ label: `Year ${y}`, value: y }))
- ],
- value: yearFilter,
- onChange: setYearFilter
- },
- {
- id: 'status',
- title: 'Status',
- options: [
- { label:"All Status", value:"all" },
- { label:"Eligible (>7 CGPA)", value:"eligible" },
- { label:"Not Eligible (<=7 CGPA)", value:"not-eligible" }
- ],
- value: statusFilter,
- onChange: setStatusFilter
- }
- ]}
- sortOptions={[
- { label:"Name (A-Z)", value:"name-asc" },
- { label:"Name (Z-A)", value:"name-desc" },
- { label:"Student ID (Asc)", value:"admissionId-asc" },
- { label:"Student ID (Desc)", value:"admissionId-desc" },
- { label:"CGPA (High-Low)", value:"cgpa-desc" },
- { label:"CGPA (Low-High)", value:"cgpa-asc" }
- ]}
- selectedSort={sortBy}
- onSortChange={setSortBy}
- onExport={() => exportToCSV(processedStudents,"students_records", STUDENT_COLUMNS)}
- onClear={() => {
- setSearchQuery("")
- setBranchFilter("all")
- setYearFilter("all")
- setStatusFilter("all")
- setSortBy("name-asc")
- }}
- />
+      {selectedStudents.length > 0 && (
+        <div className="flex items-center justify-between rounded-md border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-xs font-semibold text-amber-900 animate-fade-in">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-amber-600" />
+            <span>{selectedStudents.length} student{selectedStudents.length > 1 ? "s" : ""} selected</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                const selectedData = students.filter((s) => selectedStudents.includes(s.id))
+                exportToCSV(selectedData, "selected_students", STUDENT_COLUMNS)
+              }}
+              className="h-7 text-xs font-bold gap-1 bg-white text-brown-900 border-amber-500/30 hover:bg-amber-50"
+            >
+              <Download className="h-3.5 w-3.5" /> Export Selected
+            </Button>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setSelectedStudents([])}
+              className="h-7 text-xs font-bold text-muted-foreground hover:text-foreground"
+            >
+              Deselect All
+            </Button>
+          </div>
+        </div>
+      )}
 
- {loading ? (
- <LoadingTable rows={8} cols={6} />
- ) : (
- <>
- <div className="premium-muted overflow-hidden overflow-x-auto rounded-md border border-border/60 shadow-sm">
- <Table>
- <TableHeader>
- <TableRow className="bg-transparent hover:bg-transparent">
- <TableHead className="w-[250px]">Student</TableHead>
- <TableHead>Student ID</TableHead>
- <TableHead>Branch</TableHead>
- <TableHead>Year</TableHead>
- <TableHead>CGPA</TableHead>
- <TableHead className="text-right">Actions</TableHead>
- </TableRow>
- </TableHeader>
- <TableBody>
- {paginatedStudents.length === 0 ? (
- <TableRow>
- <TableCell colSpan={6} className="h-[400px]">
- <EmptyState
- icon={User}
- title="No students found"
- description="Try adjusting your filters or search query to find what you're looking for."
- action={{
- label:"Clear all filters",
- onClick: () => {
- setSearchQuery("");
- setBranchFilter("all");
- setYearFilter("all");
- setStatusFilter("all");
- setSortBy("name-asc");
- },
- icon: Filter
- }}
- />
- </TableCell>
- </TableRow>
- ) : (
- paginatedStudents.map((student) => (
- <TableRow
- key={student.id}
- className="group border-b border-border/40 hover:bg-muted/30 transition-colors cursor-pointer"
- onDoubleClick={() => router.push(`/admin/students/${student.id}/profile`)}
- >
- <TableCell>
- <div className="flex items-center gap-3">
- <Avatar className="h-9 w-9 border border-brown-800/10 shadow-sm">
- <AvatarImage src={getImageUrl(student.photoUrl)} />
- <AvatarFallback className="bg-brown-800/5 text-brown-800 text-xs font-bold">
- {getInitials(student.name ||"Student")}
- </AvatarFallback>
- </Avatar>
- <div className="flex flex-col">
- <span className="font-semibold text-sm group-hover:text-brown-800 transition-colors">
- {student.name ||"N/A"}
- </span>
- <span className="text-[11px] text-muted-foreground">
- {student.user?.email || student.personalEmail ||"No email"}
- </span>
- </div>
- </div>
- </TableCell>
- <TableCell>
- <code className="rounded bg-card-hover px-1.5 py-0.5 text-[11px] font-mono font-bold text-brown-800">
- {student.admissionId ||"N/A"}
- </code>
- </TableCell>
- <TableCell className="text-xs font-medium">
- {student.branch ||"N/A"}
- </TableCell>
- <TableCell className="text-xs">
- Year {student.year ||"N/A"}
- </TableCell>
- <TableCell>
- <Badge variant="secondary" className="font-bold text-[10px] bg-brown-800/5 text-brown-800 border-brown-800/10 uppercase">
- {student.cgpa ? `${student.cgpa} CGPA` :"N/A"}
- </Badge>
- </TableCell>
- <TableCell className="text-right">
- <DropdownMenu>
- <DropdownMenuTrigger asChild>
- <Button variant="ghost" size="icon" className="h-8 w-8 transition-opacity">
- <MoreHorizontal className="h-4 w-4" />
- </Button>
- </DropdownMenuTrigger>
- <DropdownMenuContent align="end" className="w-[180px]">
- <DropdownMenuLabel className="text-[10px] uppercase tracking-widest text-muted-foreground font-black">Actions</DropdownMenuLabel>
- <DropdownMenuSeparator />
- <DropdownMenuItem onClick={() => router.push(`/admin/students/${student.id}/profile`)} className="text-xs font-bold gap-2 cursor-pointer">
- <Eye className="h-3.5 w-3.5 text-brown-600" /> View Profile
- </DropdownMenuItem>
- <DropdownMenuItem onClick={() => handleEditClick(student)} className="text-xs font-bold gap-2 cursor-pointer">
- <Edit className="h-3.5 w-3.5 text-amber-500" /> Edit Record
- </DropdownMenuItem>
- <DropdownMenuItem onClick={() => { setEditingStudentId(student.id); setManageLocksOpen(true); }} className="text-xs font-bold gap-2 cursor-pointer">
- <Lock className="h-3.5 w-3.5 text-rose-500" /> Lock Management
- </DropdownMenuItem>
- <DropdownMenuItem onClick={() => handleResetPassword(student.id, student.name)} className="text-xs font-bold gap-2 cursor-pointer">
- <Send className="h-3.5 w-3.5 text-amber-700" /> Send Password
- </DropdownMenuItem>
- <DropdownMenuSeparator />
- <DropdownMenuItem
- onClick={() => handleDeleteClick(student.id, student.name, student.admissionId)}
- className="text-xs font-bold gap-2 text-rose-500 focus:text-rose-500 cursor-pointer"
- >
- <Trash2 className="h-3.5 w-3.5" /> Delete Student
- </DropdownMenuItem>
- </DropdownMenuContent>
- </DropdownMenu>
- </TableCell>
- </TableRow>
- ))
- )}
- </TableBody>
- </Table>
+      <DataTableToolbar
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        searchPlaceholder="Search by name, ID, roll no or email..."
+        facets={[
+          {
+            id: 'branch',
+            title: 'Branch',
+            options: BRANCHES.map(b => ({ label: b, value: b })),
+            value: branchFilter,
+            onChange: setBranchFilter
+          },
+          {
+            id: 'year',
+            title: 'Year',
+            options: [
+              { label: "All Years", value: "all" },
+              ...getYearOptions().map(y => ({ label: `Year ${y}`, value: y }))
+            ],
+            value: yearFilter,
+            onChange: setYearFilter
+          },
+          {
+            id: 'status',
+            title: 'Status',
+            options: [
+              { label: "All Status", value: "all" },
+              { label: "Eligible (≥7 CGPA)", value: "eligible" },
+              { label: "Not Eligible (<7 CGPA)", value: "not-eligible" }
+            ],
+            value: statusFilter,
+            onChange: setStatusFilter
+          }
+        ]}
+        sortOptions={[
+          { label: "Name (A-Z)", value: "name-asc" },
+          { label: "Name (Z-A)", value: "name-desc" },
+          { label: "Student ID (Asc)", value: "admissionId-asc" },
+          { label: "Student ID (Desc)", value: "admissionId-desc" },
+          { label: "CGPA (High-Low)", value: "cgpa-desc" },
+          { label: "CGPA (Low-High)", value: "cgpa-asc" }
+        ]}
+        selectedSort={sortBy}
+        onSortChange={setSortBy}
+        onExport={() => exportToCSV(processedStudents, "students_records", STUDENT_COLUMNS)}
+        onClear={() => {
+          setSearchQuery("")
+          setBranchFilter("all")
+          setYearFilter("all")
+          setStatusFilter("all")
+          setSortBy("name-asc")
+          setSelectedStudents([])
+        }}
+      />
 
- {/* Pagination */}
- <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border/60 bg-card/50 px-4 py-3">
- <div className="flex items-center gap-4">
- <div className="flex items-center gap-2">
- <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest whitespace-nowrap">
- Rows per page
- </span>
- <Select
- value={itemsPerPage.toString()}
- onValueChange={(value) => {
- setItemsPerPage(value ==="all" ?"all" : parseInt(value))
- setCurrentPage(1)
- }}
- >
- <SelectTrigger className="h-8 w-[70px] bg-card text-xs font-bold border-border/60">
- <SelectValue placeholder="8" />
- </SelectTrigger>
- <SelectContent>
- <SelectItem value="8" className="text-xs font-bold">8</SelectItem>
- <SelectItem value="10" className="text-xs font-bold">10</SelectItem>
- <SelectItem value="20" className="text-xs font-bold">20</SelectItem>
- <SelectItem value="50" className="text-xs font-bold">50</SelectItem>
- <SelectItem value="100" className="text-xs font-bold">100</SelectItem>
- <SelectItem value="all" className="text-xs font-bold">All</SelectItem>
- </SelectContent>
- </Select>
- </div>
- <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
- {processedStudents.length} Students Total
- </p>
- </div>
+      {loading ? (
+        <LoadingTable rows={8} cols={7} />
+      ) : (
+        <div className="premium-muted overflow-hidden overflow-x-auto rounded-md border border-border/60 shadow-sm">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-transparent hover:bg-transparent">
+                  <TableHead className="w-[44px] px-3">
+                    <input
+                      type="checkbox"
+                      checked={paginatedStudents.length > 0 && paginatedStudents.every(s => selectedStudents.includes(s.id))}
+                      onChange={() => {
+                        if (paginatedStudents.every(s => selectedStudents.includes(s.id))) {
+                          setSelectedStudents(prev => prev.filter(id => !paginatedStudents.some(ps => ps.id === id)))
+                        } else {
+                          const newIds = paginatedStudents.map(s => s.id)
+                          setSelectedStudents(prev => Array.from(new Set([...prev, ...newIds])))
+                        }
+                      }}
+                      className="h-4 w-4 rounded border-border text-amber-500 focus:ring-amber-500 cursor-pointer"
+                      aria-label="Select all rows"
+                    />
+                  </TableHead>
+                  <TableHead className="w-[250px]">Student</TableHead>
+                  <TableHead>Student ID</TableHead>
+                  <TableHead>Branch</TableHead>
+                  <TableHead>Year</TableHead>
+                  <TableHead>CGPA</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paginatedStudents.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={7} className="h-[400px]">
+                      <EmptyState
+                        icon={User}
+                        title="No students found"
+                        description="Try adjusting your search query or clear the active filters."
+                        action={{
+                          label: "Clear all filters",
+                          onClick: () => {
+                            setSearchQuery("")
+                            setBranchFilter("all")
+                            setYearFilter("all")
+                            setStatusFilter("all")
+                            setSortBy("name-asc")
+                            setSelectedStudents([])
+                          },
+                          icon: Filter
+                        }}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  paginatedStudents.map((student) => (
+                    <TableRow
+                      key={student.id}
+                      className={cn(
+                        "group border-b border-border/40 hover:bg-muted/30 transition-colors cursor-pointer",
+                        selectedStudents.includes(student.id) && "bg-amber-500/5"
+                      )}
+                      onDoubleClick={() => router.push(`/admin/students/${student.id}/profile`)}
+                    >
+                      <TableCell className="w-[44px] px-3" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          checked={selectedStudents.includes(student.id)}
+                          onChange={() => {
+                            setSelectedStudents(prev =>
+                              prev.includes(student.id) ? prev.filter(id => id !== student.id) : [...prev, student.id]
+                            )
+                          }}
+                          className="h-4 w-4 rounded border-border text-amber-500 focus:ring-amber-500 cursor-pointer"
+                          aria-label={`Select ${student.name || 'student'}`}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-9 w-9 border border-brown-800/10 shadow-sm">
+                            <AvatarImage src={getImageUrl(student.photoUrl)} />
+                            <AvatarFallback className="bg-brown-800/5 text-brown-800 text-xs font-bold">
+                              {getInitials(student.name || "Student")}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-sm group-hover:text-brown-800 transition-colors">
+                              {student.name || "N/A"}
+                            </span>
+                            <span className="text-[11px] text-muted-foreground">
+                              {student.user?.email || student.personalEmail || "No email"}
+                            </span>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <code className="rounded bg-card-hover px-1.5 py-0.5 text-[11px] font-mono font-bold text-brown-800">
+                          {student.admissionId || "N/A"}
+                        </code>
+                      </TableCell>
+                      <TableCell className="text-xs font-medium">
+                        {student.branch || "N/A"}
+                      </TableCell>
+                      <TableCell className="text-xs">
+                        Year {student.year || "N/A"}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary" className="font-bold text-[10px] bg-brown-800/5 text-brown-800 border-brown-800/10 uppercase tabular-nums">
+                          {student.cgpa !== null && student.cgpa !== undefined && Number(student.cgpa) > 0 ? `${Number(student.cgpa).toFixed(2)} CGPA` : "N/A"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 transition-opacity">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-[180px]">
+                            <DropdownMenuLabel className="text-[10px] uppercase tracking-widest text-muted-foreground font-black">Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => router.push(`/admin/students/${student.id}/profile`)} className="text-xs font-bold gap-2 cursor-pointer">
+                              <Eye className="h-3.5 w-3.5 text-brown-600" /> View Profile
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleEditClick(student)} className="text-xs font-bold gap-2 cursor-pointer">
+                              <Edit className="h-3.5 w-3.5 text-amber-500" /> Edit Record
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { setEditingStudentId(student.id); setManageLocksOpen(true); }} className="text-xs font-bold gap-2 cursor-pointer">
+                              <Lock className="h-3.5 w-3.5 text-rose-500" /> Lock Management
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleResetPassword(student.id, student.name)} className="text-xs font-bold gap-2 cursor-pointer">
+                              <Send className="h-3.5 w-3.5 text-amber-700" /> Send Password
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => handleDeleteClick(student.id, student.name, student.admissionId)}
+                              className="text-xs font-bold gap-2 text-rose-500 focus:text-rose-500 cursor-pointer"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" /> Delete Student
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
 
- {totalPages > 1 && (
- <div className="flex items-center gap-4">
- <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
- Page {currentPage} of {totalPages}
- </p>
- <Pagination className="w-auto mx-0">
- <PaginationContent>
- <PaginationPrevious
- href="#"
- onClick={(e) => { e.preventDefault(); setCurrentPage(Math.max(1, currentPage - 1)) }}
- className={currentPage === 1 ?"pointer-events-none opacity-50" :"cursor-pointer"}
- />
- <PaginationItem>
- <PaginationNext
- href="#"
- onClick={(e) => { e.preventDefault(); setCurrentPage(Math.min(totalPages, currentPage + 1)) }}
- className={currentPage === totalPages ?"pointer-events-none opacity-50" :"cursor-pointer"}
- />
- </PaginationItem>
- </PaginationContent>
- </Pagination>
- </div>
- )}
- </div>
- </div>
- </>
- )}
+          {/* Pagination */}
+          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border/60 bg-card/50 px-4 py-3">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest whitespace-nowrap">
+                  Rows per page
+                </span>
+                <Select
+                  value={itemsPerPage.toString()}
+                  onValueChange={(value) => {
+                    setItemsPerPage(value === "all" ? "all" : parseInt(value))
+                    setCurrentPage(1)
+                  }}
+                >
+                  <SelectTrigger className="h-8 w-[70px] bg-card text-xs font-bold border-border/60">
+                    <SelectValue placeholder="8" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="8" className="text-xs font-bold">8</SelectItem>
+                    <SelectItem value="10" className="text-xs font-bold">10</SelectItem>
+                    <SelectItem value="20" className="text-xs font-bold">20</SelectItem>
+                    <SelectItem value="50" className="text-xs font-bold">50</SelectItem>
+                    <SelectItem value="100" className="text-xs font-bold">100</SelectItem>
+                    <SelectItem value="all" className="text-xs font-bold">All</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                {processedStudents.length} Students Total
+              </p>
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex items-center gap-4">
+                <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
+                  Page {currentPage} of {totalPages}
+                </p>
+                <Pagination className="w-auto mx-0">
+                  <PaginationContent>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => { e.preventDefault(); setCurrentPage(Math.max(1, currentPage - 1)) }}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                    <PaginationItem>
+                      <PaginationNext
+                        href="#"
+                        onClick={(e) => { e.preventDefault(); setCurrentPage(Math.min(totalPages, currentPage + 1)) }}
+                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
  {/* Edit Student Dialog (The Big One) */}
  <Dialog open={editOpen} onOpenChange={setEditOpen}>
  <DialogContent className="max-w-[calc(100vw-2rem)] md:max-w-4xl max-h-[95vh] overflow-hidden p-0 rounded-md border-none shadow-2xl">
